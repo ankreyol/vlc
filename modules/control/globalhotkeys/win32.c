@@ -170,15 +170,7 @@ static void *Thread( void *p_data )
     for( const char* const* ppsz_keys = vlc_actions_get_key_names( p_intf );
          *ppsz_keys != NULL; ppsz_keys++ )
     {
-        char varname[12 + strlen( *ppsz_keys )];
-        sprintf( varname, "global-key-%s", *ppsz_keys );
-
-        char *key = var_InheritString( p_intf, varname );
-        if( key == NULL )
-            continue;
-
-        UINT i_key = vlc_str2keycode( key );
-        free( key );
+        uint_fast32_t i_key = vlc_actions_get_keycode( p_intf, *ppsz_keys, true );
         if( i_key == KEY_UNSET )
             continue;
 

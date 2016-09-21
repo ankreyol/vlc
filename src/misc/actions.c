@@ -594,6 +594,23 @@ vlc_actions_get_id (const char *name)
     return (act != NULL) ? act->id : ACTIONID_NONE;
 }
 
+#undef vlc_actions_get_keycode
+uint_fast32_t
+vlc_actions_get_keycode(vlc_object_t *p_obj, const char *psz_key_name,
+                        bool b_global)
+{
+    char varname[12 /* "global-key-" */ + strlen( psz_key_name )];
+    sprintf( varname, "%skey-%s", b_global ? "global-" : "", psz_key_name );
+
+    char *psz_key = var_InheritString( p_obj, varname );
+    if( psz_key == NULL )
+        return KEY_UNSET;
+
+    uint_fast32_t i_key = vlc_str2keycode( psz_key );
+    free( psz_key );
+    return i_key;
+}
+
 #undef vlc_actions_get_key_names
 const char* const*
 vlc_actions_get_key_names(vlc_object_t *p_obj)

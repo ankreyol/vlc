@@ -255,6 +255,15 @@ VLC_API vlc_action_id_t
 vlc_actions_get_id(const char *psz_key_name);
 
 /**
+ * Get a keycode from a action key name and vlc configuration
+ * \return a valid KEY_* or KEY_UNSET if the key is not found
+ */
+VLC_API uint_fast32_t
+vlc_actions_get_keycode(vlc_object_t *p_obj, const char *psz_key_name,
+                        bool b_global);
+#define vlc_actions_get_keycode(a, b, c) vlc_actions_get_keycode(VLC_OBJECT(a), b, c)
+
+/**
  * Get a list a key names
  * \return A NULL terminated list of const char *
  */

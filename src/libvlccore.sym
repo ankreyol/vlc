@@ -513,6 +513,7 @@ video_format_Print
 vlc_actions_get_id
 vlc_actions_get_key_names
 vlc_actions_get_keycode
+vlc_actions_do
 vlc_b64_decode
 vlc_b64_decode_binary
 vlc_b64_decode_binary_to_buffer

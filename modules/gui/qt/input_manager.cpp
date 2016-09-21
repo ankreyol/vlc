@@ -894,27 +894,27 @@ void InputManager::reverse()
 
 void InputManager::slower()
 {
-    var_TriggerCallback( THEPL, "rate-slower" );
+    ACTION_DO( ACTIONID_SLOWER );
 }
 
 void InputManager::faster()
 {
-    var_TriggerCallback( THEPL, "rate-faster" );
+    ACTION_DO( ACTIONID_FASTER );
 }
 
 void InputManager::littlefaster()
 {
-    var_SetInteger( p_intf->obj.libvlc, "key-action", ACTIONID_RATE_FASTER_FINE );
+    ACTION_DO( ACTIONID_RATE_FASTER_FINE );
 }
 
 void InputManager::littleslower()
 {
-    var_SetInteger( p_intf->obj.libvlc, "key-action", ACTIONID_RATE_SLOWER_FINE );
+    ACTION_DO( ACTIONID_RATE_SLOWER_FINE );
 }
 
 void InputManager::normalRate()
 {
-    var_SetFloat( THEPL, "rate", 1. );
+    ACTION_DO( ACTIONID_RATE_NORMAL );
 }
 
 void InputManager::setRate( int new_rate )
@@ -925,22 +925,12 @@ void InputManager::setRate( int new_rate )
 
 void InputManager::jumpFwd()
 {
-    int i_interval = var_InheritInteger( p_input, "short-jump-size" );
-    if( i_interval > 0 && hasInput() )
-    {
-        mtime_t val = CLOCK_FREQ * i_interval;
-        var_SetInteger( p_input, "time-offset", val );
-    }
+    ACTION_DO( ACTIONID_JUMP_FORWARD_SHORT );
 }
 
 void InputManager::jumpBwd()
 {
-    int i_interval = var_InheritInteger( p_input, "short-jump-size" );
-    if( i_interval > 0 && hasInput() )
-    {
-        mtime_t val = -CLOCK_FREQ * i_interval;
-        var_SetInteger( p_input, "time-offset", val );
-    }
+    ACTION_DO( ACTIONID_JUMP_BACKWARD_SHORT );
 }
 
 void InputManager::setAtoB()
@@ -1103,45 +1093,45 @@ void MainInputManager::probeCurrentInput()
 /* Playlist Control functions */
 void MainInputManager::stop()
 {
-   playlist_Stop( THEPL );
+    ACTION_DO( ACTIONID_STOP );
 }
 
 void MainInputManager::next()
 {
-   playlist_Next( THEPL );
+    ACTION_DO( ACTIONID_NEXT );
 }
 
 void MainInputManager::prev()
 {
-   playlist_Prev( THEPL );
+    ACTION_DO( ACTIONID_PREV );
 }
 
 void MainInputManager::prevOrReset()
 {
     if( !p_input || var_GetInteger( p_input, "time") < INT64_C(10000) )
-        playlist_Prev( THEPL );
+        ACTION_DO( ACTIONID_PREV );
     else
         getIM()->sliderUpdate( 0.0 );
 }
 
 void MainInputManager::togglePlayPause()
 {
-    playlist_TogglePause( THEPL );
+    ACTION_DO( ACTIONID_PLAY_PAUSE );
 }
 
 void MainInputManager::play()
 {
-    playlist_Play( THEPL );
+    ACTION_DO( ACTIONID_PLAY );
 }
 
 void MainInputManager::pause()
 {
-    playlist_Pause( THEPL );
+    ACTION_DO( ACTIONID_PAUSE );
 }
 
 void MainInputManager::toggleRandom()
 {
-    config_PutInt( p_intf, "random", var_ToggleBool( THEPL, "random" ) );
+    ACTION_DO( ACTIONID_RANDOM );
 }
 
 void MainInputManager::notifyRandom(bool value)
@@ -1161,30 +1151,7 @@ void MainInputManager::notifyRepeatLoop(bool)
 
 void MainInputManager::loopRepeatLoopStatus()
 {
-    /* Toggle Normal -> Loop -> Repeat -> Normal ... */
-    bool loop = var_GetBool( THEPL, "loop" );
-    bool repeat = var_GetBool( THEPL, "repeat" );
-
-    if( repeat )
-    {
-        loop = false;
-        repeat = false;
-    }
-    else if( loop )
-    {
-        loop = false;
-        repeat = true;
-    }
-    else
-    {
-        loop = true;
-        //repeat = false;
-    }
-
-    var_SetBool( THEPL, "loop", loop );
-    var_SetBool( THEPL, "repeat", repeat );
-    config_PutInt( p_intf, "loop", loop );
-    config_PutInt( p_intf, "repeat", repeat );
+    ACTION_DO( ACTIONID_LOOP );
 }
 
 void MainInputManager::activatePlayQuit( bool b_exit )

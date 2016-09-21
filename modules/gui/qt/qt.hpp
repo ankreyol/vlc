@@ -88,6 +88,7 @@ struct intf_sys_t
 };
 
 #define THEPL p_intf->p_sys->p_playlist
+#define ACTION_DO(id) vlc_actions_do( p_intf, (id), true)
 
 /**
  * This class may be used for scope-bound locking/unlocking

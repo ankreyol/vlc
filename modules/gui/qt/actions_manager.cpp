@@ -125,23 +125,12 @@ void ActionsManager::play()
  */
 void ActionsManager::fullscreen()
 {
-    bool fs = var_ToggleBool( THEPL, "fullscreen" );
-    vout_thread_t *p_vout = THEMIM->getVout();
-    if( p_vout)
-    {
-        var_SetBool( p_vout, "fullscreen", fs );
-        vlc_object_release( p_vout );
-    }
+    ACTION_DO( ACTIONID_TOGGLE_FULLSCREEN );
 }
 
 void ActionsManager::snapshot()
 {
-    vout_thread_t *p_vout = THEMIM->getVout();
-    if( p_vout )
-    {
-        var_TriggerCallback( p_vout, "video-snapshot" );
-        vlc_object_release( p_vout );
-    }
+    ACTION_DO( ACTIONID_SNAPSHOT );
 }
 
 void ActionsManager::playlist()
@@ -152,47 +141,27 @@ void ActionsManager::playlist()
 
 void ActionsManager::record()
 {
-    input_thread_t *p_input = THEMIM->getInput();
-    if( p_input )
-    {
-        /* This method won't work fine if the stream can't be cut anywhere */
-        var_ToggleBool( p_input, "record" );
-#if 0
-        else
-        {
-            /* 'record' access-filter is not loaded, we open Save dialog */
-            input_item_t *p_item = input_GetItem( p_input );
-            if( !p_item )
-                return;
-
-            char *psz = input_item_GetURI( p_item );
-            if( psz )
-                THEDP->streamingDialog( NULL, qfu(psz), true );
-        }
-#endif
-    }
+    ACTION_DO( ACTIONID_RECORD );
 }
 
 void ActionsManager::frame()
 {
-    input_thread_t *p_input = THEMIM->getInput();
-    if( p_input )
-        var_TriggerCallback( p_input, "frame-next" );
+    ACTION_DO( ACTIONID_FRAME_NEXT );
 }
 
 void ActionsManager::toggleMuteAudio()
 {
-    playlist_MuteToggle( THEPL );
+    ACTION_DO( ACTIONID_VOL_MUTE );
 }
 
 void ActionsManager::AudioUp()
 {
-    playlist_VolumeUp( THEPL, 1, NULL );
+    ACTION_DO( ACTIONID_VOL_UP );
 }
 
 void ActionsManager::AudioDown()
 {
-    playlist_VolumeDown( THEPL, 1, NULL );
+    ACTION_DO( ACTIONID_VOL_DOWN );
 }
 
 void ActionsManager::skipForward()

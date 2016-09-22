@@ -74,7 +74,7 @@ LRESULT DecodeGesture( vlc_object_t *p_this, win32_gesture_sys_t *p_gesture,
                         else
                             action_id = ACTIONID_JUMP_FORWARD_SHORT;
                     }
-                    var_SetInteger( p_this->obj.libvlc, "key-action", action_id );
+                    vlc_actions_do( p_this, action_id, true );
                 }
                 /* Reset the values */
                 p_gesture->i_action = GESTURE_ACTION_UNDEFINED;
@@ -108,9 +108,9 @@ LRESULT DecodeGesture( vlc_object_t *p_this, win32_gesture_sys_t *p_gesture,
                     int offset = p_gesture->i_lasty - gi.ptsLocation.y;
 
                     if( offset > 100)
-                        var_SetInteger( p_this->obj.libvlc, "key-action", ACTIONID_VOL_UP );
+                        vlc_actions_do( p_this, ACTIONID_VOL_UP, true );
                     else if( offset < -100)
-                        var_SetInteger( p_this->obj.libvlc, "key-action", ACTIONID_VOL_DOWN );
+                        vlc_actions_do( p_this, ACTIONID_VOL_DOWN, true );
                     else
                         break;
 
@@ -124,19 +124,19 @@ LRESULT DecodeGesture( vlc_object_t *p_this, win32_gesture_sys_t *p_gesture,
 
                     if( p_gesture->i_lasty - p_gesture->i_beginy > 80 )
                     {
-                        var_SetInteger( p_this->obj.libvlc, "key-action", ACTIONID_BRIGHTNESS_DOWN );
+                        vlc_actions_do( p_this, ACTIONID_BRIGHTNESS_DOWN, true );
                         p_gesture->i_lasty = gi.ptsLocation.y;
                     }
                     else if ( p_gesture->i_lasty - p_gesture->i_beginy < 80 )
                     {
-                        var_SetInteger( p_this->obj.libvlc, "key-action", ACTIONID_BRIGHTNESS_UP );
+                        vlc_actions_do( p_this, ACTIONID_BRIGHTNESS_UP, true );
                         p_gesture->i_lasty = gi.ptsLocation.y;
                     } */
                 }
                 break;
             case GID_TWOFINGERTAP:
                 p_gesture->i_type = GID_TWOFINGERTAP;
-                var_SetInteger( p_this->obj.libvlc, "key-action", ACTIONID_PLAY_PAUSE );
+                vlc_actions_do( p_this, ACTIONID_PLAY_PAUSE, true );
                 bHandled = TRUE;
                 break;
             case GID_ZOOM:
@@ -151,11 +151,11 @@ LRESULT DecodeGesture( vlc_object_t *p_this, win32_gesture_sys_t *p_gesture,
                             double k = (double)(gi.ullArguments) /
                                        (double)(p_gesture->i_ullArguments);
                             if( k > 1 )
-                                var_SetInteger( p_this->obj.libvlc, "key-action",
-                                        ACTIONID_TOGGLE_FULLSCREEN );
+                                vlc_actions_do( p_this,
+                                        ACTIONID_TOGGLE_FULLSCREEN, true );
                             else
-                                var_SetInteger( p_this->obj.libvlc, "key-action",
-                                        ACTIONID_LEAVE_FULLSCREEN );
+                                vlc_actions_do( p_this,
+                                        ACTIONID_LEAVE_FULLSCREEN, true );
                         }
                         break;
                     default:

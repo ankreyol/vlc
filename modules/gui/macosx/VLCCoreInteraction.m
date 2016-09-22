@@ -148,43 +148,34 @@ static int BossCallback(vlc_object_t *p_this, const char *psz_var,
 
 - (void)pause
 {
-    playlist_t *p_playlist = pl_Get(getIntf());
-
-    playlist_Pause(p_playlist);
+    vlc_actions_do(getIntf(), ACTIONID_PAUSE, true);
 }
 
 - (void)stop
 {
-    playlist_Stop(pl_Get(getIntf()));
+    vlc_actions_do(getIntf(), ACTIONID_STOP, true);
 }
 
 - (void)faster
 {
-    var_TriggerCallback(pl_Get(getIntf()), "rate-faster");
+    vlc_actions_do(getIntf(), ACTIONID_FASTER, true);
 }
 
 - (void)slower
 {
-    var_TriggerCallback(pl_Get(getIntf()), "rate-slower");
+    vlc_actions_do(getIntf(), ACTIONID_SLOWER, true);
+}
 }
 
 - (void)normalSpeed
 {
-    var_SetFloat(pl_Get(getIntf()), "rate", 1.);
+    vlc_actions_do(getIntf(), ACTIONID_RATE_NORMAL, true);
+}
 }
 
 - (void)toggleRecord
 {
-    intf_thread_t *p_intf = getIntf();
-    if (!p_intf)
-        return;
-
-    input_thread_t * p_input;
-    p_input = pl_CurrentInput(p_intf);
-    if (p_input) {
-        var_ToggleBool(p_input, "record");
-        vlc_object_release(p_input);
-    }
+    vlc_actions_do(getIntf(), ACTIONID_RECORD, true);
 }
 
 - (void)setPlaybackRate:(int)i_value
@@ -232,12 +223,12 @@ static int BossCallback(vlc_object_t *p_this, const char *psz_var,
 
 - (void)previous
 {
-    playlist_Prev(pl_Get(getIntf()));
+    vlc_actions_do(getIntf(), ACTIONID_PREV, true);
 }
 
 - (void)next
 {
-    playlist_Next(pl_Get(getIntf()));
+    vlc_actions_do(getIntf(), ACTIONID_NEXT, true);
 }
 
 - (int)durationOfCurrentPlaylistItem
@@ -342,60 +333,44 @@ static int BossCallback(vlc_object_t *p_this, const char *psz_var,
     [self backwardShort];
 }
 
-- (void)jumpWithValue:(char *)p_value forward:(BOOL)b_value
-{
-    input_thread_t *p_input = pl_CurrentInput(getIntf());
-    if (!p_input)
-        return;
-
-    int i_interval = var_InheritInteger( p_input, p_value );
-    if (i_interval > 0) {
-        mtime_t val = CLOCK_FREQ * i_interval;
-        if (!b_value)
-            val = val * -1;
-        var_SetInteger( p_input, "time-offset", val );
-    }
-    vlc_object_release(p_input);
-}
-
 - (void)forwardExtraShort
 {
-    [self jumpWithValue:"extrashort-jump-size" forward:YES];
+    vlc_actions_do(getIntf(), ACTIONID_JUMP_FORWARD_EXTRASHORT, true);
 }
 
 - (void)backwardExtraShort
 {
-    [self jumpWithValue:"extrashort-jump-size" forward:NO];
+    vlc_actions_do(getIntf(), ACTIONID_JUMP_BACKWARD_EXTRASHORT, true);
 }
 
 - (void)forwardShort
 {
-    [self jumpWithValue:"short-jump-size" forward:YES];
+    vlc_actions_do(getIntf(), ACTIONID_JUMP_FORWARD_SHORT, true);
 }
 
 - (void)backwardShort
 {
-    [self jumpWithValue:"short-jump-size" forward:NO];
+    vlc_actions_do(getIntf(), ACTIONID_JUMP_BACKWARD_SHORT, true);
 }
 
 - (void)forwardMedium
 {
-    [self jumpWithValue:"medium-jump-size" forward:YES];
+    vlc_actions_do(getIntf(), ACTIONID_JUMP_FORWARD_MEDIUM, true);
 }
 
 - (void)backwardMedium
 {
-    [self jumpWithValue:"medium-jump-size" forward:NO];
+    vlc_actions_do(getIntf(), ACTIONID_JUMP_BACKWARD_MEDIUM, true);
 }
 
 - (void)forwardLong
 {
-    [self jumpWithValue:"long-jump-size" forward:YES];
+    vlc_actions_do(getIntf(), ACTIONID_JUMP_FORWARD_LONG, true);
 }
 
 - (void)backwardLong
 {
-    [self jumpWithValue:"long-jump-size" forward:NO];
+    vlc_actions_do(getIntf(), ACTIONID_JUMP_BACKWARD_LONG, true);
 }
 
 - (void)shuffle
@@ -530,8 +505,7 @@ static int BossCallback(vlc_object_t *p_this, const char *psz_var,
     intf_thread_t *p_intf = getIntf();
     if (!p_intf)
         return;
-
-    playlist_VolumeUp(pl_Get(p_intf), 1, NULL);
+    vlc_actions_do(p_intf, ACTIONID_VOL_UP, true);
 }
 
 - (void)volumeDown
@@ -539,8 +513,7 @@ static int BossCallback(vlc_object_t *p_this, const char *psz_var,
     intf_thread_t *p_intf = getIntf();
     if (!p_intf)
         return;
-
-    playlist_VolumeDown(pl_Get(p_intf), 1, NULL);
+    vlc_actions_do(p_intf, ACTIONID_VOL_DOWN, true);
 }
 
 - (void)toggleMute
@@ -548,8 +521,7 @@ static int BossCallback(vlc_object_t *p_this, const char *psz_var,
     intf_thread_t *p_intf = getIntf();
     if (!p_intf)
         return;
-
-    playlist_MuteToggle(pl_Get(p_intf));
+    vlc_actions_do(p_intf, ACTIONID_VOL_MUTE, true);
 }
 
 - (BOOL)mute
@@ -619,15 +591,7 @@ static int BossCallback(vlc_object_t *p_this, const char *psz_var,
 
 - (void)showPosition
 {
-    input_thread_t *p_input = pl_CurrentInput(getIntf());
-    if (p_input != NULL) {
-        vout_thread_t *p_vout = input_GetVout(p_input);
-        if (p_vout != NULL) {
-            var_SetInteger(getIntf()->obj.libvlc, "key-action", ACTIONID_POSITION);
-            vlc_object_release(p_vout);
-        }
-        vlc_object_release(p_input);
-    }
+    vlc_actions_do(getIntf(), ACTIONID_POSITION, true);
 }
 
 #pragma mark - Drop support for files into the video, controls bar or drop box
@@ -1008,12 +972,10 @@ static int BossCallback(vlc_object_t *p_this, const char *psz_var,
                 [self backward];
                 break;
             case kRemoteButtonVolume_Plus_Hold:
-                if (p_intf)
-                    var_SetInteger(p_intf->obj.libvlc, "key-action", ACTIONID_VOL_UP);
+                vlc_actions_do(p_intf, ACTIONID_VOL_UP, true);
                 break;
             case kRemoteButtonVolume_Minus_Hold:
-                if (p_intf)
-                    var_SetInteger(p_intf->obj.libvlc, "key-action", ACTIONID_VOL_DOWN);
+                vlc_actions_do(p_intf, ACTIONID_VOL_DOWN, true);
                 break;
         }
         if (b_remote_button_hold) {
@@ -1051,15 +1013,13 @@ static int BossCallback(vlc_object_t *p_this, const char *psz_var,
             if (config_GetInt(getIntf(), "macosx-appleremote-sysvol"))
                 [NSSound increaseSystemVolume];
             else
-                if (p_intf)
-                    var_SetInteger(p_intf->obj.libvlc, "key-action", ACTIONID_VOL_UP);
+                vlc_actions_do(p_intf, ACTIONID_VOL_UP, true);
             break;
         case kRemoteButtonVolume_Minus:
             if (config_GetInt(getIntf(), "macosx-appleremote-sysvol"))
                 [NSSound decreaseSystemVolume];
             else
-                if (p_intf)
-                    var_SetInteger(p_intf->obj.libvlc, "key-action", ACTIONID_VOL_DOWN);
+                vlc_actions_do(p_intf, ACTIONID_VOL_DOWN, true);
             break;
         case kRemoteButtonRight:
             if (config_GetInt(getIntf(), "macosx-appleremote-prevnext"))

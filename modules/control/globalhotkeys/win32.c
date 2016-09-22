@@ -299,12 +299,7 @@ LRESULT CALLBACK WMHOTKEYPROC( HWND hwnd, UINT uMsg, WPARAM wParam,
 
                 /* search for key associated with VLC */
                 vlc_action_id_t action = vlc_actions_get_id( psz_atomName );
-                if( action != ACTIONID_NONE )
-                {
-                    var_SetInteger( p_intf->obj.libvlc,
-                            "key-action", action );
-                    return 1;
-                }
+                return vlc_actions_do( p_intf, action, true ) == VLC_SUCCESS ? 1 : 0;
             }
             break;
 

@@ -151,6 +151,7 @@ misc.copyright(): Get the VLC copyright statement.
 misc.license(): Get the VLC license.
 
 misc.action_id( name ): get the id of the given action.
+misc.action_do( id, notify ): execute the action identified by the id
 
 misc.mdate(): Get the current date (in microseconds).
 misc.mwait(): Wait for the given date (in microseconds).

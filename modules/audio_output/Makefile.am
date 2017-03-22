@@ -12,6 +12,13 @@ if HAVE_ANDROID
 aout_LTLIBRARIES += libandroid_audiotrack_plugin.la libopensles_android_plugin.la
 endif
 
+libppapi_audio_plugin_la_SOURCES = audio_output/ppapi.c
+libppapi_audio_plugin_la_LIBADD = $(LIBS_nacl)
+
+if HAVE_NACL
+aout_LTLIBRARIES += libppapi_audio_plugin.la
+endif
+
 libadummy_plugin_la_SOURCES = audio_output/adummy.c
 
 libafile_plugin_la_SOURCES = audio_output/file.c

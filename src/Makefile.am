@@ -390,6 +390,8 @@ else
 if HAVE_NACL
 libvlccore_la_SOURCES += \
 	android/error.c \
+	android/thread.c \
+	nacl/thread.c \
 	posix/dirs.c \
 	posix/filesystem.c \
 	posix/netconf.c \

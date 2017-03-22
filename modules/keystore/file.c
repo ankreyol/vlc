@@ -25,6 +25,10 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #ifdef HAVE_FLOCK
+#ifdef __native_client__
+#define __BSD_VISIBLE 1
+#include <fcntl.h>
+#endif
 #include <sys/file.h>
 #endif
 #ifdef HAVE_FCNTL

@@ -648,6 +648,11 @@ libvlc_media_player_new( libvlc_instance_t *instance )
 #ifdef HAVE_EVAS
     var_Create (mp, "drawable-evasobject", VLC_VAR_ADDRESS);
 #endif
+#ifdef __native_client__
+    var_Create (mp, "ppapi-instance", VLC_VAR_INTEGER);
+    var_Create (mp, "ppapi-ppb-get-interface", VLC_VAR_ADDRESS);
+    var_Create (mp, "ppapi-view", VLC_VAR_INTEGER);
+#endif
 
     var_Create (mp, "keyboard-events", VLC_VAR_BOOL);
     var_SetBool (mp, "keyboard-events", true);
@@ -1257,6 +1262,49 @@ int libvlc_media_player_set_evas_object( libvlc_media_player_t *p_mi,
 #else
     (void) p_mi; (void) p_evas_object;
     return -1;
+#endif
+}
+
+/**************************************************************************
+ * set_nacl handles
+ **************************************************************************/
+int libvlc_media_player_set_nacl_pp_instance( libvlc_media_player_t *p_mi,
+                                              int pp_instance )
+{
+#ifdef __native_client__
+    var_SetInteger(p_mi, "ppapi-instance", pp_instance);
+    return 0;
+#else
+    VLC_UNUSED(p_mi);
+    VLC_UNUSED(pp_instance);
+    return VLC_EGENERIC;
+#endif
+}
+
+int libvlc_media_player_set_nacl_get_ppb_interface ( libvlc_media_player_t *p_mi,
+                                                     void *p_get_ppb_interface )
+{
+#ifdef __native_client__
+    var_SetInteger(p_mi, "ppapi-ppb-get-interface", p_get_ppb_interface);
+    return 0;
+#else
+    VLC_UNUSED(p_mi);
+    VLC_UNUSED(p_get_ppb_interface);
+    return VLC_EGENERIC;
+#endif
+}
+
+int libvlc_media_player_set_nacl_pp_view( libvlc_media_player_t *p_mi,
+                                          int pp_view )
+{
+#ifdef __native_client__
+    var_SetString(p_mi, "vout", "gles2");
+    var_SetInteger(p_mi, "ppapi-view", pp_view);
+    return 0;
+#else
+    VLC_UNUSED(p_mi);
+    VLC_UNUSED(pp_view);
+    return VLC_EGENERIC;
 #endif
 }
 

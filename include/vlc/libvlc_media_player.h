@@ -598,6 +598,41 @@ LIBVLC_API void libvlc_media_player_set_android_context( libvlc_media_player_t *
 LIBVLC_API int libvlc_media_player_set_evas_object( libvlc_media_player_t *p_mi,
                                                     void *p_evas_object );
 
+/**
+ * Set the NaCl PP Instance handle
+ *
+ * \version LibVLC 3.0.0 and later.
+ *
+ * \param p_mi the media player
+ * \param pp_instance the PP_Instance id
+ * \return -1 if an error was detected, 0 otherwise.
+ */
+LIBVLC_API int libvlc_media_player_set_nacl_pp_instance( libvlc_media_player_t *p_mi,
+                                                         int pp_instance );
+
+/**
+ * Set the NaCl PPB Interface accessor
+ *
+ * \version LibVLC 3.0.0 and later.
+ *
+ * \param p_mi the media player
+ * \param p_get_ppb_interface PPB_GetInterface function pointer
+ * \return -1 if an error was detected, 0 otherwise.
+ */
+LIBVLC_API int libvlc_media_player_set_nacl_get_ppb_interface ( libvlc_media_player_t *p_mi,
+                                                                void *p_get_ppb_interface );
+
+/**
+ * Set the NaCl View resource
+ *
+ * \version LibVLC 3.0.0 and later.
+ *
+ * \param p_mi the media player
+ * \param pp_view the PP_Resource of the current view
+ * \return -1 if an error was detected, 0 otherwise.
+ */
+LIBVLC_API int libvlc_media_player_set_nacl_pp_view( libvlc_media_player_t *p_mi,
+                                                     int pp_view );
 
 /**
  * Callback prototype for audio playback.

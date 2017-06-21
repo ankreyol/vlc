@@ -323,6 +323,9 @@ enum demux_query_e
     DEMUX_NAV_POPUP,
     /** Activate disc Root Menu. Can fail */
     DEMUX_NAV_MENU,            /* res=can fail */
+    /** Enable/Disable a demux filter */
+    DEMUX_FILTER_ENABLE,
+    DEMUX_FILTER_DISABLE
 };
 
 /*************************************************************************

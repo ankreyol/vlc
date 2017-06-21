@@ -230,6 +230,9 @@ struct demux_sys_t
             setPauseState( paused != 0 );
             break;
         }
+        case DEMUX_FILTER_DISABLE:
+            demux_Control( p_demux_filter->p_next, DEMUX_SET_TIME, getPlaybackTime() );
+            return VLC_SUCCESS;
         }
 
         return demux_vaControl( p_demux_filter->p_next, i_query, args );

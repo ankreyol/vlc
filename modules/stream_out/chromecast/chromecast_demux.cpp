@@ -45,6 +45,7 @@ struct demux_sys_t
         ,demuxReady(false)
         ,canSeek(false)
         ,m_seektime( VLC_TS_INVALID )
+        ,m_enabled( true )
     {
         vlc_meta_t *p_meta = vlc_meta_New();
         if( likely(p_meta != NULL) )
@@ -64,8 +65,11 @@ struct demux_sys_t
 
     ~demux_sys_t()
     {
-        p_renderer->pf_set_title( p_renderer->p_opaque, NULL );
-        p_renderer->pf_set_artwork( p_renderer->p_opaque, NULL );
+        if( p_renderer )
+        {
+            p_renderer->pf_set_title( p_renderer->p_opaque, NULL );
+            p_renderer->pf_set_artwork( p_renderer->p_opaque, NULL );
+        }
     }
 
     void setPauseState(bool paused)
@@ -119,6 +123,9 @@ struct demux_sys_t
 
     int Demux()
     {
+        if ( !m_enabled )
+            return demux_Demux( p_demux->p_next );
+
         if (!demuxReady)
         {
             msg_Dbg(p_demux, "wait to demux");
@@ -140,6 +147,9 @@ struct demux_sys_t
 
     int Control( demux_t *p_demux_filter, int i_query, va_list args )
     {
+        if( !m_enabled )
+            return demux_vaControl( p_demux_filter->p_next, i_query, args );
+
         switch (i_query)
         {
         case DEMUX_GET_POSITION:
@@ -230,8 +240,15 @@ struct demux_sys_t
             setPauseState( paused != 0 );
             break;
         }
+        case DEMUX_FILTER_ENABLE:
+            p_renderer = static_cast<chromecast_common *>(
+                        var_InheritAddress( p_demux, CC_SHARED_VAR_NAME ) );
+            m_enabled = true;
+            break;
         case DEMUX_FILTER_DISABLE:
+            m_enabled = false;
             demux_Control( p_demux_filter->p_next, DEMUX_SET_TIME, getPlaybackTime() );
+            p_renderer = NULL;
             return VLC_SUCCESS;
         }
 
@@ -240,12 +257,13 @@ struct demux_sys_t
 
 protected:
     demux_t     * const p_demux;
-    chromecast_common  * const p_renderer;
+    chromecast_common  * p_renderer;
     mtime_t       i_length;
     bool          demuxReady;
     bool          canSeek;
     /* seek time kept while waiting for the chromecast to "seek" */
     mtime_t       m_seektime;
+    bool          m_enabled;
 };
 
 static int Demux( demux_t *p_demux_filter )

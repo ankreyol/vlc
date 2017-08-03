@@ -241,6 +241,7 @@ typedef enum vlc_action_id {
     ACTIONID_VIEWPOINT_FOV_OUT,
     ACTIONID_VIEWPOINT_ROLL_CLOCK,
     ACTIONID_VIEWPOINT_ROLL_ANTICLOCK,
+    ACTIONID_VIEWPOINT_UPDATE, /* Arg 1: vlc_viewpoint_t* */
     /* Combo Actions */
     ACTIONID_COMBO_VOL_FOV_UP,
     ACTIONID_COMBO_VOL_FOV_DOWN,
@@ -271,5 +272,19 @@ vlc_actions_get_keycodes(vlc_object_t *p_obj, const char *psz_key_name,
 VLC_API const char* const*
 vlc_actions_get_key_names(vlc_object_t *p_obj);
 #define vlc_actions_get_key_names(x) vlc_actions_get_key_names(VLC_OBJECT(x))
+
+/**
+ * Execute an action
+ *
+ * \param a valid vlc object
+ * \param i_action action to execute
+ * \param b_notify notify a new state via the OSD of the current vout
+ * \return VLC_SUCCESS or a VLC error
+ */
+VLC_API int
+vlc_actions_do(vlc_object_t *p_obj, vlc_action_id_t i_action,
+               bool b_notify, ...);
+#define vlc_actions_do(a,b,c,...) vlc_actions_do(VLC_OBJECT(a),b,c, \
+    ##__VA_ARGS__)
 
 #endif

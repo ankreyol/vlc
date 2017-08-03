@@ -154,6 +154,14 @@ static int vlclua_action_id( lua_State *L )
     return 1;
 }
 
+static int vlclua_action_do( lua_State *L )
+{
+    vlc_object_t *p_this = vlclua_get_this( L );
+    int i_ret = vlc_actions_do( p_this, luaL_checkint( L, 1 ),
+                                luaL_checkboolean( L, 2 ) );
+    return vlclua_push_ret( L, i_ret );
+}
+
 /*****************************************************************************
  *
  *****************************************************************************/
@@ -163,6 +171,7 @@ static const luaL_Reg vlclua_misc_reg[] = {
     { "license", vlclua_license },
 
     { "action_id", vlclua_action_id },
+    { "action_do", vlclua_action_do },
 
     { "mdate", vlclua_mdate },
     { "mwait", vlclua_mwait },

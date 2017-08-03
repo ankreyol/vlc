@@ -25,8 +25,11 @@ end
 function hotkey(arg)
     local id = vlc.misc.action_id( arg )
     if id ~= nil then
-        vlc.var.set( vlc.object.libvlc(), "key-action", id )
-        return true
+        if vlc.misc.action_do( id, true ) == 0 then
+            return true
+        else
+            return false
+        end
     else
         return false
     end

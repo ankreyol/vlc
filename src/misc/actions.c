@@ -801,6 +801,63 @@ static float adjust_rate_fine( playlist_t *p_playlist, const int i_dir )
     return f_rate;
 }
 
+static void do_volume_up( vlc_actions_t *p_as, vout_thread_t *p_vout,
+                          playlist_t *p_playlist )
+{
+    float vol;
+    if( playlist_VolumeUp( p_playlist, 1, &vol ) == 0 )
+        display_volume( p_as, p_vout, vol );
+}
+
+static void do_volume_down( vlc_actions_t *p_as, vout_thread_t *p_vout,
+                            playlist_t *p_playlist )
+{
+    float vol;
+    if( playlist_VolumeDown( p_playlist, 1, &vol ) == 0 )
+        display_volume( p_as, p_vout, vol );
+}
+
+static void do_seek( vlc_actions_t *p_as, vout_thread_t *p_notify_vout,
+                     input_thread_t *p_input, vlc_action_id_t i_action )
+{
+    if( p_input == NULL || !var_GetBool( p_input, "can-seek" ) )
+        return;
+
+    const char *varname;
+    int sign = +1;
+    switch( i_action )
+    {
+        case ACTIONID_JUMP_BACKWARD_EXTRASHORT:
+            sign = -1;
+        case ACTIONID_JUMP_FORWARD_EXTRASHORT:
+            varname = "extrashort-jump-size";
+            break;
+        case ACTIONID_JUMP_BACKWARD_SHORT:
+            sign = -1;
+        case ACTIONID_JUMP_FORWARD_SHORT:
+            varname = "short-jump-size";
+            break;
+        case ACTIONID_JUMP_BACKWARD_MEDIUM:
+            sign = -1;
+        case ACTIONID_JUMP_FORWARD_MEDIUM:
+            varname = "medium-jump-size";
+            break;
+        case ACTIONID_JUMP_BACKWARD_LONG:
+            sign = -1;
+        case ACTIONID_JUMP_FORWARD_LONG:
+            varname = "long-jump-size";
+            break;
+        default:
+            vlc_assert_unreachable();
+    }
+
+    mtime_t it = var_InheritInteger( p_input, varname );
+    if( it < 0 )
+        return;
+    var_SetInteger( p_input, "time-offset", it * sign * CLOCK_FREQ );
+    display_position( p_as, p_notify_vout, p_input );
+}
+
 static int
 vlc_actions_do_va( vlc_object_t *p_obj, vlc_action_id_t i_action, bool b_notify,
                    va_list args )
@@ -952,19 +1009,11 @@ vlc_actions_do_va( vlc_object_t *p_obj, vlc_action_id_t i_action, bool b_notify,
             break;
         }
         case ACTIONID_VOL_UP:
-        {
-            float vol;
-            if( playlist_VolumeUp( p_playlist, 1, &vol ) == 0 )
-                display_volume( p_as, p_notify_vout, vol );
+            do_volume_up( p_as, p_notify_vout, p_playlist );
             break;
-        }
         case ACTIONID_VOL_DOWN:
-        {
-            float vol;
-            if( playlist_VolumeDown( p_playlist, 1, &vol ) == 0 )
-                display_volume( p_as, p_notify_vout, vol );
+            do_volume_down( p_as, p_notify_vout, p_playlist );
             break;
-        }
         case ACTIONID_VOL_MUTE:
         {
             int mute = playlist_MuteGet( p_playlist );
@@ -1392,49 +1441,8 @@ vlc_actions_do_va( vlc_object_t *p_obj, vlc_action_id_t i_action, bool b_notify,
         case ACTIONID_JUMP_FORWARD_MEDIUM:
         case ACTIONID_JUMP_BACKWARD_LONG:
         case ACTIONID_JUMP_FORWARD_LONG:
-        {
-            if( p_input == NULL || !var_GetBool( p_input, "can-seek" ) )
-                break;
-
-            const char *varname;
-            int sign = +1;
-            switch( i_action )
-            {
-                case ACTIONID_JUMP_BACKWARD_EXTRASHORT:
-                    sign = -1;
-                    /* fall through */
-                case ACTIONID_JUMP_FORWARD_EXTRASHORT:
-                    varname = "extrashort-jump-size";
-                    break;
-                case ACTIONID_JUMP_BACKWARD_SHORT:
-                    sign = -1;
-                    /* fall through */
-                case ACTIONID_JUMP_FORWARD_SHORT:
-                    varname = "short-jump-size";
-                    break;
-                case ACTIONID_JUMP_BACKWARD_MEDIUM:
-                    sign = -1;
-                    /* fall through */
-                case ACTIONID_JUMP_FORWARD_MEDIUM:
-                    varname = "medium-jump-size";
-                    break;
-                case ACTIONID_JUMP_BACKWARD_LONG:
-                    sign = -1;
-                    /* fall through */
-                case ACTIONID_JUMP_FORWARD_LONG:
-                    varname = "long-jump-size";
-                    break;
-                default:
-                    vlc_assert_unreachable();
-            }
-
-            mtime_t it = var_InheritInteger( p_input, varname );
-            if( it < 0 )
-                break;
-            var_SetInteger( p_input, "time-offset", it * sign * CLOCK_FREQ );
-            display_position( p_as, p_notify_vout, p_input );
+            do_seek( p_as, p_notify_vout, p_input, i_action );
             break;
-        }
 
         /* Input navigation */
         case ACTIONID_TITLE_PREV:
@@ -1462,37 +1470,86 @@ vlc_actions_do_va( vlc_object_t *p_obj, vlc_action_id_t i_action, bool b_notify,
                 input_Control( p_input, INPUT_NAV_ACTIVATE, NULL );
             break;
         case ACTIONID_NAV_UP:
-            if( p_vout )
-                input_UpdateViewpoint( p_input,
-                                       &(vlc_viewpoint_t) { .pitch = -1.f },
-                                       false );
-            if( p_input )
-                input_Control( p_input, INPUT_NAV_UP, NULL );
-            break;
         case ACTIONID_NAV_DOWN:
-            if( p_vout )
-                input_UpdateViewpoint( p_input,
-                                       &(vlc_viewpoint_t) { .pitch = 1.f },
-                                       false );
-            if( p_input )
-                input_Control( p_input, INPUT_NAV_DOWN, NULL );
-            break;
         case ACTIONID_NAV_LEFT:
-            if( p_vout )
-                input_UpdateViewpoint( p_input,
-                                       &(vlc_viewpoint_t) { .yaw = -1.f },
-                                       false );
-            if( p_input )
-                input_Control( p_input, INPUT_NAV_LEFT, NULL );
-            break;
         case ACTIONID_NAV_RIGHT:
-            if( p_vout )
-                input_UpdateViewpoint( p_input,
-                                       &(vlc_viewpoint_t) { .yaw = 1.f },
-                                       false );
-            if( p_input )
-                input_Control( p_input, INPUT_NAV_RIGHT, NULL );
+        {
+            if( !p_input )
+                break;
+            bool b_vrnav = p_vout &&
+                            var_GetBool( p_vout, "viewpoint-changeable" );
+            if( b_vrnav )
+            {
+                switch( i_action )
+                {
+                    case ACTIONID_NAV_UP:
+                        input_UpdateViewpoint( p_input,
+                                               &(vlc_viewpoint_t) {
+                                                   .pitch = -1.f
+                                               },
+                                               false );
+                        break;
+                    case ACTIONID_NAV_DOWN:
+                        input_UpdateViewpoint( p_input,
+                                               &(vlc_viewpoint_t) {
+                                                   .pitch = 1.f
+                                               },
+                                               false );
+                        break;
+                    case ACTIONID_NAV_LEFT:
+                        input_UpdateViewpoint( p_input,
+                                               &(vlc_viewpoint_t) {
+                                                   .yaw = -1.f
+                                               },
+                                               false );
+                        break;
+                    case ACTIONID_NAV_RIGHT:
+                        input_UpdateViewpoint( p_input,
+                                               &(vlc_viewpoint_t) {
+                                                   .yaw = 1.f
+                                               },
+                                               false );
+                        break;
+                    default:
+                        vlc_assert_unreachable();
+                }
+                break;
+            }
+            input_title_t *p_title = NULL;
+            int i_title_id = -1;
+            if ( input_Control( p_input, INPUT_GET_TITLE_INFO, &p_title,
+                                &i_title_id ) == VLC_SUCCESS
+              && p_title->i_flags & (INPUT_TITLE_INTERACTIVE|INPUT_TITLE_MENU) )
+            {
+
+                input_Control( p_input, i_action - ACTIONID_NAV_ACTIVATE
+                               + INPUT_NAV_ACTIVATE, NULL );
+            }
+            else
+            {
+                switch( i_action )
+                {
+                    case ACTIONID_NAV_UP:
+                        do_volume_up( p_as, p_notify_vout, p_playlist );
+                        break;
+                    case ACTIONID_NAV_DOWN:
+                        do_volume_down( p_as, p_notify_vout, p_playlist );
+                        break;
+                    case ACTIONID_NAV_LEFT:
+                        do_seek( p_as, p_notify_vout, p_input,
+                                 ACTIONID_JUMP_BACKWARD_SHORT );
+                        break;
+                    case ACTIONID_NAV_RIGHT:
+                        do_seek( p_as, p_notify_vout, p_input,
+                                 ACTIONID_JUMP_FORWARD_SHORT );
+                        break;
+                    default:
+                        break;
+                }
+            }
+            vlc_input_title_Delete( p_title );
             break;
+        }
 
         /* Video Output actions */
         case ACTIONID_SNAPSHOT:

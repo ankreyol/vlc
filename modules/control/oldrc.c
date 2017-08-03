@@ -714,8 +714,7 @@ static void *Run( void *data )
         }
         else if( !strcmp( psz_cmd, "key" ) || !strcmp( psz_cmd, "hotkey" ) )
         {
-            var_SetInteger( p_intf->obj.libvlc, "key-action",
-                            vlc_actions_get_id( psz_arg ) );
+            vlc_actions_do( p_intf, vlc_actions_get_id( psz_arg ), true );
         }
         else switch( psz_cmd[0] )
         {
@@ -959,7 +958,7 @@ static int Input( vlc_object_t *p_this, char const *psz_cmd,
     /* Parse commands that only require an input */
     if( !strcmp( psz_cmd, "pause" ) )
     {
-        playlist_TogglePause( p_intf->p_sys->p_playlist );
+        vlc_actions_do( p_intf, ACTIONID_PLAY_PAUSE, true );
         i_error = VLC_SUCCESS;
     }
     else if( !strcmp( psz_cmd, "seek" ) )
@@ -987,7 +986,7 @@ static int Input( vlc_object_t *p_this, char const *psz_cmd,
         }
         else
         {
-            var_SetInteger( p_intf->obj.libvlc, "key-action", ACTIONID_JUMP_FORWARD_EXTRASHORT );
+            vlc_actions_do( p_intf, ACTIONID_JUMP_FORWARD_EXTRASHORT, true );
         }
         i_error = VLC_SUCCESS;
     }
@@ -1001,18 +1000,18 @@ static int Input( vlc_object_t *p_this, char const *psz_cmd,
         }
         else
         {
-            var_SetInteger( p_intf->obj.libvlc, "key-action", ACTIONID_JUMP_BACKWARD_EXTRASHORT );
+            vlc_actions_do( p_intf, ACTIONID_JUMP_BACKWARD_EXTRASHORT, true );
         }
         i_error = VLC_SUCCESS;
     }
     else if ( !strcmp( psz_cmd, "faster" ) )
     {
-        var_TriggerCallback( p_intf->p_sys->p_playlist, "rate-faster" );
+        vlc_actions_do( p_intf, ACTIONID_FASTER, true );
         i_error = VLC_SUCCESS;
     }
     else if ( !strcmp( psz_cmd, "slower" ) )
     {
-        var_TriggerCallback( p_intf->p_sys->p_playlist, "rate-slower" );
+        vlc_actions_do( p_intf, ACTIONID_SLOWER, true );
         i_error = VLC_SUCCESS;
     }
     else if ( !strcmp( psz_cmd, "normal" ) )
@@ -1022,7 +1021,7 @@ static int Input( vlc_object_t *p_this, char const *psz_cmd,
     }
     else if ( !strcmp( psz_cmd, "frame" ) )
     {
-        var_TriggerCallback( p_input, "frame-next" );
+        vlc_actions_do( p_intf, ACTIONID_RATE_NORMAL, true );
         i_error = VLC_SUCCESS;
     }
     else if( !strcmp( psz_cmd, "chapter" ) ||
@@ -1046,9 +1045,9 @@ static int Input( vlc_object_t *p_this, char const *psz_cmd,
             }
         }
         else if( !strcmp( psz_cmd, "chapter_n" ) )
-            var_TriggerCallback( p_input, "next-chapter" );
+            vlc_actions_do( p_intf, ACTIONID_CHAPTER_NEXT, true );
         else if( !strcmp( psz_cmd, "chapter_p" ) )
-            var_TriggerCallback( p_input, "prev-chapter" );
+            vlc_actions_do( p_intf, ACTIONID_CHAPTER_PREV, true );
         i_error = VLC_SUCCESS;
     }
     else if( !strcmp( psz_cmd, "title" ) ||
@@ -1070,9 +1069,9 @@ static int Input( vlc_object_t *p_this, char const *psz_cmd,
             }
         }
         else if( !strcmp( psz_cmd, "title_n" ) )
-            var_TriggerCallback( p_input, "next-title" );
+            vlc_actions_do( p_intf, ACTIONID_TITLE_NEXT, true );
         else if( !strcmp( psz_cmd, "title_p" ) )
-            var_TriggerCallback( p_input, "prev-title" );
+            vlc_actions_do( p_intf, ACTIONID_TITLE_PREV, true );
 
         i_error = VLC_SUCCESS;
     }

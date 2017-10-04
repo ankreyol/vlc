@@ -15,6 +15,9 @@ $(TARBALLS)/gettext-$(GETTEXT_VERSION).tar.gz:
 
 gettext: gettext-$(GETTEXT_VERSION).tar.gz .sum-gettext
 	$(UNPACK)
+ifdef HAVE_NACL
+	$(APPLY) $(SRC)/gettext/nacl.patch
+endif
 	$(MOVE)
 
 DEPS_gettext = iconv $(DEPS_iconv) libxml2 $(DEPS_libxml2)
@@ -29,6 +32,10 @@ GETTEXT_CONF = \
 ifdef HAVE_WIN32
 GETTEXT_CONF += --disable-threads
 GETTEXT_CFLAGS += -DLIBXML_STATIC
+endif
+
+ifdef HAVE_NACL
+GETTEXT_CONF += ac_cv_func_sigaction=yes
 endif
 
 .gettext: gettext

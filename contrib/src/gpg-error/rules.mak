@@ -39,6 +39,15 @@ else
 	cp $@/src/syscfg/lock-obj-pub.aarch64-apple-darwin.h $@/src/syscfg/lock-obj-pub.$(HOST).h
 endif
 endif
+ifdef HAVE_NACL
+ifeq ($(ARCH),i386) # 32bits intel
+	cp $@/src/syscfg/lock-obj-pub.i686-pc-linux-gnu.h $@/src/syscfg/lock-obj-pub.nacl.h
+else
+ifeq ($(ARCH),x86_64)
+	cp $@/src/syscfg/lock-obj-pub.x86_64-pc-linux-gnu.h $@/src/syscfg/lock-obj-pub.nacl.h
+endif
+endif
+endif
 
 .gpg-error: libgpg-error
 	$(RECONF)

@@ -19,6 +19,9 @@ LIVE_TARGET = $(error live555 target not defined!)
 ifdef HAVE_LINUX
 LIVE_TARGET := linux
 endif
+ifdef HAVE_NACL
+LIVE_TARGET := linux
+endif
 ifdef HAVE_WIN32
 LIVE_TARGET := mingw
 endif

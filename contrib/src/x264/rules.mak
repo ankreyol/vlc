@@ -67,6 +67,9 @@ x264 x26410b: %: x264-git.tar.bz2 .sum-%
 	rm -Rf $*-git
 	mkdir -p $*-git
 	tar xvjf "$<" --strip-components=1 -C $*-git
+ifdef HAVE_NACL
+	$(APPLY) $(SRC)/x264/nacl.patch
+endif
 	$(UPDATE_AUTOCONFIG)
 	mv $*-git $*
 

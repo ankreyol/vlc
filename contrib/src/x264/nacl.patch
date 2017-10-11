@@ -1,0 +1,11 @@
+--- x264/configure	2017-10-11 15:31:55.775920438 +0200
++++ x264/configure.new	2017-10-11 15:31:52.907920449 +0200
+@@ -615,7 +615,7 @@
+         SYS="OPENBSD"
+         libm="-lm"
+         ;;
+-    *linux*)
++    *linux*|*nacl*)
+         SYS="LINUX"
+         define HAVE_MALLOC_H
+         libm="-lm"

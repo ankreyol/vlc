@@ -49,6 +49,8 @@
 #include <stdlib.h>                                                /* free() */
 #include <errno.h>
 
+#include "libvlc.h"
+
 #include "config/vlc_getopt.h"
 
 #include <vlc_playlist.h>
@@ -63,7 +65,6 @@
 #include <vlc_url.h>
 #include <vlc_modules.h>
 
-#include "libvlc.h"
 #include "playlist/playlist_internal.h"
 #include "misc/variables.h"
 

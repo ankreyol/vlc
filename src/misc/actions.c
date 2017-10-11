@@ -391,12 +391,12 @@ static int keycmp (const void *a, const void *b)
     return (ka->key < kb->key) ? -1 : (ka->key > kb->key) ? +1 : 0;
 }
 
-struct vlc_actions_t
+typedef struct vlc_actions_t
 {
     void *map; /* Key map */
     void *global_map; /* Grabbed/global key map */
     const char *ppsz_keys[];
-};
+} vlc_actions_t;
 
 static int vlc_key_to_action (vlc_object_t *obj, const char *varname,
                               vlc_value_t prevkey, vlc_value_t curkey, void *d)

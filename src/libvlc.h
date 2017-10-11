@@ -170,10 +170,6 @@ void vlc_objres_remove(vlc_object_t *obj, void *data,
 /**
  * Private LibVLC instance data.
  */
-typedef struct vlc_dialog_provider vlc_dialog_provider;
-typedef struct vlc_keystore vlc_keystore;
-typedef struct vlc_actions_t vlc_actions_t;
-
 typedef struct libvlc_priv_t
 {
     libvlc_int_t       public_data;
@@ -184,11 +180,11 @@ typedef struct libvlc_priv_t
     /* Singleton objects */
     vlc_logger_t      *logger;
     vlm_t             *p_vlm;  ///< the VLM singleton (or NULL)
-    vlc_dialog_provider *p_dialog_provider; ///< dialog provider
-    vlc_keystore      *p_memory_keystore; ///< memory keystore
+    struct vlc_dialog_provider *p_dialog_provider; ///< dialog provider
+    struct vlc_keystore      *p_memory_keystore; ///< memory keystore
     struct playlist_t *playlist; ///< Playlist for interfaces
     struct playlist_preparser_t *parser; ///< Input item meta data handler
-    vlc_actions_t *actions; ///< Hotkeys handler
+    struct vlc_actions_t *actions; ///< Hotkeys handler
 
     /* Exit callback */
     vlc_exit_t       exit;

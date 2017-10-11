@@ -28,7 +28,11 @@
 # include "config.h"
 #endif
 
+#ifndef __native_client__
 #include <stdalign.h>
+#else
+#define alignof(x) sizeof((x))
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

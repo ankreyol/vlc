@@ -23,7 +23,9 @@
 #ifndef LIBVLC_VARIABLES_H
 # define LIBVLC_VARIABLES_H 1
 
+#ifndef __native_client__
 # include <stdalign.h>
+#endif
 # include <vlc_atomic.h>
 
 struct vlc_res;
@@ -35,7 +37,9 @@ typedef struct vlc_object_internals vlc_object_internals_t;
 
 struct vlc_object_internals
 {
+#ifndef __native_client__
     alignas (max_align_t) /* ensure vlc_externals() is maximally aligned */
+#endif
     char           *psz_name; /* given name */
 
     /* Object variables */
@@ -55,7 +59,11 @@ struct vlc_object_internals
 
     /* Object resources */
     struct vlc_res *resources;
-};
+}
+#ifdef __native_client__
+__attribute ((aligned (__BIGGEST_ALIGNMENT__)))
+#endif
+;
 
 # define vlc_internals( obj ) (((vlc_object_internals_t*)(VLC_OBJECT(obj)))-1)
 # define vlc_externals( priv ) ((vlc_object_t *)((priv) + 1))

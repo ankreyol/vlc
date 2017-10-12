@@ -53,6 +53,8 @@
 #   define thread_local _Thread_local
 #  elif defined(_MSC_VER)
 #   define thread_local __declspec(thread)
+#  elif defined(__GNUC__)
+#   define thread_local __thread
 #  endif
 # endif
 #endif

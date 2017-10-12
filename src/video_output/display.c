@@ -402,12 +402,15 @@ typedef struct {
 static int VoutDisplayCreateRender(vout_display_t *vd)
 {
     vout_display_owner_sys_t *osys = vd->owner.sys;
-    filter_owner_t owner = {
-        .sys = vd,
-        .video = {
-            .buffer_new = VideoBufferNew,
-        },
-    };
+    filter_owner_t owner;
+//  = {
+//        .sys = vd,
+//        .video = {
+//            .buffer_new = VideoBufferNew,
+//        },
+//    };
+    owner.sys = vd;
+    owner.video.buffer_new = VideoBufferNew;
 
     osys->filters = filter_chain_NewVideo(vd, false, &owner);
     if (unlikely(osys->filters == NULL))

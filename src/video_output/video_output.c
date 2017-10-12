@@ -1420,12 +1420,14 @@ static int ThreadStart(vout_thread_t *vout, vout_display_state_t *state)
     vout->p->filter.configuration = NULL;
     video_format_Copy(&vout->p->filter.format, &vout->p->original);
 
-    filter_owner_t owner = {
+    filter_owner_t owner; /*= {
         .sys = vout,
         .video = {
             .buffer_new = VoutVideoFilterStaticNewPicture,
         },
-    };
+    };*/
+    owner.sys = vout;
+    owner.video.buffer_new = VoutVideoFilterStaticNewPicture;
     vout->p->filter.chain_static =
         filter_chain_NewVideo( vout, true, &owner );
 

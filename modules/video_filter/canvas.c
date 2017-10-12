@@ -231,12 +231,14 @@ static int Activate( vlc_object_t *p_this )
         return VLC_ENOMEM;
     p_filter->p_sys = p_sys;
 
-    filter_owner_t owner = {
+    filter_owner_t owner;/* = {
         .sys = p_filter,
         .video = {
             .buffer_new = video_new,
         },
-    };
+    };*/
+    owner.sys = p_filter;
+    owner.video.buffer_new = video_new;
 
     p_sys->p_chain = filter_chain_NewVideo( p_filter, true, &owner );
     if( !p_sys->p_chain )

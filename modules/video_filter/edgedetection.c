@@ -95,12 +95,14 @@ static int Open( vlc_object_t *p_this )
 {
     int i_ret;
     filter_t *p_filter = (filter_t *)p_this;
-    filter_owner_t owner = {
+    filter_owner_t owner;/* = {
         .sys = p_filter,
         .video = {
             .buffer_new = new_frame,
         },
-    };
+    };*/
+    owner.sys = p_filter;
+    owner.video.buffer_new = new_frame;
     /* Store the filter chain in p_sys */
     p_filter->p_sys = (filter_sys_t *)filter_chain_NewVideo( p_filter, true, &owner );
 

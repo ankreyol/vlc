@@ -120,12 +120,14 @@ static int Activate( filter_t *p_filter, int (*pf_build)(filter_t *) )
     if( !p_sys )
         return VLC_ENOMEM;
 
-    filter_owner_t owner = {
+    filter_owner_t owner;/* = {
         .sys = p_filter,
         .video = {
             .buffer_new = BufferNew,
         },
-    };
+    };*/
+    owner.sys = p_filter;
+    owner.video.buffer_new = BufferNew;
 
     p_sys->p_chain = filter_chain_NewVideo( p_filter, false, &owner );
     if( !p_sys->p_chain )

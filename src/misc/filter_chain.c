@@ -132,12 +132,14 @@ static picture_t *filter_chain_VideoBufferNew( filter_t *filter )
 filter_chain_t *filter_chain_NewVideo( vlc_object_t *obj, bool allow_change,
                                        const filter_owner_t *restrict owner )
 {
-    filter_owner_t callbacks = {
+    filter_owner_t callbacks; /*= {
         .sys = obj,
         .video = {
             .buffer_new = filter_chain_VideoBufferNew,
         },
-    };
+    };*/
+    callbacks.sys = obj;
+    callbacks.video.buffer_new = filter_chain_VideoBufferNew;
 
     return filter_chain_NewInner( &callbacks, "video filter",
                                   "video converter", allow_change, owner, VIDEO_ES );

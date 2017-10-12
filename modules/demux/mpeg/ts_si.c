@@ -41,15 +41,19 @@
 #include "ts_si.h"
 #include "ts_arib.h"
 #include "ts_decoders.h"
+#include "ts_psip.h"
 
 #include "ts_pid.h"
-#include "ts_streams_private.h"
-#include "ts.h"
 #include "../dvb-text.h"
 
 #ifdef HAVE_ARIBB24
  #include <aribb24/decoder.h>
 #endif
+
+typedef struct csa_t csa_t;
+
+#include "ts_streams_private.h"
+#include "ts.h"
 
 #include <time.h>
 #include <assert.h>

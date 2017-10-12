@@ -19,7 +19,6 @@
 #ifndef VLC_TS_STREAMS_PRIVATE_H
 #define VLC_TS_STREAMS_PRIVATE_H
 
-typedef struct dvbpsi_s dvbpsi_t;
 typedef struct ts_sections_processor_t ts_sections_processor_t;
 
 #include "mpeg4_iod.h"
@@ -149,8 +148,6 @@ struct ts_si_t
     ts_pid_t *tdtpid;
     ts_pid_t *cdtpid;
 };
-
-typedef struct ts_psip_context_t ts_psip_context_t;
 
 struct ts_psip_t
 {

@@ -25,6 +25,11 @@
 #include <vlc_meta.h>
 #include <vlc_epg.h>
 
+#ifdef HAVE_ARIBB24
+typedef struct arib_instance_t arib_instance_t;
+#endif
+typedef struct csa_t csa_t;
+
 #ifndef _DVBPSI_DVBPSI_H_
  #include <dvbpsi/dvbpsi.h>
 #endif
@@ -44,14 +49,15 @@
 #include "ts_psip_dvbpsi_fixes.h"
 
 #include "ts_pid.h"
-#include "ts.h"
-#include "ts_streams_private.h"
 #include "ts_scte.h"
 
 #include "ts_psip.h"
 
 #include "../codec/atsc_a65.h"
 #include "../codec/scte18.h"
+
+#include "ts.h"
+#include "ts_streams_private.h"
 
 #include <assert.h>
 

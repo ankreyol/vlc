@@ -26,6 +26,9 @@
 #include "ts_pid.h"
 #include "ts_streams.h"
 
+typedef struct arib_instance_t arib_instance_t;
+typedef struct csa_t csa_t;
+
 #include "ts.h"
 
 #include <assert.h>

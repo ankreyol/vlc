@@ -24,7 +24,6 @@
 
 #include "ts_pid.h"
 #include "ts_streams.h"
-#include "ts_streams_private.h"
 
 #ifndef _DVBPSI_DVBPSI_H_
  #include <dvbpsi/dvbpsi.h>
@@ -42,11 +41,18 @@
 #include <vlc_es_out.h>
 #include <vlc_input.h>
 
+#ifdef HAVE_ARIBB24
+typedef struct arib_instance_t arib_instance_t;
+#endif
+typedef struct csa_t csa_t;
+
+#include "ts_psip.h"
+
+#include "ts_streams_private.h"
+
 #include "sections.h"
 #include "ts_pid.h"
 #include "ts.h"
-
-#include "ts_psip.h"
 
 static inline bool handle_Init( demux_t *p_demux, dvbpsi_t **handle )
 {

@@ -25,6 +25,7 @@
 #include <vlc_demux.h>
 
 #include "ts_pid.h"
+typedef struct ts_sections_processor_t ts_sections_processor_t;
 #include "sections.h"
 
 #ifndef _DVBPSI_DVBPSI_H_

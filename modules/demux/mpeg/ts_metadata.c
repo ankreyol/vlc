@@ -25,6 +25,7 @@
 #include <vlc_es_out.h>
 #include <vlc_block.h>
 
+#include "ts_psip.h"
 #include "ts_pid.h"
 #include "ts_streams.h"
 #include "ts_streams_private.h"

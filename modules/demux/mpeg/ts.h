@@ -20,11 +20,6 @@
 #ifndef VLC_TS_H
 #define VLC_TS_H
 
-#ifdef HAVE_ARIBB24
-    typedef struct arib_instance_t arib_instance_t;
-#endif
-typedef struct csa_t csa_t;
-
 #define TS_USER_PMT_NUMBER (0)
 
 #define TS_PSI_PAT_PID 0x00

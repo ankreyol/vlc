@@ -29,6 +29,7 @@
 #endif
 #include <dvbpsi/psi.h>
 
+#include "ts_psip.h"
 #include "ts_pid.h"
 #include "ts_scte.h"
 #include "ts_streams_private.h"

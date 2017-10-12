@@ -25,8 +25,6 @@ typedef void(* ts_section_processor_callback_t)( demux_t *,
                                                  const uint8_t *, size_t,
                                                  void * );
 
-typedef struct ts_sections_processor_t ts_sections_processor_t;
-
 void ts_sections_processor_Add( demux_t *,
                                 ts_sections_processor_t **pp_chain,
                                 uint8_t i_table_id, uint16_t i_extension_id,

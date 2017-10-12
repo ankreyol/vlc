@@ -38,10 +38,10 @@
 
 #include "ts_pid.h"
 #include "ts_streams.h"
+#include "ts_psip.h"
 #include "ts_streams_private.h"
 #include "ts_psi.h"
 #include "ts_si.h"
-#include "ts_psip.h"
 
 #include "ts_hotfixes.h"
 #include "ts_sl.h"
@@ -50,15 +50,15 @@
 #include "pes.h"
 #include "timestamps.h"
 
-#include "ts.h"
+#ifdef HAVE_ARIBB24
+ #include <aribb24/aribb24.h>
+#endif
 
 #include "../../codec/scte18.h"
 #include "../opus.h"
 #include "../../mux/mpeg/csa.h"
 
-#ifdef HAVE_ARIBB24
- #include <aribb24/aribb24.h>
-#endif
+#include "ts.h"
 
 #include <assert.h>
 

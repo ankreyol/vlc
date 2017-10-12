@@ -23,6 +23,11 @@
 #include <vlc_common.h>
 #include <vlc_demux.h>
 
+#ifdef HAVE_ARIBB24
+typedef struct arib_instance_t arib_instance_t;
+#endif
+typedef struct csa_t csa_t;
+
 #include "ts_pid.h"
 #include "ts.h"
 

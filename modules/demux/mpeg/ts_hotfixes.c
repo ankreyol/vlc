@@ -24,6 +24,11 @@
 #include <vlc_demux.h>
 #include <vlc_es.h>
 
+#ifdef HAVE_ARIBB24
+typedef struct arib_instance_t arib_instance_t;
+#endif
+typedef struct csa_t csa_t;
+
 #ifndef _DVBPSI_DVBPSI_H_
  #include <dvbpsi/dvbpsi.h>
 #endif
@@ -41,6 +46,7 @@
 #include "ts_streams.h"
 #include "ts_psi.h"
 #include "ts_pid.h"
+#include "ts_psip.h"
 #include "ts_streams_private.h"
 #include "ts.h"
 #include "ts_hotfixes.h"

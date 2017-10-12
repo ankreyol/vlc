@@ -22,7 +22,7 @@
 #endif
 
 #include <vlc_fixups.h>
-#include <cinttypes>
+#include <inttypes.h>
 
 #include "SmoothManager.hpp"
 

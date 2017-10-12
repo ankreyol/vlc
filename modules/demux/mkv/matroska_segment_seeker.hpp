@@ -66,7 +66,11 @@ class SegmentSeeker
             { }
 
             Seekpoint()
+#ifndef __native_client__
                 : Seekpoint( std::numeric_limits<fptr_t>::max(), -1, DISABLED )
+#else
+                : fpos( std::numeric_limits<fptr_t>::max() ), pts( -1 ), trust_level( DISABLED )
+#endif
             { }
 
             bool operator<( Seekpoint const& rhs ) const

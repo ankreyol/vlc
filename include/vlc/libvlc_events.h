@@ -34,8 +34,6 @@
 extern "C" {
 # endif
 
-typedef struct libvlc_renderer_item_t libvlc_renderer_item_t;
-
 /**
  * \ingroup libvlc_event
  * @{

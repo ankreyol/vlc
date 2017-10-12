@@ -865,7 +865,11 @@ void matroska_segment_c::ParseTrackEntry( const KaxTrackEntry *m )
             return;
         }
 
+#ifndef __native_client__
         tracks.insert( std::make_pair( p_track->i_number, std::unique_ptr<mkv_track_t>(p_track) ) ); // TODO: add warning if two tracks have the same key
+#else
+        tracks.insert( std::make_pair( p_track->i_number, p_track ) ); // TODO: add warning if two tracks have the same key
+#endif
     }
     else
     {

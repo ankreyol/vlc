@@ -24,7 +24,9 @@
 
 #include <assert.h>
 #include <errno.h>
+#ifndef __native_client__
 #include <stdalign.h>
+#endif
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,7 +53,11 @@ struct vlc_http_msg
 };
 
 /* Maximum alignment for safe conversion to/from any specific pointer type */
+#ifndef __native_client__
 static const char alignas (max_align_t) vlc_http_error_loc;
+#else
+static const char /*alignas (max_align_t)*/ vlc_http_error_loc;
+#endif
 
 void *const vlc_http_error = (char *)&vlc_http_error_loc;
 

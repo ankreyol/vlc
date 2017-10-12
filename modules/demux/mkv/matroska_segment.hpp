@@ -75,7 +75,11 @@ public:
 class matroska_segment_c
 {
 public:
+#ifndef __native_client__
     typedef std::map<mkv_track_t::track_id_t, std::unique_ptr<mkv_track_t>> tracks_map_t;
+#else
+    typedef std::map<mkv_track_t::track_id_t, mkv_track_t*> tracks_map_t;
+#endif
     typedef std::vector<Tag>            tags_t;
 
     matroska_segment_c( demux_sys_t & demuxer, EbmlStream & estream );
@@ -173,7 +177,7 @@ private:
 
     SegmentSeeker _seeker;
 
-    friend SegmentSeeker;
+    friend class SegmentSeeker;
 };
 
 

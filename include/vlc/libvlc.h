@@ -53,6 +53,9 @@
 # define LIBVLC_DEPRECATED
 #endif
 
+#if HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>

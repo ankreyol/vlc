@@ -27,7 +27,7 @@
 #endif
 
 #include <vlc_fixups.h>
-#include <cinttypes>
+#include <inttypes.h>
 
 #include "DASHManager.h"
 #include "mpd/ProgramInformation.h"

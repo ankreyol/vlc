@@ -32,6 +32,7 @@
 #include <vlc/libvlc.h>
 #include <vlc/libvlc_dialog.h>
 #include <vlc/libvlc_media.h>
+#include <vlc/libvlc_renderer_discoverer.h>
 #include <vlc/libvlc_events.h>
 
 #include <vlc_common.h>

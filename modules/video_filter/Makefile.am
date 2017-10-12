@@ -25,7 +25,9 @@ libfps_plugin_la_SOURCES = video_filter/fps.c
 libfreeze_plugin_la_SOURCES = video_filter/freeze.c
 libgaussianblur_plugin_la_SOURCES = video_filter/gaussianblur.c
 libgaussianblur_plugin_la_LIBADD = $(LIBM)
+if !HAVE_NACL
 libgradfun_plugin_la_SOURCES = video_filter/gradfun.c video_filter/gradfun.h
+endif
 libgradient_plugin_la_SOURCES = video_filter/gradient.c
 libgradient_plugin_la_LIBADD = $(LIBM)
 libgrain_plugin_la_SOURCES = video_filter/grain.c
@@ -142,7 +144,9 @@ if HAVE_ARM64
 libdeinterlace_plugin_la_SOURCES += video_filter/deinterlace/merge_arm64.S
 libdeinterlace_plugin_la_CFLAGS += -DCAN_COMPILE_ARM64
 endif
+if !HAVE_NACL
 video_filter_LTLIBRARIES += libdeinterlace_plugin.la
+endif
 
 libopencv_wrapper_plugin_la_SOURCES = video_filter/opencv_wrapper.c
 libopencv_wrapper_plugin_la_CPPFLAGS = $(AM_CPPFLAGS) $(OPENCV_CFLAGS)

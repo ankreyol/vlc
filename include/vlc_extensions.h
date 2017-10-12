@@ -180,8 +180,25 @@ static inline int extension_MetaChanged( extensions_manager_t *p_mgr,
  * Extension dialogs
  *****************************************************************************/
 
-typedef struct extension_dialog_t extension_dialog_t;
-typedef struct extension_widget_t extension_widget_t;
+/// Dialog descriptor for extensions
+struct extension_dialog_t
+{
+    vlc_object_t *p_object;      ///< Owner object (callback on "dialog-event")
+
+    char *psz_title;             ///< Title for the Dialog (in TitleBar)
+    int i_width;                 ///< Width hint in pixels (may be discarded)
+    int i_height;                ///< Height hint in pixels (may be discarded)
+
+    DECL_ARRAY(struct extension_widget_t*) widgets; ///< Widgets owned by the dialog
+
+    bool b_hide;                 ///< Hide this dialog (!b_hide shows)
+    bool b_kill;                 ///< Kill this dialog
+
+    void *p_sys;                 ///< Dialog private pointer
+    void *p_sys_intf;            ///< GUI private pointer
+    vlc_mutex_t lock;            ///< Dialog mutex
+    vlc_cond_t cond;             ///< Signaled == UI is done working on the dialog
+};
 
 /// User interface event types
 typedef enum
@@ -195,31 +212,10 @@ typedef enum
 /// Command to pass to the extension dialog owner
 typedef struct
 {
-    extension_dialog_t *p_dlg;      ///< Destination dialog
-    extension_dialog_event_e event; ///< Event, @see extension_dialog_event_e
-    void *p_data;                   ///< Opaque data to send
+    struct extension_dialog_t *p_dlg;   ///< Destination dialog
+    extension_dialog_event_e event;     ///< Event, @see extension_dialog_event_e
+    void *p_data;                       ///< Opaque data to send
 } extension_dialog_command_t;
-
-
-/// Dialog descriptor for extensions
-struct extension_dialog_t
-{
-    vlc_object_t *p_object;      ///< Owner object (callback on "dialog-event")
-
-    char *psz_title;             ///< Title for the Dialog (in TitleBar)
-    int i_width;                 ///< Width hint in pixels (may be discarded)
-    int i_height;                ///< Height hint in pixels (may be discarded)
-
-    DECL_ARRAY(extension_widget_t*) widgets; ///< Widgets owned by the dialog
-
-    bool b_hide;                 ///< Hide this dialog (!b_hide shows)
-    bool b_kill;                 ///< Kill this dialog
-
-    void *p_sys;                 ///< Dialog private pointer
-    void *p_sys_intf;            ///< GUI private pointer
-    vlc_mutex_t lock;            ///< Dialog mutex
-    vlc_cond_t cond;             ///< Signaled == UI is done working on the dialog
-};
 
 /** Send a command to an Extension dialog
  * @param p_dialog The dialog
@@ -227,7 +223,7 @@ struct extension_dialog_t
  * @param data Optional opaque data,  @see extension_dialog_event_e
  * @return VLC error code
  **/
-static inline int extension_DialogCommand( extension_dialog_t* p_dialog,
+static inline int extension_DialogCommand( struct extension_dialog_t* p_dialog,
                                            extension_dialog_event_e event,
                                            void *data )
 {
@@ -308,7 +304,7 @@ struct extension_widget_t
     void *p_sys_intf;             ///< Reserved for the UI, but:
                                   ///< NULL means the UI has destroyed the widget
                                   ///< or has not created it yet
-    extension_dialog_t *p_dialog; ///< Parent dialog
+    struct extension_dialog_t *p_dialog; ///< Parent dialog
 };
 
 #endif /* VLC_EXTENSIONS_H */

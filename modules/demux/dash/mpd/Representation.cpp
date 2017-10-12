@@ -25,7 +25,7 @@
 # include "config.h"
 #endif
 
-#include <cstdlib>
+#include <stdlib.h>
 
 #include "Representation.h"
 #include "AdaptationSet.h"

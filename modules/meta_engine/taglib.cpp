@@ -177,7 +177,7 @@ public:
         return m_stream->psz_location;
     }
 
-    ByteVector readBlock(ulong length)
+    ByteVector readBlock(TagLib::ulong length)
     {
         ByteVector res(length, 0);
         ssize_t i_read = vlc_stream_Read( m_stream, res.data(), length);
@@ -193,11 +193,11 @@ public:
         // Let's stay Read-Only for now
     }
 
-    void insert(const ByteVector&, ulong, ulong)
+    void insert(const ByteVector&, TagLib::ulong, TagLib::ulong)
     {
     }
 
-    void removeBlock(ulong, ulong)
+    void removeBlock(TagLib::ulong, TagLib::ulong)
     {
     }
 

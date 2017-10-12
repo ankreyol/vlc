@@ -31,6 +31,7 @@
 #include <vlc/libvlc.h>
 #include <vlc/libvlc_media.h>
 #include <vlc/libvlc_media_list.h> // For the subitems, here for convenience
+#include <vlc/libvlc_renderer_discoverer.h>
 #include <vlc/libvlc_events.h>
 
 #include <vlc_common.h>

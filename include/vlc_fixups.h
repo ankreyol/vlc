@@ -344,10 +344,14 @@ static inline locale_t newlocale(int mask, const char * locale, locale_t base)
 #endif
 
 #if !defined (HAVE_STATIC_ASSERT) && !defined(__cpp_static_assert)
+#if !defined(__native_client__)
 # define STATIC_ASSERT_CONCAT_(a, b) a##b
 # define STATIC_ASSERT_CONCAT(a, b) STATIC_ASSERT_CONCAT_(a, b)
 # define _Static_assert(x, s) extern char STATIC_ASSERT_CONCAT(static_assert_, __LINE__)[sizeof(struct { unsigned:-!(x); })]
 # define static_assert _Static_assert
+#else
+# define static_assert(x,s)
+#endif
 #endif
 
 /* libintl support */

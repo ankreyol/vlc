@@ -81,6 +81,13 @@ matroska_segment_c::~matroska_segment_c()
     vlc_delete_all( stored_editions );
     vlc_delete_all( translations );
     vlc_delete_all( families );
+
+#ifdef __native_client__
+   for( tracks_map_t::const_iterator it = tracks.begin(); it != tracks.end(); ++it )
+   {
+        delete it->second;
+   }
+#endif
 }
 
 
@@ -919,7 +926,11 @@ mkv_track_t * matroska_segment_c::FindTrackByBlock(
     if (track_it == tracks.end())
         return NULL;
 
+#ifndef __native_client__
     return track_it->second.get();
+#else
+    return track_it->second;
+#endif
 }
 
 void matroska_segment_c::ComputeTrackPriority()

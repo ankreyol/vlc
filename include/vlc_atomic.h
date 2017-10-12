@@ -217,8 +217,10 @@ static inline void vlc_atomic_store_float(vlc_atomic_float *atom, float f)
 }
 
 # else /* C++ */
+#ifndef __native_client__
 /*** Native C++11 atomics ***/
 #   include <atomic>
+#endif
 # endif /* C++ */
 
 #endif

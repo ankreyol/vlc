@@ -22,7 +22,7 @@
 #endif
 
 #include <vlc_fixups.h>
-#include <cinttypes>
+#include <inttypes.h>
 
 #include "Representation.hpp"
 #include "M3U8.hpp"

@@ -26,7 +26,7 @@
 #endif
 
 #include <vlc_fixups.h>
-#include <cinttypes>
+#include <inttypes.h>
 
 #include "MPD.h"
 #include "ProgramInformation.h"

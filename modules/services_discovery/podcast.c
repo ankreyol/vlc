@@ -36,7 +36,9 @@
 #include <vlc_network.h>
 
 #include <assert.h>
+#ifndef __native_client__
 #include <stdnoreturn.h>
+#endif
 #include <unistd.h>
 
 /************************************************************************
@@ -210,7 +212,10 @@ static void Close( vlc_object_t *p_this )
 /*****************************************************************************
  * Run: main thread
  *****************************************************************************/
-noreturn static void *Run( void *data )
+#ifndef __native_client__
+noreturn
+#endif
+static void *Run( void *data )
 {
     services_discovery_t *p_sd = data;
     services_discovery_sys_t *p_sys  = p_sd->p_sys;

@@ -25,7 +25,9 @@
 # include <config.h>
 #endif
 
+#ifndef __native_client__
 #include <stdnoreturn.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <vlc_common.h>
@@ -40,7 +42,10 @@ struct vout_display_event_thread {
     vlc_thread_t thread;
 };
 
-noreturn static void *VoutDisplayEventKeyDispatch(void *data)
+#ifndef __native_client__
+noreturn
+#endif
+static void *VoutDisplayEventKeyDispatch(void *data)
 {
     vout_display_event_thread_t *vdet = data;
     vout_display_t *vd = vdet->vd;

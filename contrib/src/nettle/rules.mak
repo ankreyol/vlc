@@ -14,6 +14,9 @@ $(TARBALLS)/nettle-$(NETTLE_VERSION).tar.gz:
 
 nettle: nettle-$(NETTLE_VERSION).tar.gz .sum-nettle
 	$(UNPACK)
+ifdef HAVE_NACL
+	$(APPLY) $(SRC)/nettle/nacl.patch
+endif
 	$(UPDATE_AUTOCONFIG)
 	$(MOVE)
 

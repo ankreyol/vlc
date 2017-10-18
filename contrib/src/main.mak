@@ -160,6 +160,10 @@ EXTRA_LDFLAGS += -m32
 endif
 endif
 
+ifdef HAVE_NACL
+EXTRA_CFLAGS += -I$(WEBPORTS_ROOT)/src/ports/glibc-compat/include/
+endif
+
 cppcheck = $(shell $(CC) $(CFLAGS) -E -dM - < /dev/null | grep -E $(1))
 
 EXTRA_CFLAGS += -I$(PREFIX)/include

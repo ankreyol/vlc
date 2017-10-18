@@ -308,6 +308,7 @@ case "${host_os}" in
     AC_LIBOBJ([sendmsg])
     VLC_ADD_PLUGIN([gles2])
     VLC_ADD_LIBS([nacl],[-lppapi -lppapi_gles2])
+    CPPFLAGS="${CPPFLAGS} -I${NACL_SDK_ROOT}/include/"
     ;;
   *)
     SYS="${host_os}"

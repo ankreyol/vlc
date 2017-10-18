@@ -306,6 +306,8 @@ case "${host_os}" in
     AC_LIBOBJ([sigwait])
     AC_LIBOBJ([recvmsg])
     AC_LIBOBJ([sendmsg])
+    VLC_ADD_PLUGIN([gles2])
+    VLC_ADD_LIBS([nacl],[-lppapi -lppapi_gles2])
     ;;
   *)
     SYS="${host_os}"

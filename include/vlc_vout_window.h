@@ -53,6 +53,7 @@ enum vout_window_type {
     VOUT_WINDOW_TYPE_NSOBJECT /**< MacOS X view */,
     VOUT_WINDOW_TYPE_ANDROID_NATIVE /**< Android native window */,
     VOUT_WINDOW_TYPE_WAYLAND /**< Wayland surface */,
+    VOUT_WINDOW_TYPE_PPAPI /**< PPAPI / Native Client view */
 };
 
 /**
@@ -159,6 +160,7 @@ struct vout_window_t {
         void     *nsobject;      /**< Mac OSX view object */
         void     *anativewindow; /**< Android native window */
         struct wl_surface *wl;   /**< Wayland surface (client pointer) */
+        int32_t  pp_context;     /* PPAPI context ID */
     } handle;
 
     /** Display server (mandatory)

@@ -404,6 +404,21 @@ endif
 endif
 
 
+## NaCl/PPAPI ###
+
+libppapi_gl_plugin_la_SOURCES = video_output/ppapi/gl.c
+libppapi_gl_plugin_la_CFLAGS = $(AM_CFLAGS) -DUSE_OPENGL_ES2
+libppapi_gl_plugin_la_LIBADD = $(LIBS_nacl)
+
+libppapi_window_plugin_la_SOURCES = video_output/ppapi/window.c
+libppapi_window_plugin_la_CFLAGS = $(AM_CFLAGS)
+libppapi_window_plugin_la_LIBADD = $(LIBS_nacl)
+
+if HAVE_NACL
+vout_LTLIBRARIES += libppapi_gl_plugin.la libppapi_window_plugin.la
+endif
+
+
 ### FrameBuffer ###
 
 libfb_plugin_la_SOURCES = video_output/fb.c

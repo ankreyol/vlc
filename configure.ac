@@ -309,6 +309,7 @@ case "${host_os}" in
     VLC_ADD_PLUGIN([gles2])
     VLC_ADD_LIBS([nacl],[-lppapi -lppapi_gles2])
     CPPFLAGS="${CPPFLAGS} -I${NACL_SDK_ROOT}/include/"
+    LDFLAGS="${LDFLAGS} -lglibc-compat"
     ;;
   *)
     SYS="${host_os}"

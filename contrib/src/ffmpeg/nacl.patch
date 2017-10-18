@@ -1,0 +1,17 @@
+--- ffmpeg/libavformat/ftp.c	2017-10-18 18:33:38.735882596 +0200
++++ ffmpeg/libavformat/ftp.old.c	2017-10-18 18:33:35.047882611 +0200
+@@ -962,11 +962,11 @@
+         } else if (!av_strcasecmp(fact, "modify")) {
+             next->modification_timestamp = ftp_parse_date(value);
+         } else if (!av_strcasecmp(fact, "UNIX.mode")) {
+-            next->filemode = strtoumax(value, NULL, 8);
++            next->filemode = strtoll(value, NULL, 8);
+         } else if (!av_strcasecmp(fact, "UNIX.uid") || !av_strcasecmp(fact, "UNIX.owner"))
+-            next->user_id = strtoumax(value, NULL, 10);
++            next->user_id = strtoll(value, NULL, 10);
+         else if (!av_strcasecmp(fact, "UNIX.gid") || !av_strcasecmp(fact, "UNIX.group"))
+-            next->group_id = strtoumax(value, NULL, 10);
++            next->group_id = strtoll(value, NULL, 10);
+         else if (!av_strcasecmp(fact, "size") || !av_strcasecmp(fact, "sizd"))
+             next->size = strtoll(value, NULL, 10);
+     }

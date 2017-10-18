@@ -230,6 +230,9 @@ ffmpeg: ffmpeg-$(FFMPEG_BASENAME).tar.xz .sum-ffmpeg
 	tar xvJf "$<" --strip-components=1 -C $@-$(FFMPEG_BASENAME)
 ifdef USE_FFMPEG
 	$(APPLY) $(SRC)/ffmpeg/force-unicode.patch
+ifdef HAVE_NACL
+	$(APPLY) $(SRC)/ffmpeg/nacl.patch
+endif
 endif
 	$(MOVE)
 

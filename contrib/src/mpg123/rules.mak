@@ -27,7 +27,7 @@ endif
 endif
 
 ifdef HAVE_NACL
-MPG123CONF += ac_cv_header_sys_select_h=no
+MPG123CONF += ac_cv_header_sys_select_h=no --with-cpu=generic
 endif
 
 $(TARBALLS)/mpg123-$(MPG123_VERSION).tar.bz2:

@@ -78,7 +78,7 @@ endif
 endif
 
 ifdef HAVE_NACL
-	GNUTLS_CONF += --disable-hardware-acceleration
+	GNUTLS_CONF += --disable-hardware-acceleration --without-nettle-mini
 endif
 
 .gnutls: gnutls

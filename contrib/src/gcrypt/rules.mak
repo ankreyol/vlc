@@ -68,7 +68,7 @@ GCRYPT_CONF += ac_cv_sys_symbol_underscore=no
 endif
 endif
 ifdef HAVE_NACL
-GCRYPT_CONF += --disable-asm ac_cv_func_syslog=no
+GCRYPT_CONF += --disable-asm --disable-aesni-support ac_cv_func_syslog=no
 endif
 
 .gcrypt: gcrypt

@@ -27,7 +27,8 @@ endif
 endif
 
 ifdef HAVE_NACL
-MPG123CONF += ac_cv_header_sys_select_h=no --with-cpu=generic
+MPG123CONF += ac_cv_header_sys_select_h=no --with-cpu=generic_fpu
+MPG123CFLAGS = -DDONT_CATCH_SIGNALS
 endif
 
 $(TARBALLS)/mpg123-$(MPG123_VERSION).tar.bz2:
@@ -52,6 +53,6 @@ endif
 
 .mpg123: mpg123
 	$(RECONF)
-	cd $< && $(HOSTVARS) ./configure $(MPG123CONF)
+	cd $< && $(HOSTVARS) ./configure CFLAGS="$(CFLAGS) $(MPG123CFLAGS)" $(MPG123CONF)
 	cd $< && $(MAKE) install
 	touch $@

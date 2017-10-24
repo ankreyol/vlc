@@ -43,6 +43,7 @@ extern char **environ;
  * @param url absolute URL for which to get the proxy server
  * @return proxy URL, NULL if no proxy or error
  */
+#ifndef __native_client__
 char *vlc_getProxyUrl(const char *url)
 {
     /* libproxy helper */
@@ -121,3 +122,10 @@ char *vlc_getProxyUrl(const char *url)
         var = strdup(var);
     return var;
 }
+#else
+char *vlc_getProxyUrl(const char *url)
+{
+    VLC_UNUSED( url );
+    return NULL;
+}
+#endif

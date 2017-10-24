@@ -79,6 +79,15 @@ int vlc_getaddrinfo (const char *node, unsigned port,
                      const struct addrinfo *hints, struct addrinfo **res)
 {
     char hostbuf[NI_MAXHOST], portbuf[6], *servname;
+#ifdef __native_client__
+    struct addrinfo fake_hints;
+    if( hints != NULL )
+    {
+        fake_hints = *hints;
+        fake_hints.ai_family = AF_INET;
+        hints = &fake_hints;
+    }
+#endif
 
     /*
      * In VLC, we always use port number as integer rather than strings

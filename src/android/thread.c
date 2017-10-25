@@ -409,6 +409,7 @@ void *vlc_threadvar_get (vlc_threadvar_t key)
 }
 
 /* time */
+#ifndef __native_client__
 mtime_t mdate (void)
 {
     struct timespec ts;
@@ -418,6 +419,7 @@ mtime_t mdate (void)
 
     return (INT64_C(1000000) * ts.tv_sec) + (ts.tv_nsec / 1000);
 }
+#endif
 
 /* cpu */
 

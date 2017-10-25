@@ -35,6 +35,8 @@
 #include <sys/types.h>
 #include <pthread.h>
 
+#include <sys/time.h>
+
 unsigned long vlc_thread_id(void)
 {
     return (unsigned long)(void *)pthread_self();
@@ -141,6 +143,15 @@ void vlc_addr_wait(void *addr, unsigned val)
 
     release_futex(futex);
     pthread_mutex_unlock(&futex_list_mtx);
+}
+
+mtime_t mdate()
+{
+    struct timeval tv;
+
+    if (unlikely(gettimeofday (&tv, NULL) != 0))
+        abort ();
+    return (INT64_C(1000000) * tv.tv_sec) + tv.tv_usec;
 }
 
 bool vlc_addr_timedwait(void *addr, unsigned val, mtime_t delay)

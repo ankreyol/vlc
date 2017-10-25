@@ -146,8 +146,28 @@ static void Close(vout_window_t *wnd)
 
 static int Control(vout_window_t *wnd, int cmd, va_list ap)
 {
-    VLC_UNUSED(cmd);
-    VLC_UNUSED(ap);
-    msg_Err(wnd, "control requests not supported");
+    switch( cmd )
+    {
+        case VOUT_WINDOW_SET_SIZE:
+        {
+            unsigned int width = va_arg(ap, unsigned int);
+            unsigned int height = va_arg(ap, unsigned int);
+            printf("Ignoring VOUT_WINDOW_SET_SIZE %u %u\n", width, height);
+            break;
+        }
+        case VOUT_WINDOW_SET_FULLSCREEN:
+            printf("Ignoring VOUT_WINDOW_SET_FULLSCREEN\n");
+            break;
+        case VOUT_WINDOW_SET_STATE:
+        {
+            unsigned int state = va_arg(ap, unsigned int);
+            printf("Ignoring VOUT_WINDOW_SET_STATE %u\n", state);
+            break;
+        }
+        case VOUT_WINDOW_HIDE_MOUSE:
+            printf("Ignoring VOUT_WINDOW_HIDE_MOUSE\n");
+            break;
+    }
+
     return VLC_EGENERIC;
 }

@@ -52,6 +52,7 @@ vlc_thread_fatal_print (const char *action, int error,
     char buf[1000];
     const char *msg;
 
+#ifndef __native_client__
     switch (strerror_r (error, buf, sizeof (buf)))
     {
         case 0:
@@ -64,6 +65,9 @@ vlc_thread_fatal_print (const char *action, int error,
             msg = "unknown (invalid error number)";
             break;
     }
+#else
+    msg = "Generic thread error";
+#endif
 
     fprintf(stderr, "LibVLC fatal error %s (%d) in thread %lu "
             "at %s:%u in %s\n Error message: %s\n",
@@ -113,11 +117,13 @@ void vlc_mutex_destroy (vlc_mutex_t *p_mutex)
     VLC_THREAD_ASSERT ("destroying mutex");
 }
 
+#ifndef __native_client__
 #ifndef NDEBUG
 void vlc_assert_locked (vlc_mutex_t *p_mutex)
 {
     assert (pthread_mutex_lock (p_mutex) == EDEADLK);
 }
+#endif
 #endif
 
 void vlc_mutex_lock (vlc_mutex_t *p_mutex)

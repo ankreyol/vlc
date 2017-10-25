@@ -99,15 +99,15 @@ static void Swap(vlc_gl_t *gl)
     sys->viewport = var_InheritInteger(gl, "ppapi-view");
 
     int32_t width, height;
-    if (GetViewSize(gl, &width, &height) != VLC_SUCCESS)
-        return;
+    if (GetViewSize(gl, &width, &height) == VLC_SUCCESS)
+    {
+        if (((unsigned)width != sys->width) ||
+                ((unsigned)height != sys->height)) {
+            vout_window_ReportSize(gl->surface, width, height);
 
-    if (((unsigned)width != sys->width) ||
-            ((unsigned)height != sys->height)) {
-        vout_window_ReportSize(gl->surface, width, height);
-
-        sys->width = width;
-        sys->height = height;
+            sys->width = width;
+            sys->height = height;
+        }
     }
 
     sys->graphics3d->SwapBuffers(sys->context, PP_BlockUntilComplete());

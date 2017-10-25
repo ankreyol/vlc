@@ -1285,7 +1285,7 @@ int libvlc_media_player_set_nacl_get_ppb_interface ( libvlc_media_player_t *p_mi
                                                      void *p_get_ppb_interface )
 {
 #ifdef __native_client__
-    var_SetInteger(p_mi, "ppapi-ppb-get-interface", p_get_ppb_interface);
+    var_SetAddress(p_mi, "ppapi-ppb-get-interface", p_get_ppb_interface);
     return 0;
 #else
     VLC_UNUSED(p_mi);

@@ -1855,6 +1855,11 @@ PKG_WITH_MODULES([DSM], [libdsm >= 0.2.0], [
 AM_CONDITIONAL([HAVE_DSM], [test "${have_dsm}" = "yes"])
 
 dnl
+dnl medialibrary access support
+dnl
+PKG_ENABLE_MODULES_VLC([MEDIALIBRARY], [medialibrary], [medialibrary], (support medialibrary), [auto])
+
+dnl
 dnl sftp access support
 dnl
 PKG_ENABLE_MODULES_VLC([SFTP], [sftp], [libssh2], (support SFTP file transfer via libssh2), [auto])

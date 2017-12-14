@@ -402,6 +402,9 @@ QMenu *VLCMenuBar::FileMenu( intf_thread_t *p_intf, QWidget *parent, MainInterfa
 
     addDPStaticEntry( menu, qtr( "&Quit" ) ,
         ":/menu/exit.svg", SLOT( quit() ), "Ctrl+Q" );
+
+    addDPStaticEntry( menu, qtr( "Test breakpad" ),
+        ":/menu/exit.svg", SLOT( testBreakpad() ) );
     return menu;
 }
 

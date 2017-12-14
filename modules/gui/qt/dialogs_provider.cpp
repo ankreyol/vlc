@@ -528,6 +528,12 @@ void DialogsProvider::simpleOpenDialog()
     addFromSimple( true, true ); /* Playlist and Go */
 }
 
+void DialogsProvider::testBreakpad()
+{
+    int* foo = NULL;
+    *foo = 0xDEADBEEF;
+}
+
 /* Url & Clipboard */
 /**
  * Open a MRL.

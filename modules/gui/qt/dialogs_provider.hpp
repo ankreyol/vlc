@@ -155,6 +155,8 @@ public slots:
 
     void simpleOpenDialog();
 
+    void testBreakpad();
+
     void openDialog();
     void openDiscDialog();
     void openFileDialog();

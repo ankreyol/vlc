@@ -3845,7 +3845,9 @@ AS_IF([test "$with_breakpad" != "no"], [
       AC_MSG_RESULT([yes])
     ])
   ],[
-    PKG_CHECK_MODULES([BREAKPAD], [breakpad-client],, [
+    PKG_CHECK_MODULES([BREAKPAD], [breakpad-client], [
+      LDFLAGS="${LDFLAGS} -Wl,--build-id"
+    ], [
       AC_MSG_ERROR(["breakpad not found"])
     ])
   ])

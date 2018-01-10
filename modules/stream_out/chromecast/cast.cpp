@@ -119,6 +119,8 @@ static const char *const ppsz_sout_options[] = {
 #define MIME_LONGTEXT N_("This sets the media MIME content type sent to the Chromecast.")
 #define PERF_TEXT N_( "Performance warning" )
 #define PERF_LONGTEXT N_( "Display a performance warning when transcoding" )
+#define PASSTHROUGH_TEXT N_( "Chromecast (E)AC3 passthrough" )
+#define PASSTHROUGH_LONGTEXT N_( "Change this value if you have issue with HD codecs when using a HDMI receiver." )
 
 #define IP_ADDR_TEXT N_("IP Address")
 #define IP_ADDR_LONGTEXT N_("IP Address of the Chromecast.")
@@ -142,6 +144,7 @@ vlc_module_begin ()
     add_string(SOUT_CFG_PREFIX "mux", DEFAULT_MUXER, MUX_TEXT, MUX_LONGTEXT, false)
     add_string(SOUT_CFG_PREFIX "mime", "video/x-matroska", MIME_TEXT, MIME_LONGTEXT, false)
     add_integer(SOUT_CFG_PREFIX "show-perf-warning", 1, PERF_TEXT, PERF_LONGTEXT, true )
+    add_bool(SOUT_CFG_PREFIX "audio-passthrough", true, PASSTHROUGH_TEXT, PASSTHROUGH_LONGTEXT, false )
 
 
 vlc_module_end ()
@@ -238,6 +241,10 @@ bool sout_stream_sys_t::canDecodeAudio( vlc_fourcc_t i_codec,
 {
     if ( transcode_attempt_idx == MAX_TRANSCODE_PASS - 1 )
         return i_codec == VLC_CODEC_MP3;
+    if ( i_codec == VLC_CODEC_A52 || i_codec == VLC_CODEC_EAC3 )
+    {
+        return var_InheritBool( p_stream, SOUT_CFG_PREFIX "audio-passthrough" );
+    }
     if ( i_codec == VLC_FOURCC('h', 'a', 'a', 'c') ||
             i_codec == VLC_FOURCC('l', 'a', 'a', 'c') ||
             i_codec == VLC_FOURCC('s', 'a', 'a', 'c') ||

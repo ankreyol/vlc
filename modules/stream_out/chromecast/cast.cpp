@@ -119,6 +119,8 @@ static const char *const ppsz_sout_options[] = {
 #define MIME_LONGTEXT N_("This sets the media MIME content type sent to the Chromecast.")
 #define PERF_TEXT N_( "Performance warning" )
 #define PERF_LONGTEXT N_( "Display a performance warning when transcoding" )
+#define PASSTHROUGH_TEXT N_( "Chromecast (E)AC3 passthrough" )
+#define PASSTHROUGH_LONGTEXT N_( "Change this value if you have issue with HD codecs when using a HDMI receiver." )
 
 #define IP_ADDR_TEXT N_("IP Address")
 #define IP_ADDR_LONGTEXT N_("IP Address of the Chromecast.")
@@ -142,6 +144,7 @@ vlc_module_begin ()
     add_string(SOUT_CFG_PREFIX "mux", DEFAULT_MUXER, MUX_TEXT, MUX_LONGTEXT, false)
     add_string(SOUT_CFG_PREFIX "mime", "video/x-matroska", MIME_TEXT, MIME_LONGTEXT, false)
     add_integer(SOUT_CFG_PREFIX "show-perf-warning", 1, PERF_TEXT, PERF_LONGTEXT, true )
+    add_bool(SOUT_CFG_PREFIX "audio-passthrough", true, PASSTHROUGH_TEXT, PASSTHROUGH_LONGTEXT, false )
 
 
 vlc_module_end ()
@@ -218,6 +221,9 @@ static void Del(sout_stream_t *p_stream, sout_stream_id_sys_t *id)
  * 2: Transcode to H264 & MP3
  *
  * Additionally:
+ * - Allow (E)AC3 passthrough depending on the audio-passthrough
+ *   config value, except for the final step, where we just give up and transcode
+ *   everything.
  * - Disallow multichannel AAC
  *
  * Supported formats: https://developers.google.com/cast/docs/media
@@ -237,6 +243,10 @@ bool sout_stream_sys_t::canDecodeAudio( vlc_fourcc_t i_codec,
 {
     if ( transcode_attempt_idx == MAX_TRANSCODE_PASS - 1 )
         return false;
+    if ( i_codec == VLC_CODEC_A52 || i_codec == VLC_CODEC_EAC3 )
+    {
+        return var_InheritBool( p_stream, SOUT_CFG_PREFIX "audio-passthrough" );
+    }
     if ( i_codec == VLC_FOURCC('h', 'a', 'a', 'c') ||
             i_codec == VLC_FOURCC('l', 'a', 'a', 'c') ||
             i_codec == VLC_FOURCC('s', 'a', 'a', 'c') ||
@@ -245,7 +255,6 @@ bool sout_stream_sys_t::canDecodeAudio( vlc_fourcc_t i_codec,
         return p_fmt->i_channels <= 2;
     }
     return i_codec == VLC_CODEC_VORBIS || i_codec == VLC_CODEC_OPUS ||
-           i_codec == VLC_CODEC_A52 || i_codec == VLC_CODEC_EAC3 ||
            i_codec == VLC_CODEC_MP3;
 }
 

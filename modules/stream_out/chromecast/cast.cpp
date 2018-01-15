@@ -61,7 +61,7 @@ struct sout_stream_sys_t
     }
 
     bool canDecodeVideo( vlc_fourcc_t i_codec ) const;
-    bool canDecodeAudio( vlc_fourcc_t i_codec,
+    bool canDecodeAudio( sout_stream_t* p_stream, vlc_fourcc_t i_codec,
                          const audio_format_t* p_fmt ) const;
     bool startSoutChain(sout_stream_t* p_stream);
 
@@ -83,7 +83,8 @@ struct sout_stream_sys_t
 
 private:
     bool UpdateOutput( sout_stream_t * );
-    vlc_fourcc_t transcodeAudioFourCC(const audio_format_t* p_fmt );
+    vlc_fourcc_t transcodeAudioFourCC( sout_stream_t* p_stream,
+                                       const audio_format_t* p_fmt );
 
 };
 
@@ -121,6 +122,8 @@ static const char *const ppsz_sout_options[] = {
 #define PERF_LONGTEXT N_( "Display a performance warning when transcoding" )
 #define PASSTHROUGH_TEXT N_( "Chromecast (E)AC3 passthrough" )
 #define PASSTHROUGH_LONGTEXT N_( "Change this value if you have issue with HD codecs when using a HDMI receiver." )
+#define MULTICHANNEL_TEXT N_( "Allow multichannel PCM" )
+#define MULTICHANNEL_LONGTEXT N_( "Use PCM for multicannel audio." )
 
 #define IP_ADDR_TEXT N_("IP Address")
 #define IP_ADDR_LONGTEXT N_("IP Address of the Chromecast.")
@@ -145,6 +148,7 @@ vlc_module_begin ()
     add_string(SOUT_CFG_PREFIX "mime", "video/x-matroska", MIME_TEXT, MIME_LONGTEXT, false)
     add_integer(SOUT_CFG_PREFIX "show-perf-warning", 1, PERF_TEXT, PERF_LONGTEXT, true )
     add_bool(SOUT_CFG_PREFIX "audio-passthrough", true, PASSTHROUGH_TEXT, PASSTHROUGH_LONGTEXT, false )
+    add_bool(SOUT_CFG_PREFIX "multichannel-pcm", true, MULTICHANNEL_TEXT, MULTICHANNEL_LONGTEXT, false );
 
 
 vlc_module_end ()
@@ -238,7 +242,8 @@ bool sout_stream_sys_t::canDecodeVideo( vlc_fourcc_t i_codec ) const
     return i_codec == VLC_CODEC_H264 || i_codec == VLC_CODEC_VP8;
 }
 
-bool sout_stream_sys_t::canDecodeAudio( vlc_fourcc_t i_codec,
+bool sout_stream_sys_t::canDecodeAudio( sout_stream_t *p_stream,
+                                        vlc_fourcc_t i_codec,
                                         const audio_format_t* p_fmt ) const
 {
     if ( i_codec == VLC_CODEC_A52 || i_codec == VLC_CODEC_EAC3 )
@@ -260,9 +265,11 @@ bool sout_stream_sys_t::canDecodeAudio( vlc_fourcc_t i_codec,
            i_codec == VLC_CODEC_MP3;
 }
 
-vlc_fourcc_t sout_stream_sys_t::transcodeAudioFourCC( const audio_format_t* p_fmt )
+vlc_fourcc_t sout_stream_sys_t::transcodeAudioFourCC( sout_stream_t *p_stream,
+                                                      const audio_format_t* p_fmt )
 {
-    if ( p_fmt->i_channels > 2 )
+    if ( p_fmt->i_channels > 2 &&
+         var_InheritBool( p_stream, SOUT_CFG_PREFIX "multichannel-pcm" ) )
         return VLC_CODEC_S16L;
     return VLC_CODEC_MP3;
 }
@@ -324,7 +331,7 @@ bool sout_stream_sys_t::UpdateOutput( sout_stream_t *p_stream )
         {
             if ( p_original_audio == NULL )
                 p_original_audio = &p_es->audio;
-            if ( !canDecodeAudio( p_es->i_codec, &p_es->audio ) )
+            if ( !canDecodeAudio( p_stream, p_es->i_codec, &p_es->audio ) )
             {
                 msg_Dbg( p_stream, "can't remux audio track %d codec %4.4s", p_es->i_id, (const char*)&p_es->i_codec );
                 canRemux = false;
@@ -366,7 +373,7 @@ bool sout_stream_sys_t::UpdateOutput( sout_stream_t *p_stream )
         char s_fourcc[5];
         if ( i_codec_audio == 0 && p_original_audio )
         {
-            i_codec_audio = transcodeAudioFourCC( p_original_audio );
+            i_codec_audio = transcodeAudioFourCC( p_stream, p_original_audio );
             msg_Dbg( p_stream, "Converting audio to %.4s", (const char*)&i_codec_audio );
             ssout << "acodec=";
             vlc_fourcc_to_char( i_codec_audio, s_fourcc );

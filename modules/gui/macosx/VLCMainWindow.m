@@ -277,8 +277,6 @@ static const float f_min_window_height = 307.;
     SideBarItem *libraryItem = [SideBarItem itemWithTitle:_NS("LIBRARY") identifier:@"library"];
     SideBarItem *playlistItem = [SideBarItem itemWithTitle:_NS("Playlist") identifier:@"playlist"];
     [playlistItem setIcon: imageFromRes(@"sidebar-playlist")];
-    SideBarItem *medialibraryItem = [SideBarItem itemWithTitle:_NS("Media Library") identifier:@"medialibrary"];
-    [medialibraryItem setIcon: imageFromRes(@"sidebar-playlist")];
     SideBarItem *mycompItem = [SideBarItem itemWithTitle:_NS("MY COMPUTER") identifier:@"mycomputer"];
     SideBarItem *devicesItem = [SideBarItem itemWithTitle:_NS("DEVICES") identifier:@"devices"];
     SideBarItem *lanItem = [SideBarItem itemWithTitle:_NS("LOCAL NETWORK") identifier:@"localnetwork"];
@@ -343,7 +341,7 @@ static const float f_min_window_height = 307.;
     free(ppsz_longnames);
     free(p_categories);
 
-    [libraryItem setChildren: [NSArray arrayWithObjects:playlistItem, medialibraryItem, nil]];
+    [libraryItem setChildren: [NSArray arrayWithObjects:playlistItem, nil]];
     [o_sidebaritems addObject: libraryItem];
     if ([mycompItem hasChildren])
         [o_sidebaritems addObject: mycompItem];
@@ -823,8 +821,6 @@ static const float f_min_window_height = 307.;
     PL_LOCK;
     if (root == ROOT_TYPE_PLAYLIST)
         [_categoryLabel setStringValue: [_NS("Playlist") stringByAppendingString:[self _playbackDurationOfNode:p_playlist->p_playing]]];
-    else if (root == ROOT_TYPE_MEDIALIBRARY)
-        [_categoryLabel setStringValue: [_NS("Media Library") stringByAppendingString:[self _playbackDurationOfNode:p_playlist->p_media_library]]];
 
     PL_UNLOCK;
 }

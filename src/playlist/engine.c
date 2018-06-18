@@ -35,6 +35,7 @@
 #include <vlc_interface.h>
 #include <vlc_http.h>
 #include <vlc_renderer_discovery.h>
+#include <vlc_media_library.h>
 #include "playlist_internal.h"
 #include "input/resource.h"
 
@@ -226,6 +227,13 @@ playlist_t *playlist_Create( vlc_object_t *p_parent )
     p_playlist->root.i_id = 0;
     p_playlist->root.i_flags = 0;
 
+    if( var_InheritBool( p_parent, "media-library") )
+    {
+        p_playlist->p_media_library = vlc_ml_create( p_playlist );
+        if ( p_playlist->p_media_library == NULL )
+            abort();
+    }
+
     /* Create the root, playing items nodes */
     playlist_item_t *playing;
 
@@ -304,6 +312,9 @@ void playlist_Destroy( playlist_t *p_playlist )
     input_resource_Release( p_sys->p_input_resource );
     if( p_sys->p_renderer )
         vlc_renderer_item_release( p_sys->p_renderer );
+
+    if ( p_playlist->p_media_library )
+        vlc_ml_release( p_playlist->p_media_library );
 
     PL_LOCK;
     /* Release the current node */

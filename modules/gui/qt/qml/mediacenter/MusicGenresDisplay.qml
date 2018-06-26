@@ -30,18 +30,13 @@ import "qrc:///style/"
 Loader {
     id: viewLoader
 
-    // notify when the view has changed
-    function changedView() {
-        viewLoader.sourceComponent = medialib.isGridView() ? gridViewComponent_id : listViewComponent_id;
-        console.log("View changed");
-    }
     // Force the data to be reloaded
     function reloadData() {
-        viewLoader.item.model = medialib.getObjects();
+        viewLoader.item.model = medialib.getGenres();
         console.log( "Data reloaded" );
     }
 
-    sourceComponent: medialib.isGridView() ? gridViewComponent_id : listViewComponent_id
+    sourceComponent: medialib.gridView() ? gridViewComponent_id : listViewComponent_id
 
     /* Grid View */
     Component {
@@ -53,24 +48,24 @@ Loader {
             cellWidth: VLCStyle.cover_normal
             cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
 
-            model: medialib.getObjects()
+            model: medialib.getGenres()
             delegate : Utils.GridItem {
                 width: gridView_id.cellWidth
                 height: gridView_id.cellHeight
 
-                cover: Utils.GenreCover { albums: model.genre_albums }
-                name: model.genre_name || "Unknown genre"
+                cover: Utils.GenreCover { albums: model.albums }
+                name: model.name || "Unknown genre"
 
                 onItemClicked: {
-                    console.log('Clicked on details : '+model.genre_name);
+                    console.log('Clicked on details : '+model.name);
                     medialib.select( index );
                 }
                 onPlayClicked: {
-                    console.log('Clicked on play : '+model.genre_name);
+                    console.log('Clicked on play : '+model.name);
                     medialib.addAndPlay(index)
                 }
                 onAddToPlaylistClicked: {
-                    console.log('Clicked on addToPlaylist : '+model.genre_name);
+                    console.log('Clicked on addToPlaylist : '+model.name);
                     medialib.addToPlaylist(index);
                 }
             }
@@ -86,28 +81,28 @@ Loader {
         ListView {
             spacing: 2
 
-            model: medialib.getObjects()
+            model: medialib.getGenres()
             delegate : Utils.ListItem {
                 height: VLCStyle.heightBar_small
                 width: parent.width
 
                 line1: Text{
-                    text: (model.genre_name || "Unknown genre")+" - "+model.genre_nb_tracks+" tracks"
+                    text: (model.name || "Unknown genre")+" - "+model.nb_tracks+" tracks"
                     font.bold: true
                     elide: Text.ElideRight
                     color: VLCStyle.textColor
                 }
 
                 onItemClicked: {
-                    console.log("Clicked on : "+model.genre_name);
+                    console.log("Clicked on : "+model.name);
                     medialib.select( index );
                 }
                 onPlayClicked: {
-                    console.log('Clicked on play : '+model.genre_name);
+                    console.log('Clicked on play : '+model.name);
                     medialib.addAndPlay(index)
                 }
                 onAddToPlaylistClicked: {
-                    console.log('Clicked on addToPlaylist : '+model.genre_name);
+                    console.log('Clicked on addToPlaylist : '+model.name);
                     medialib.addToPlaylist(index);
                 }
             }

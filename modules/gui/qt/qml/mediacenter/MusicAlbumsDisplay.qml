@@ -30,18 +30,13 @@ import "qrc:///style/"
 Loader {
     id: viewLoader
 
-    // notify when the view has changed
-    function changedView() {
-        viewLoader.sourceComponent = medialib.isGridView() ? gridViewComponent_id : listViewComponent_id;
-        console.log("View changed");
-    }
     // Force the data to be reloaded
     function reloadData() {
-        viewLoader.item.model = medialib.getObjects();
+        viewLoader.item.model = medialib.getAlbums();
         console.log( "Data reloaded" );
     }
 
-    sourceComponent: medialib.isGridView() ? gridViewComponent_id : listViewComponent_id
+    sourceComponent: medialib.gridView ? gridViewComponent_id : listViewComponent_id
 
     /* Grid View */
     Component {
@@ -50,7 +45,7 @@ Loader {
         Utils.ExpandGridView {
             id: gridView_id
 
-            model: medialib.getObjects()
+            model: medialib.getAlbums()
 
             cellWidth: VLCStyle.cover_normal
             cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
@@ -67,18 +62,18 @@ Loader {
                 width: gridView_id.cellWidth
                 height: gridView_id.cellHeight
 
-                cover : Image { source: model.album_cover || VLCStyle.noArtCover }
-                name : model.album_title || "Unknown title"
-                date : model.album_release_year !== "0" ? model.album_release_year : ""
-                infos : model.album_duration + " - " + model.album_nb_tracks + " tracks"
+                cover : Image { source: model.cover || VLCStyle.noArtCover }
+                name : model.title || "Unknown title"
+                date : model.release_year !== "0" ? model.release_year : ""
+                infos : model.duration + " - " + model.nb_tracks + " tracks"
 
-                onItemClicked : console.log('Clicked on details : '+model.album_title)
+                onItemClicked : console.log('Clicked on details : '+model.title)
                 onPlayClicked: {
-                    console.log('Clicked on play : '+model.album_title);
+                    console.log('Clicked on play : '+model.title);
                     medialib.addAndPlay(currentIndex)
                 }
                 onAddToPlaylistClicked : {
-                    console.log('Clicked on addToPlaylist : '+model.album_title);
+                    console.log('Clicked on addToPlaylist : '+model.title);
                     medialib.addToPlaylist(currentIndex);
                 }
             }
@@ -98,7 +93,7 @@ Loader {
         ListView {
             spacing: VLCStyle.margin_xxxsmall
 
-            model: medialib.getObjects()
+            model: medialib.getAlbums()
             delegate : Utils.ListExpandItem {
                 height: VLCStyle.icon_normal
                 width: parent.width
@@ -109,7 +104,7 @@ Loader {
                     width: VLCStyle.icon_normal
                     height: VLCStyle.icon_normal
 
-                    source: model.album_cover || VLCStyle.noArtCover
+                    source: model.cover || VLCStyle.noArtCover
 
                     states: State {
                         name: "expanded"
@@ -119,32 +114,32 @@ Loader {
                     Behavior on width { PropertyAnimation { duration: VLCStyle.timingListExpandOpen } }
                 }
                 line1: Text{
-                    text: (model.album_title || "Unknown title")+" ["+model.album_duration+"]"
+                    text: (model.title || "Unknown title")+" ["+model.duration+"]"
                     font.bold: true
                     elide: Text.ElideRight
                     color: VLCStyle.textColor
                     font.pixelSize: VLCStyle.fontSize_normal
                 }
                 line2: Text{
-                    text: model.album_main_artist || "Unknown artist"
+                    text: model.main_artist || "Unknown artist"
                     elide: Text.ElideRight
                     color: VLCStyle.textColor
                     font.pixelSize: VLCStyle.fontSize_xsmall
                 }
                 expand: Utils.TracksDisplay {
-                    height: album_nb_tracks * (VLCStyle.fontSize_normal + VLCStyle.margin_xxxsmall) - VLCStyle.margin_xxxsmall
+                    height: nb_tracks * (VLCStyle.fontSize_normal + VLCStyle.margin_xxxsmall) - VLCStyle.margin_xxxsmall
                     width: parent.width
 
-                    tracks: album_tracks
+                    tracks: tracks
                     parentIndex: index
                 }
 
                 onPlayClicked: {
-                    console.log('Clicked on play : '+model.album_title);
+                    console.log('Clicked on play : '+model.title);
                     medialib.addAndPlay(index)
                 }
                 onAddToPlaylistClicked: {
-                    console.log('Clicked on addToPlaylist : '+model.album_title);
+                    console.log('Clicked on addToPlaylist : '+model.title);
                     medialib.addToPlaylist(index);
                 }
             }

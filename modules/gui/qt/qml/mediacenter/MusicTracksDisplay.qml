@@ -30,18 +30,13 @@ import "qrc:///style/"
 Loader {
     id: viewLoader
 
-    // notify when the view has changed
-    function changedView() {
-        viewLoader.sourceComponent = medialib.isGridView() ? gridViewComponent_id : listViewComponent_id;
-        console.log("View changed");
-    }
     // Force the data to be reloaded
     function reloadData() {
         viewLoader.item.model = medialib.getObjects();
         console.log( "Data reloaded" );
     }
 
-    sourceComponent: medialib.isGridView() ? gridViewComponent_id : listViewComponent_id
+    sourceComponent: medialib.gridView ? gridViewComponent_id : listViewComponent_id
 
     /* Grid View */
     Component {
@@ -53,21 +48,21 @@ Loader {
             cellWidth: VLCStyle.cover_normal
             cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
 
-            model: medialib.getObjects()
+            model: medialib.getAlbumTracks()
             delegate : Utils.GridItem {
                 width: gridView_id.cellWidth
                 height: gridView_id.cellHeight
 
-                cover: Image { source: model.track_cover || VLCStyle.noArtCover }
-                name: model.track_title || "Unknown track"
+                cover: Image { source: model.cover || VLCStyle.noArtCover }
+                name: model.title || "Unknown track"
 
-                onItemClicked: console.log('Clicked on details : '+model.track_title)
+                onItemClicked: console.log('Clicked on details : '+model.title)
                 onPlayClicked: {
-                    console.log('Clicked on play : '+model.track_title);
+                    console.log('Clicked on play : '+model.title);
                     medialib.addAndPlay(index)
                 }
                 onAddToPlaylistClicked: {
-                    console.log('Clicked on addToPlaylist : '+model.track_title);
+                    console.log('Clicked on addToPlaylist : '+model.title);
                     medialib.addToPlaylist(index);
                 }
             }
@@ -88,19 +83,19 @@ Loader {
                 width: parent.width
 
                 line1: Text{
-                    text: (model.track_title || "Unknown track")+" - "+model.track_duration
+                    text: (model.title || "Unknown track")+" - "+model.duration
                     font.bold: true
                     elide: Text.ElideRight
                     color: VLCStyle.textColor
                 }
 
-                onItemClicked: console.log("Clicked on : "+model.track_title)
+                onItemClicked: console.log("Clicked on : "+model.title)
                 onPlayClicked: {
-                    console.log('Clicked on play : '+model.track_title);
+                    console.log('Clicked on play : '+model.title);
                     medialib.addAndPlay(index)
                 }
                 onAddToPlaylistClicked: {
-                    console.log('Clicked on addToPlaylist : '+model.track_title);
+                    console.log('Clicked on addToPlaylist : '+model.title);
                     medialib.addToPlaylist(index);
                 }
             }

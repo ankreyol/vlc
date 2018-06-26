@@ -30,18 +30,13 @@ import "qrc:///style/"
 Loader {
     id: viewLoader
 
-    // notify when the view has changed
-    function changedView() {
-        viewLoader.sourceComponent = medialib.isGridView() ? gridViewComponent_id : listViewComponent_id;
-        console.log("View changed");
-    }
     // Force the data to be reloaded
     function reloadData() {
-        viewLoader.item.model = medialib.getObjects();
+        viewLoader.item.model = medialib.getArtists();
         console.log( "Data reloaded" );
     }
 
-    sourceComponent: medialib.isGridView() ? gridViewComponent_id : listViewComponent_id
+    sourceComponent: medialib.gridView ? gridViewComponent_id : listViewComponent_id
 
     /* Grid View */
     Component {
@@ -53,28 +48,28 @@ Loader {
             cellWidth: VLCStyle.cover_normal
             cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
 
-            model: medialib.getObjects()
+            model: medialib.getArtists()
             delegate : Utils.GridItem {
                 width: gridView_id.cellWidth
                 height: gridView_id.cellHeight
 
                 cover: Utils.ArtistCover {
-                    albums: model.artist_albums
-                    nb_albums: model.artist_nb_albums
+                    albums: model.albums
+                    nb_albums: model.nb_albums
                 }
-                name: model.artist_name || "Unknown Artist"
+                name: model.name || "Unknown Artist"
 
                 onItemClicked: {
-                    console.log('Clicked on details : '+model.artist_name);
+                    console.log('Clicked on details : '+model.name);
                     medialib.select( index );
                 }
                 onPlayClicked: {
-                    console.log('Clicked on play : '+model.artist_name);
-                    medialib.addAndPlay(index)
+                    console.log('Clicked on play : '+model.name);
+                    medialib.addAndPlay( index )
                 }
                 onAddToPlaylistClicked: {
-                    console.log('Clicked on addToPlaylist : '+model.artist_name);
-                    medialib.addToPlaylist(index);
+                    console.log('Clicked on addToPlaylist : '+model.name);
+                    medialib.addToPlaylist( index );
                 }
             }
 
@@ -88,7 +83,7 @@ Loader {
         ListView {
             spacing: 2
 
-            model: medialib.getObjects()
+            model: medialib.getArtists()
             delegate : Utils.ListItem {
                 height: VLCStyle.icon_normal
                 width: parent.width
@@ -97,26 +92,26 @@ Loader {
                     height: VLCStyle.icon_normal
                     width: VLCStyle.icon_normal
 
-                    source: model.artist_cover || VLCStyle.noArtCover
+                    source: model.cover || VLCStyle.noArtCover
                 }
                 line1: Text{
-                    text: model.artist_name || "Unknown artist"
+                    text: model.name || "Unknown artist"
                     font.bold: true
                     elide: Text.ElideRight
                     color: VLCStyle.textColor
                 }
 
                 onItemClicked: {
-                    console.log("Clicked on : "+model.artist_name);
+                    console.log("Clicked on : "+model.name);
                     medialib.select( index );
                 }
                 onPlayClicked: {
-                    console.log('Clicked on play : '+model.artist_name);
-                    medialib.addAndPlay(index)
+                    console.log('Clicked on play : '+model.name);
+                    medialib.addAndPlay( index )
                 }
                 onAddToPlaylistClicked: {
-                    console.log('Clicked on addToPlaylist : '+model.artist_name);
-                    medialib.addToPlaylist(index);
+                    console.log('Clicked on addToPlaylist : '+model.name);
+                    medialib.addToPlaylist( index );
                 }
             }
 

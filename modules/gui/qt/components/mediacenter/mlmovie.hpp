@@ -21,17 +21,36 @@
  * 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
  *****************************************************************************/
 
-#pragma once
+#ifndef MLMOVIE_HPP
+#define MLMOVIE_HPP
 
-#include <qt5/QtCore/QString>
-#include <medialibrary/Types.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
-class MLMovie
+#include <QString>
+#include <QObject>
+#include <vlc_media_library.h>
+#include "mlhelper.hpp"
+
+class MLMovie : public QObject
 {
-public:
-    MLMovie( medialibrary::AlbumPtr data );
+    Q_OBJECT
 
+    Q_PROPERTY(uint64_t id READ getId)
+    Q_PROPERTY(QString title READ getTitle)
+    Q_PROPERTY(unsigned int duration READ getDuration)
+    Q_PROPERTY(QString cover READ getCover)
+
+public:
+    MLMovie( const ml_media_t *data );
+
+    uint64_t getId() { return 0; }
     QString getTitle() { return QString(""); }
-    QString getDuration() { return QString(""); }
+    unsigned int getDuration() { return 0; }
     QString getCover() { return QString(""); }
+
+private:
 };
+
+#endif

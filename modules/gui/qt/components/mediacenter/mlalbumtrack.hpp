@@ -23,47 +23,54 @@
 
 #pragma once
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <QObject>
 #include <QString>
-#include <medialibrary/IMedia.h>
-#include <medialibrary/IAlbumTrack.h>
-#include <medialibrary/IAlbum.h>
-#include <medialibrary/Types.h>
-
 #include <memory>
 
-#include "mlitem.hpp"
-#include "components/utils/mlitemmodel.hpp"
+#include <vlc_media_library.h>
+#include "mlhelper.hpp"
 
-class MLAlbumTrack : public MLItem
+class MLAlbumTrack : public QObject
 {
     Q_OBJECT
 
-public:
-    MLAlbumTrack( medialibrary::MediaPtr _data, QObject *_parent = nullptr);
+    Q_PROPERTY(uint64_t id READ getId)
+    Q_PROPERTY(QString title READ getTitle)
+    Q_PROPERTY(QString albumtitle READ getAlbumTitle)
+    Q_PROPERTY(QString cover READ getCover)
+    Q_PROPERTY(unsigned int tracknumber READ getTrackNumber)
+    Q_PROPERTY(unsigned int duration READ getDuration)
+    Q_PROPERTY(QString mrl READ getMRL)
 
-    Q_INVOKABLE QString getTitle() const;
-    Q_INVOKABLE QString getAlbumTitle() const;
-    Q_INVOKABLE QString getCover() const;
-    Q_INVOKABLE QString getTrackNumber() const;
-    Q_INVOKABLE QString getDuration() const;
-    Q_INVOKABLE QString getMRL() const;
+public:
+    MLAlbumTrack(const ml_media_t *_data, QObject *_parent = nullptr);
+
+    uint64_t getId() const;
+    QString getTitle() const;
+    QString getAlbumTitle() const;
+    QString getCover() const;
+    unsigned int getTrackNumber() const;
+    unsigned int getDuration() const;
+    QString getMRL() const;
 
     Q_INVOKABLE QString getPresName() const;
     Q_INVOKABLE QString getPresImage() const;
     Q_INVOKABLE QString getPresInfo() const;
-    Q_INVOKABLE QList<MLAlbumTrack *> getPLTracks() const;
-    QList<std::shared_ptr<MLItem>> getDetailsObjects(medialibrary::SortingCriteria sort = medialibrary::SortingCriteria::Default, bool desc = false);
 
 private:
+    uint64_t m_id;
     QString m_title;
     QString m_albumTitle;
     QString m_cover;
     unsigned int m_trackNumber;
-    int64_t m_duration;
+    unsigned int m_duration;
     QString m_mrl;
 
-    medialibrary::MediaPtr m_data;
+   ml_unique_ptr<ml_media_t> m_data;
 
 signals:
 

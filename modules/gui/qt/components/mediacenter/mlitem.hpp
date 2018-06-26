@@ -23,13 +23,15 @@
 
 #pragma once
 
-#include <qt5/QtCore/QObject>
-#include <qt5/QtCore/QString>
-#include <qt5/QtCore/QList>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include <QObject>
+#include <QString>
+#include <QList>
 
 #include <memory>
-
-#include <medialibrary/IMediaLibrary.h>
 
 class MLAlbumTrack;
 
@@ -39,9 +41,9 @@ class MLItem : public QObject
 public:
     MLItem(QObject *_parent = nullptr);
 
-    Q_INVOKABLE virtual QString getPresName() const = 0;
-    Q_INVOKABLE virtual QString getPresImage() const = 0;
-    Q_INVOKABLE virtual QString getPresInfo() const = 0;
-    Q_INVOKABLE virtual QList<MLAlbumTrack *> getPLTracks() const = 0;
-    virtual QList<std::shared_ptr<MLItem>> getDetailsObjects(medialibrary::SortingCriteria sort = medialibrary::SortingCriteria::Default, bool desc = false) = 0;
+    //Q_INVOKABLE virtual QString getPresName() const = 0;
+    //Q_INVOKABLE virtual QString getPresImage() const = 0;
+    //Q_INVOKABLE virtual QString getPresInfo() const = 0;
+    //Q_INVOKABLE virtual QList<MLAlbumTrack *> getPLTracks() const = 0;
+    //virtual QList<std::shared_ptr<MLItem>> getDetailsObjects(medialibrary::SortingCriteria sort = medialibrary::SortingCriteria::Default, bool desc = false) = 0;
 };

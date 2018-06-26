@@ -22,6 +22,7 @@
  *****************************************************************************/
 
 #include "mcmedialib.hpp"
+#include "mlhelper.hpp"
 
 #include <vlc_playlist.h>
 #include <vlc_input_item.h>
@@ -30,458 +31,265 @@ MCMediaLib::MCMediaLib(
         intf_thread_t *_intf,
         QQuickWidget *_qml_item,
         std::shared_ptr<PLModel> _pl_model,
-        QObject *_parent
-    ) : m_intf( _intf ),
-        m_qmlItem( _qml_item ),
-        m_currentCat ( CAT_MUSIC_ALBUM ),
-        m_oldCat ( CAT_MUSIC_ALBUM ),
-        m_currentSort( medialibrary::SortingCriteria::Default ),
-        m_isDesc( false ),
-        m_ml( NewMediaLibrary() ),
-        m_cb( new medialibrary::ExCallback() ),
-        m_gridView( true ),
-        m_PLModel( _pl_model ),
-        QObject( _parent )
+        QObject *_parent)
+    : QObject( _parent )
+    , m_intf( _intf )
+    , m_qmlItem( _qml_item )
+    , m_gridView( true )
+    , m_oldCat ( CAT_MUSIC_ALBUM )
+    , m_currentCat ( CAT_MUSIC_ALBUM )
+    , m_PLModel( _pl_model )
 {
-    char* cachedir = config_GetUserDir( VLC_CACHE_DIR );
-
-    m_ml->initialize(qtu(QString("%1%2%3").arg(cachedir, DIR_SEP, "vlc-bdd.db")),
-                     qtu(QString("%1%2%3").arg(cachedir, DIR_SEP, "vlc-thumb")),
-                     m_cb);
-    m_ml->start();
-
-    retrieveAlbums();
-    free(cachedir);
+    m_ml = std::shared_ptr<vlc_medialibrary_t>(vlc_ml_create(_intf), vlc_ml_release);
+    m_genreModel = new MLGenreModel(m_ml, this);
+    m_artistModel = new MLArtistModel(m_ml, this);
+    m_albumModel = new MLAlbumModel(m_ml, this);
+    m_trackModel = new MLAlbumTrackModel(m_ml, this);
 }
 
 // Are we exploring a specific item or just browsing generic category
 QVariant MCMediaLib::hasPresentation() {
-    if (m_currentMainObj)
-        return true;
-    else
-        return false;
+    return false;
 }
 
 // Remove presentation to get back to the list of items that were in place before
 void MCMediaLib::backPresentation() {
-    switch (m_oldCat)
-    {
-    case CAT_MUSIC_ALBUM:
-    {
-        m_currentCat = CAT_MUSIC_ALBUM;
-        retrieveAlbums();
-        if (m_currentMainObj) m_currentMainObj = nullptr;
-        break;
-    }
-    case CAT_MUSIC_ARTIST:
-    {
-        m_currentCat = CAT_MUSIC_ARTIST;
-        retrieveArtists();
-        if (m_currentMainObj) m_currentMainObj = nullptr;
-        break;
-    }
-    case CAT_MUSIC_GENRE:
-    {
-        m_currentCat = CAT_MUSIC_GENRE;
-        retrieveGenres();
-        if (m_currentMainObj) m_currentMainObj = nullptr;
-        break;
-    }
-    case CAT_MUSIC_TRACKS:
-    {
-        m_currentCat = CAT_MUSIC_TRACKS;
-        retrieveTracks();
-        if (m_currentMainObj) m_currentMainObj = nullptr;
-        break;
-    }
-    case CAT_VIDEO:
-    {
-        m_currentCat = CAT_VIDEO;
-        retrieveMovies();
-        if (m_currentMainObj) m_currentMainObj = nullptr;
-        break;
-    }
-    case CAT_NETWORK:
-    {
-        m_currentCat = CAT_NETWORK;
-        retrieveSeries();
-        if (m_currentMainObj) m_currentMainObj = nullptr;
-        break;
-    }
-    default:
-        break;
-    }
+    m_currentCat = m_oldCat;
+    emit categoryChanged();
     invokeQML("reloadPresentation()");
-    invokeQML("changedCategory()");
 }
 
 // Which category should be displayed
-QVariant MCMediaLib::getCategory()
+int MCMediaLib::getCategory() const
 {
-    return QVariant( m_currentCat );
+    return m_currentCat;
 }
 
-// Get the list of items that should be displayed
-QVariant MCMediaLib::getObjects()
+void MCMediaLib::setCategory(int category)
 {
-    MLItemModel* obj =  new MLItemModel(m_currentObj);
-    // Trick needed else the ownership is passed to QML and obj might be destroyed
-    // cf. http://doc.qt.io/qt-5/qtqml-cppintegration-data.html#data-ownership
-    QQmlEngine::setObjectOwnership(obj, QQmlEngine::CppOwnership);
-    return QVariant::fromValue<MLItemModel*>( obj );
+    //FIXME is there somthing to do
+    m_currentCat = (MCMediaLibCategory)category;
+    emit categoryChanged();
 }
 
 // Should the items be displayed as a grid or as list ?
-QVariant MCMediaLib::isGridView()
+bool MCMediaLib::isGridView() const
 {
-    return QVariant( m_gridView );
+    return m_gridView;
+}
+
+void MCMediaLib::setGridView(bool state)
+{
+    m_gridView = state;
+    emit gridViewChanged();
 }
 
 // Toogle between grid and list view for the displayed items
-void MCMediaLib::toogleView()
+void MCMediaLib::toogleGridView()
 {
-    m_gridView = !m_gridView;
-    invokeQML("changedView()");
+    setGridView(!m_gridView);
 }
 
 // A specific item has been selected -> update the list of obejcts and the presentation
 void MCMediaLib::select( const int &item_id )
 {
-    if (item_id >= 0 && item_id <= m_currentObj.count())
-    {
-        if (!m_currentMainObj)
-            m_oldCat = m_currentCat;
-
-        m_currentMainObj = m_currentObj.at(item_id);
-        m_currentObj = m_currentMainObj->getDetailsObjects(m_currentSort, m_isDesc);
-
-        switch (m_currentCat)
-        {
-        case CAT_MUSIC_ALBUM:
-            m_currentCat = CAT_MUSIC_TRACKS;
-            break;
-
-        case CAT_MUSIC_ARTIST:
-            m_currentCat = CAT_MUSIC_ALBUM;
-            break;
-
-        case CAT_MUSIC_GENRE:
-            m_currentCat = CAT_MUSIC_ALBUM;
-            break;
-
-        default:
-            break;
-        }
-    }
-
-    invokeQML("reloadPresentation()");
-    invokeQML("changedCategory()");
+    //if (item_id >= 0 && item_id <= m_currentObj.count())
+    //{
+    //    if (!m_currentMainObj)
+    //        m_oldCat = m_currentCat;
+    //
+    //    m_currentMainObj = m_currentObj.at(item_id);
+    //    m_currentObj = m_currentMainObj->getDetailsObjects(m_currentSort, m_isDesc);
+    //
+    //    switch (m_currentCat)
+    //    {
+    //    case CAT_MUSIC_ALBUM:
+    //        m_currentCat = CAT_MUSIC_TRACKS;
+    //        break;
+    //
+    //    case CAT_MUSIC_ARTIST:
+    //        m_currentCat = CAT_MUSIC_ALBUM;
+    //        break;
+    //
+    //    case CAT_MUSIC_GENRE:
+    //        m_currentCat = CAT_MUSIC_ALBUM;
+    //        break;
+    //
+    //    default:
+    //        break;
+    //    }
+    //}
+    //
+    //invokeQML("reloadPresentation()");
+    //emit categoryChanged();
 }
 
 // A specific item has been asked to be added to the playlist
 void MCMediaLib::addToPlaylist( const int &item_id )
 {
-    if (item_id >= 0 && item_id <= m_currentObj.count())
-    {
-        std::shared_ptr<MLItem> selected_item = m_currentObj.at(item_id);
-        QList<MLAlbumTrack*> tracks = selected_item->getPLTracks();
-
-        for (int i=0 ; i<tracks.size() ; i++)
-        {
-            std::shared_ptr<PLItem> pl_item = std::make_shared<PLItem>(tracks.at(i));
-            m_PLModel->appendItem(pl_item, false);
-        }
-    }
+    //if (item_id >= 0 && item_id <= m_currentObj.count())
+    //{
+    //    std::shared_ptr<MLItem> selected_item = m_currentObj.at(item_id);
+    //    QList<MLAlbumTrack*> tracks = selected_item->getPLTracks();
+    //
+    //    for (int i=0 ; i<tracks.size() ; i++)
+    //    {
+    //        std::shared_ptr<PLItem> pl_item = std::make_shared<PLItem>(tracks.at(i));
+    //        m_PLModel->appendItem(pl_item, false);
+    //    }
+    //}
 }
 
 // A specific sub-item has been asked to be added to the playlist
 void MCMediaLib::addToPlaylist( const int &item_id, const int &subitem_id )
 {
-    if (item_id >= 0 && item_id <= m_currentObj.count())
-    {
-        std::shared_ptr<MLItem> selected_item = m_currentObj.at(item_id);
-        QList<std::shared_ptr<MLItem>> subitems = selected_item->getDetailsObjects(m_currentSort, m_isDesc);
-        if (subitem_id >= 0 && subitem_id <= subitems.count())
-        {
-            std::shared_ptr<MLItem> selected_subitem = subitems.at(subitem_id);
-            QList<MLAlbumTrack*> tracks = selected_subitem->getPLTracks();
-
-            for (int i=0 ; i<tracks.size() ; i++)
-            {
-                std::shared_ptr<PLItem> pl_item = std::make_shared<PLItem>(tracks.at(i));
-                m_PLModel->appendItem(pl_item, false);
-            }
-        }
-    }
+    //if (item_id >= 0 && item_id <= m_currentObj.count())
+    //{
+    //    std::shared_ptr<MLItem> selected_item = m_currentObj.at(item_id);
+    //    QList<std::shared_ptr<MLItem>> subitems = selected_item->getDetailsObjects(m_currentSort, m_isDesc);
+    //    if (subitem_id >= 0 && subitem_id <= subitems.count())
+    //    {
+    //        std::shared_ptr<MLItem> selected_subitem = subitems.at(subitem_id);
+    //        QList<MLAlbumTrack*> tracks = selected_subitem->getPLTracks();
+    //
+    //        for (int i=0 ; i<tracks.size() ; i++)
+    //        {
+    //            std::shared_ptr<PLItem> pl_item = std::make_shared<PLItem>(tracks.at(i));
+    //            m_PLModel->appendItem(pl_item, false);
+    //        }
+    //    }
+    //}
 }
 
 // A specific item has been asked to be played,
 // so it's added to the playlist and played
 void MCMediaLib::addAndPlay( const int &item_id )
 {
-    if (item_id >= 0 && item_id <= m_currentObj.count())
-    {
-        std::shared_ptr<MLItem> selected_item = m_currentObj.at(item_id);
-        QList<MLAlbumTrack*> tracks = selected_item->getPLTracks();
-
-        for (int i=0 ; i<tracks.size() ; i++)
-        {
-            std::shared_ptr<PLItem> pl_item = std::make_shared<PLItem>(tracks.at(i));
-            m_PLModel->appendItem(pl_item, i==0);
-        }
-    }
+    //if (item_id >= 0 && item_id <= m_currentObj.count())
+    //{
+    //    std::shared_ptr<MLItem> selected_item = m_currentObj.at(item_id);
+    //    QList<MLAlbumTrack*> tracks = selected_item->getPLTracks();
+    //
+    //    for (int i=0 ; i<tracks.size() ; i++)
+    //    {
+    //        std::shared_ptr<PLItem> pl_item = std::make_shared<PLItem>(tracks.at(i));
+    //        m_PLModel->appendItem(pl_item, i==0);
+    //    }
+    //}
 }
 
 // A specific sub-item has been asked to be played,
 // so it's added to the playlist and played
 void MCMediaLib::addAndPlay( const int &item_id, const int &subitem_id )
 {
-    if (item_id >= 0 && item_id <= m_currentObj.count())
-    {
-        std::shared_ptr<MLItem> selected_item = m_currentObj.at(item_id);
-        QList<std::shared_ptr<MLItem>> subitems = selected_item->getDetailsObjects(m_currentSort, m_isDesc);
-        if (subitem_id >= 0 && subitem_id <= subitems.count())
-        {
-            std::shared_ptr<MLItem> selected_subitem = subitems.at(subitem_id);
-            QList<MLAlbumTrack*> tracks = selected_subitem->getPLTracks();
-
-            for (int i=0 ; i<tracks.size() ; i++)
-            {
-                std::shared_ptr<PLItem> pl_item = std::make_shared<PLItem>(tracks.at(i));
-                m_PLModel->appendItem(pl_item, i==0);
-            }
-        }
-    }
-}
-
-// The object that should be presented in the presentation banner
-QVariant MCMediaLib::getPresObject()
-{
-    if (m_currentMainObj)
-        return QVariant::fromValue( m_currentMainObj.get() );
-    else
-        return QVariant();
+    //if (item_id >= 0 && item_id <= m_currentObj.count())
+    //{
+    //    std::shared_ptr<MLItem> selected_item = m_currentObj.at(item_id);
+    //    QList<std::shared_ptr<MLItem>> subitems = selected_item->getDetailsObjects(m_currentSort, m_isDesc);
+    //    if (subitem_id >= 0 && subitem_id <= subitems.count())
+    //    {
+    //        std::shared_ptr<MLItem> selected_subitem = subitems.at(subitem_id);
+    //        QList<MLAlbumTrack*> tracks = selected_subitem->getPLTracks();
+    //
+    //        for (int i=0 ; i<tracks.size() ; i++)
+    //        {
+    //            std::shared_ptr<PLItem> pl_item = std::make_shared<PLItem>(tracks.at(i));
+    //            m_PLModel->appendItem(pl_item, i==0);
+    //        }
+    //    }
+    //}
 }
 
 // When a source (or sub-source) is selected (Music / Music>Albums / Videos / ...)
 void MCMediaLib::selectSource( const QString &name )
 {
-    if (name == "music" && m_currentCat != CAT_MUSIC_ALBUM)
-    {
-        msg_Dbg( m_intf, "Switching to music-general view");
-        m_currentCat = CAT_MUSIC_ALBUM;
-        retrieveAlbums();
-        if (m_currentMainObj) m_currentMainObj = nullptr;
-        invokeQML("reloadPresentation()");
-        invokeQML("changedCategory()");
-    }
-    else if (name == "music-albums" && m_currentCat != CAT_MUSIC_ALBUM)
-    {
-        msg_Dbg( m_intf, "Switching to music-albums view");
-        m_currentCat = CAT_MUSIC_ALBUM;
-        retrieveAlbums();
-        if (m_currentMainObj) m_currentMainObj = nullptr;
-        invokeQML("reloadPresentation()");
-        invokeQML("changedCategory()");
-    }
-    else if (name == "music-artists" && m_currentCat != CAT_MUSIC_ARTIST)
-    {
-        msg_Dbg( m_intf, "Switching to music-artists view");
-        m_currentCat = CAT_MUSIC_ARTIST;
-        retrieveArtists();
-        if (m_currentMainObj) m_currentMainObj = nullptr;
-        invokeQML("reloadPresentation()");
-        invokeQML("changedCategory()");
-    }
-    else if (name == "music-genre" && m_currentCat != CAT_MUSIC_GENRE)
-    {
-        msg_Dbg( m_intf, "Switching to music-genre view");
-        m_currentCat = CAT_MUSIC_GENRE;
-        retrieveGenres();
-        if (m_currentMainObj) m_currentMainObj = nullptr;
-        invokeQML("reloadPresentation()");
-        invokeQML("changedCategory()");
-    }
-    else if (name == "music-tracks" && m_currentCat != CAT_MUSIC_TRACKS)
-    {
-        msg_Dbg( m_intf, "Switching to music-track view");
-        m_currentCat = CAT_MUSIC_TRACKS;
-        retrieveTracks();
-        if (m_currentMainObj) m_currentMainObj = nullptr;
-        invokeQML("reloadPresentation()");
-        invokeQML("changedCategory()");
-    }
-    else if (name == "video" && m_currentCat != CAT_VIDEO)
-    {
-        msg_Dbg( m_intf, "Switching to video-general view");
-        m_currentCat = CAT_VIDEO;
-        retrieveMovies();
-        if (m_currentMainObj) m_currentMainObj = nullptr;
-        invokeQML("reloadPresentation()");
-        invokeQML("changedCategory()");
-    }
-    else if (name == "network" && m_currentCat != CAT_NETWORK)
-    {
-        msg_Dbg( m_intf, "Switching to network-general view");
-        m_currentCat = CAT_NETWORK;
-        retrieveSeries();
-        if (m_currentMainObj) m_currentMainObj = nullptr;
-        invokeQML("reloadPresentation()");
-        invokeQML("changedCategory()");
-    }
-}
-
-// When a sort has been selected, we need to recalculate the model
-void MCMediaLib::sort( const QString &criteria )
-{
-    if (criteria == "Alphabetic asc")
-    {
-        msg_Dbg( m_intf, "Sorting by ascending alphabetic order");
-        m_currentSort = medialibrary::SortingCriteria::Alpha;
-        m_isDesc = false;
-    }
-    else if (criteria == "Alphabetic desc")
-    {
-        msg_Dbg( m_intf, "Sorting by descending alphabetic order");
-        m_currentSort = medialibrary::SortingCriteria::Alpha;
-        m_isDesc = true;
-    }
-    else if (criteria == "Duration asc")
-    {
-        msg_Dbg( m_intf, "Sorting by ascending duration order");
-        m_currentSort = medialibrary::SortingCriteria::Duration;
-        m_isDesc = false;
-    }
-    else if (criteria == "Duration desc")
-    {
-        msg_Dbg( m_intf, "Sorting by descending duration order");
-        m_currentSort = medialibrary::SortingCriteria::Duration;
-        m_isDesc = true;
-    }
-    else if (criteria == "Date asc")
-    {
-        msg_Dbg( m_intf, "Sorting by ascending date order");
-        m_currentSort = medialibrary::SortingCriteria::ReleaseDate;
-        m_isDesc = false;
-    }
-    else if (criteria == "Date desc")
-    {
-        msg_Dbg( m_intf, "Sorting by descending date order");
-        m_currentSort = medialibrary::SortingCriteria::ReleaseDate;
-        m_isDesc = true;
-    }
-    else if (criteria == "Artist asc")
-    {
-        msg_Dbg( m_intf, "Sorting by ascending artist order");
-        m_currentSort = medialibrary::SortingCriteria::Artist;
-        m_isDesc = false;
-    }
-    else if (criteria == "Artist desc")
-    {
-        msg_Dbg( m_intf, "Sorting by descending artist order");
-        m_currentSort = medialibrary::SortingCriteria::Artist;
-        m_isDesc = false;
-    }
-    if (m_currentMainObj)
-    {
-        m_currentObj = m_currentMainObj->getDetailsObjects(m_currentSort, m_isDesc);
-    }
-    else
-    {
-        sortCurrent();
-    }
-    invokeQML("reloadData()");
-}
-
-// Recalculate the list of root objects that should be displayed according to the current category and sort
-void MCMediaLib::sortCurrent()
-{
-    switch (m_currentCat)
-    {
-    case CAT_MUSIC_ALBUM:
-        retrieveAlbums();
-        break;
-    case CAT_MUSIC_ARTIST:
-        retrieveArtists();
-        break;
-    case CAT_MUSIC_GENRE:
-        retrieveGenres();
-        break;
-    case CAT_MUSIC_TRACKS:
-        retrieveTracks();
-        break;
-    case CAT_VIDEO:
-        retrieveMovies();
-        break;
-    case CAT_NETWORK:
-        retrieveSeries();
-        break;
-    default:
-        break;
-    }
+    //if (name == "music" && m_currentCat != CAT_MUSIC_ALBUM)
+    //{
+    //    msg_Dbg( m_intf, "Switching to music-general view");
+    //    m_currentCat = CAT_MUSIC_ALBUM;
+    //    if (m_currentMainObj) m_currentMainObj = nullptr;
+    //    invokeQML("reloadPresentation()");
+    //    emit categoryChanged();
+    //}
+    //else if (name == "music-albums" && m_currentCat != CAT_MUSIC_ALBUM)
+    //{
+    //    msg_Dbg( m_intf, "Switching to music-albums view");
+    //    m_currentCat = CAT_MUSIC_ALBUM;
+    //    if (m_currentMainObj) m_currentMainObj = nullptr;
+    //    invokeQML("reloadPresentation()");
+    //    emit categoryChanged();
+    //}
+    //else if (name == "music-artists" && m_currentCat != CAT_MUSIC_ARTIST)
+    //{
+    //    msg_Dbg( m_intf, "Switching to music-artists view");
+    //    m_currentCat = CAT_MUSIC_ARTIST;
+    //    if (m_currentMainObj) m_currentMainObj = nullptr;
+    //    invokeQML("reloadPresentation()");
+    //    emit categoryChanged();
+    //}
+    //else if (name == "music-genre" && m_currentCat != CAT_MUSIC_GENRE)
+    //{
+    //    msg_Dbg( m_intf, "Switching to music-genre view");
+    //    m_currentCat = CAT_MUSIC_GENRE;
+    //    if (m_currentMainObj) m_currentMainObj = nullptr;
+    //    invokeQML("reloadPresentation()");
+    //    emit categoryChanged();
+    //}
+    //else if (name == "music-tracks" && m_currentCat != CAT_MUSIC_TRACKS)
+    //{
+    //    msg_Dbg( m_intf, "Switching to music-track view");
+    //    m_currentCat = CAT_MUSIC_TRACKS;
+    //    if (m_currentMainObj) m_currentMainObj = nullptr;
+    //    invokeQML("reloadPresentation()");
+    //    emit categoryChanged();
+    //}
+    //else if (name == "video" && m_currentCat != CAT_VIDEO)
+    //{
+    //    msg_Dbg( m_intf, "Switching to video-general view");
+    //    m_currentCat = CAT_VIDEO;
+    //    if (m_currentMainObj) m_currentMainObj = nullptr;
+    //    invokeQML("reloadPresentation()");
+    //    emit categoryChanged();
+    //}
+    //else if (name == "network" && m_currentCat != CAT_NETWORK)
+    //{
+    //    msg_Dbg( m_intf, "Switching to network-general view");
+    //    m_currentCat = CAT_NETWORK;
+    //    if (m_currentMainObj) m_currentMainObj = nullptr;
+    //    invokeQML("reloadPresentation()");
+    //    emit categoryChanged();
+    //}
 }
 
 // Retriever to fetch items in medialib : Recalculate a specific list of root objects
-void MCMediaLib::retrieveAlbums()
+MLAlbumModel* MCMediaLib::getAlbums()
 {
-    m_currentObj = QList<std::shared_ptr<MLItem>>();
-    medialibrary::QueryParameters query_param{ m_currentSort, m_isDesc };
-    std::vector<medialibrary::AlbumPtr> a = m_ml->albums(&query_param)->all();
-    for ( int i=0 ; i<a.size() ; i++ )
-    {
-        std::shared_ptr<MLAlbum> item = std::make_shared<MLAlbum>( a[i] );
-        m_currentObj.append( item );
-    }
+    return m_albumModel;
 }
 
-void MCMediaLib::retrieveArtists()
+MLArtistModel* MCMediaLib::getArtists()
 {
-    m_currentObj = QList<std::shared_ptr<MLItem>>();
-    medialibrary::QueryParameters query_param{ m_currentSort, m_isDesc };
-    std::vector<medialibrary::ArtistPtr> a = m_ml->artists(true, &query_param)->all();
-    for ( int i=0 ; i<a.size() ; i++ )
-    {
-        std::shared_ptr<MLArtist> item = std::make_shared<MLArtist>( a[i] );
-        m_currentObj.append( item );
-    }
+    return m_artistModel;
 }
 
-void MCMediaLib::retrieveGenres()
+MLGenreModel* MCMediaLib::getGenres()
 {
-    m_currentObj = QList<std::shared_ptr<MLItem>>();
-    medialibrary::QueryParameters query_param{ m_currentSort, m_isDesc };
-    std::vector<medialibrary::GenrePtr> g = m_ml->genres(&query_param)->all();
-    for ( int i=0 ; i<g.size() ; i++ )
-    {
-        std::shared_ptr<MLGenre> item = std::make_shared<MLGenre>( g[i] );
-        m_currentObj.append( item );
-    }
+    return m_genreModel;
 }
 
-void MCMediaLib::retrieveTracks()
+MLAlbumTrackModel* MCMediaLib::getTracks()
 {
-    m_currentObj = QList<std::shared_ptr<MLItem>>();
-    medialibrary::QueryParameters query_param{ m_currentSort, m_isDesc };
-    std::vector<medialibrary::MediaPtr> t = m_ml->audioFiles(&query_param)->all();
-    for ( int i=0 ; i<t.size() ; i++ )
-    {
-        std::shared_ptr<MLAlbumTrack> item = std::make_shared<MLAlbumTrack>( t[i] );
-        m_currentObj.append( item );
-    }
+    return m_trackModel;
 }
 
-void MCMediaLib::retrieveMovies()
+void MCMediaLib::getMovies()
 {
-    m_currentObj = QList<std::shared_ptr<MLItem>>();
-/* NOT IMPLEMENTED YET IN API
- */
+
 }
 
-void MCMediaLib::retrieveSeries()
+void MCMediaLib::getSeries()
 {
-    m_currentObj = QList<std::shared_ptr<MLItem>>();
-/* NOT IMPLEMENTED YET IN API
- */
+
 }
 
 // Invoke a given QML function (used to notify the view part of a change)

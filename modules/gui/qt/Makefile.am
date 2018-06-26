@@ -111,23 +111,33 @@ libqt_plugin_la_SOURCES = \
 	gui/qt/components/epg/EPGView.cpp gui/qt/components/epg/EPGView.hpp \
 	gui/qt/components/epg/EPGWidget.cpp \
 	gui/qt/components/epg/EPGWidget.hpp \
-	gui/qt/components/mediacenter/excallback.hpp \
 	gui/qt/components/mediacenter/mcmedialib.cpp \
 	gui/qt/components/mediacenter/mcmedialib.hpp \
 	gui/qt/components/mediacenter/mlalbum.cpp \
 	gui/qt/components/mediacenter/mlalbum.hpp \
+	gui/qt/components/mediacenter/mlalbummodel.cpp \
+	gui/qt/components/mediacenter/mlalbummodel.hpp \
 	gui/qt/components/mediacenter/mlalbumtrack.cpp \
 	gui/qt/components/mediacenter/mlalbumtrack.hpp \
+	gui/qt/components/mediacenter/mlalbumtrackmodel.cpp \
+	gui/qt/components/mediacenter/mlalbumtrackmodel.hpp \
+	gui/qt/components/mediacenter/mlartist.cpp \
+	gui/qt/components/mediacenter/mlartist.hpp \
+	gui/qt/components/mediacenter/mlartistmodel.cpp \
+	gui/qt/components/mediacenter/mlartistmodel.hpp \
+	gui/qt/components/mediacenter/mlbasemodel.cpp \
+	gui/qt/components/mediacenter/mlbasemodel.hpp \
+	gui/qt/components/mediacenter/mlgenre.cpp \
+	gui/qt/components/mediacenter/mlgenre.hpp \
+	gui/qt/components/mediacenter/mlgenremodel.cpp \
+	gui/qt/components/mediacenter/mlgenremodel.hpp \
+	gui/qt/components/mediacenter/mlhelper.hpp \
 	gui/qt/components/mediacenter/mlitem.cpp \
 	gui/qt/components/mediacenter/mlitem.hpp \
 	gui/qt/components/mediacenter/mlmovie.cpp \
-	gui/qt/components/mediacenter/mlmovie.hpp \
 	gui/qt/components/mediacenter/mlserie.cpp \
 	gui/qt/components/mediacenter/mlserie.hpp \
-	gui/qt/components/mediacenter/mlgenre.cpp \
-	gui/qt/components/mediacenter/mlgenre.hpp \
-	gui/qt/components/mediacenter/mlartist.cpp \
-	gui/qt/components/mediacenter/mlartist.hpp \
+	gui/qt/components/mediacenter/mlmovie.hpp \
 	gui/qt/components/playlist/views.cpp \
 	gui/qt/components/playlist/views.hpp \
 	gui/qt/components/playlist/vlc_model.cpp \
@@ -150,8 +160,6 @@ libqt_plugin_la_SOURCES = \
 	gui/qt/components/sout/sout_widgets.cpp \
 	gui/qt/components/sout/sout_widgets.hpp \
 	gui/qt/components/sout/profiles.hpp \
-	gui/qt/components/utils/mlitemmodel.hpp \
-	gui/qt/components/utils/mlitemmodel.cpp \
 	gui/qt/util/animators.cpp gui/qt/util/animators.hpp \
 	gui/qt/util/input_slider.cpp gui/qt/util/input_slider.hpp \
 	gui/qt/util/timetooltip.cpp gui/qt/util/timetooltip.hpp \
@@ -245,10 +253,17 @@ nodist_libqt_plugin_la_SOURCES = \
 	gui/qt/components/epg/EPGWidget.moc.cpp \
 	gui/qt/components/mediacenter/mcmedialib.moc.cpp \
 	gui/qt/components/mediacenter/mlalbum.moc.cpp \
+	gui/qt/components/mediacenter/mlalbummodel.moc.cpp \
 	gui/qt/components/mediacenter/mlalbumtrack.moc.cpp \
+	gui/qt/components/mediacenter/mlalbumtrackmodel.moc.cpp \
 	gui/qt/components/mediacenter/mlartist.moc.cpp \
+	gui/qt/components/mediacenter/mlartistmodel.moc.cpp \
+	gui/qt/components/mediacenter/mlbasemodel.moc.cpp \
 	gui/qt/components/mediacenter/mlgenre.moc.cpp \
+	gui/qt/components/mediacenter/mlgenremodel.moc.cpp \
 	gui/qt/components/mediacenter/mlitem.moc.cpp \
+	gui/qt/components/mediacenter/mlmovie.moc.cpp \
+	gui/qt/components/mediacenter/mlserie.moc.cpp \
 	gui/qt/components/playlist/views.moc.cpp \
 	gui/qt/components/playlist/vlc_model.moc.cpp \
 	gui/qt/components/playlist/mediacenter_model.moc.cpp \
@@ -258,7 +273,6 @@ nodist_libqt_plugin_la_SOURCES = \
 	gui/qt/components/playlist/standardpanel.moc.cpp \
 	gui/qt/components/sout/profile_selector.moc.cpp \
 	gui/qt/components/sout/sout_widgets.moc.cpp \
-	gui/qt/components/utils/mlitemmodel.moc.cpp \
 	gui/qt/util/animators.moc.cpp \
 	gui/qt/util/input_slider.moc.cpp \
 	gui/qt/util/timetooltip.moc.cpp \

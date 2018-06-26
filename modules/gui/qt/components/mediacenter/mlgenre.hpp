@@ -21,53 +21,39 @@
  * 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
  *****************************************************************************/
 
-#pragma once
+#ifndef MLGENRE_HPP
+#define MLGENRE_HPP
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include <memory>
 #include <QObject>
 #include <QString>
 #include <QList>
-#include <medialibrary/IGenre.h>
-#include <medialibrary/IArtist.h>
-#include <medialibrary/IAlbum.h>
-#include <medialibrary/IAlbumTrack.h>
-#include <medialibrary/Types.h>
+#include <vlc_media_library.h>
+#include "mlhelper.hpp"
 
-#include <memory>
-
-#include "mlartist.hpp"
-#include "mlalbum.hpp"
-#include "mlalbumtrack.hpp"
-#include "mlitem.hpp"
-#include "components/utils/mlitemmodel.hpp"
-
-class MLGenre : public MLItem
+class MLGenre : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(uint64_t id READ getId)
+    Q_PROPERTY(QString name READ getName)
+    Q_PROPERTY(unsigned int nbtracks READ getNbTracks)
+
 public:
-    MLGenre( medialibrary::GenrePtr _data, QObject *_parent = nullptr);
+    MLGenre( const ml_genre_t *_data, QObject *_parent = nullptr);
 
-    Q_INVOKABLE QString getId() const;
-    Q_INVOKABLE QString getName() const;
-    Q_INVOKABLE QString getNbTracks() const;
-    Q_INVOKABLE MLItemModel* getArtists() const;
-    Q_INVOKABLE MLItemModel* getTracks() const;
-    Q_INVOKABLE MLItemModel* getAlbums() const;
-
-    Q_INVOKABLE QString getPresName() const;
-    Q_INVOKABLE QString getPresImage() const;
-    Q_INVOKABLE QString getPresInfo() const;
-    Q_INVOKABLE QList<MLAlbumTrack *> getPLTracks() const;
-    QList<std::shared_ptr<MLItem>> getDetailsObjects(medialibrary::SortingCriteria sort = medialibrary::SortingCriteria::Default, bool desc = false);
+    uint64_t getId() const;
+    QString getName() const;
+    unsigned int getNbTracks() const;
 
 private:
-    int64_t m_id;
+    uint64_t m_id;
     QString m_name;
-    uint32_t m_nbTracks;
-    QList<std::shared_ptr<MLItem>> m_artists;
-    QList<std::shared_ptr<MLItem>> m_tracks;
-    QList<std::shared_ptr<MLItem>> m_albums;
-
-    medialibrary::GenrePtr m_data;
-
+    unsigned int m_nbTracks;
 };
+
+#endif

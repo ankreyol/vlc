@@ -20,18 +20,35 @@
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
  *****************************************************************************/
+#ifndef MLSERIE_HPP
+#define MLSERIE_HPP
 
-#pragma once
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
-#include <qt5/QtCore/QString>
-#include <medialibrary/Types.h>
+#include <memory>
+#include <QString>
+#include <QObject>
+#include <vlc_media_library.h>
+#include "mlhelper.hpp"
 
-class MLSerie
+class MLShow : public QObject
 {
-public:
-    MLSerie( medialibrary::AlbumPtr data );
+    Q_OBJECT
 
+    Q_PROPERTY(uint64_t id READ getId)
+    Q_PROPERTY(QString title READ getTitle)
+    Q_PROPERTY(QString duration READ getDuration)
+    Q_PROPERTY(QString cover READ getCover)
+
+public:
+    MLShow( const ml_show_t *_data );
+
+    uint64_t getId() { return 0; }
     QString getTitle() { return QString(""); }
     QString getDuration() { return QString(""); }
     QString getCover() { return QString(""); }
 };
+
+#endif

@@ -21,46 +21,56 @@
  * 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
  *****************************************************************************/
 
-#pragma once
+#ifndef MLARTIST_HPP
+#define MLARTIST_HPP
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include <QObject>
 #include <QString>
 #include <QList>
-#include <medialibrary/IAlbum.h>
-#include <medialibrary/IArtist.h>
-#include <medialibrary/Types.h>
-
 #include <memory>
+#include <vlc_media_library.h>
 
 #include "mlalbum.hpp"
 #include "mlitem.hpp"
-#include "components/utils/mlitemmodel.hpp"
+#include "mlhelper.hpp"
 
-class MLArtist : public MLItem
+class MLArtist : public QObject
 {
     Q_OBJECT
-public:
-    MLArtist(medialibrary::ArtistPtr _data, QObject *_parent = nullptr);
 
-    Q_INVOKABLE QString getId() const;
-    Q_INVOKABLE QString getName() const;
-    Q_INVOKABLE QString getShortBio() const;
-    Q_INVOKABLE MLItemModel *getAlbums() const;
-    Q_INVOKABLE QString getCover() const;
-    Q_INVOKABLE QString getNbAlbums() const;
+    Q_PROPERTY(uint64_t id READ getId)
+    Q_PROPERTY(QString name READ getName)
+    Q_PROPERTY(QString shortbio READ getShortBio)
+    Q_PROPERTY(QString cover READ getCover)
+    Q_PROPERTY(unsigned int nbalbums READ getNbAlbums)
+    Q_PROPERTY(unsigned int nbtracks READ getNbTracks)
+
+public:
+    MLArtist(const ml_artist_t *_data, QObject *_parent = nullptr);
+
+    uint64_t getId() const;
+    QString getName() const;
+    QString getShortBio() const;
+    QString getCover() const;
+    unsigned int getNbAlbums() const;
+    unsigned int getNbTracks() const;
 
     Q_INVOKABLE QString getPresName() const;
     Q_INVOKABLE QString getPresImage() const;
     Q_INVOKABLE QString getPresInfo() const;
-    Q_INVOKABLE QList<MLAlbumTrack *> getPLTracks() const;
-    QList<std::shared_ptr<MLItem>> getDetailsObjects(medialibrary::SortingCriteria sort = medialibrary::SortingCriteria::Default, bool desc = false);
+    //Q_INVOKABLE QList<MLAlbumTrack *> getPLTracks() const;
 
 private:
-    int64_t m_id;
+    uint64_t m_id;
     QString m_name;
     QString m_shortBio;
-    QList<std::shared_ptr<MLItem>> m_albums;
     QString m_cover;
-
-    medialibrary::ArtistPtr m_data;
+    unsigned int m_nbAlbums;
+    unsigned int m_nbTracks;
 };
+
+#endif

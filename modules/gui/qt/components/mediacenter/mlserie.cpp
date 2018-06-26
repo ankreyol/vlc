@@ -23,7 +23,7 @@
 
 #include "mlserie.hpp"
 
-MLSerie::MLSerie(medialibrary::AlbumPtr data)
+MLShow::MLShow(const ml_show_t * data)
 {
 
 }

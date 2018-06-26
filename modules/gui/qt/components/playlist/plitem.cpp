@@ -49,7 +49,7 @@ QString PLItem::getName()
     return QString( "plop" );
 }
 
-QString PLItem::getDuration()
+unsigned int PLItem::getDuration()
 {
     return pl_item->getDuration();
 }

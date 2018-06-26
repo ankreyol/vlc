@@ -21,30 +21,32 @@
  * 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
  *****************************************************************************/
 
+#include <cassert>
 #include "mlalbumtrack.hpp"
+#include "mlhelper.hpp"
 
-MLAlbumTrack::MLAlbumTrack(medialibrary::MediaPtr _data, QObject *_parent ):
-    m_data       ( _data ),
-    m_title      ( QString::fromStdString( _data->title() ) ),
-    m_trackNumber( _data->albumTrack()->trackNumber() ),
-    m_duration   ( _data->duration() ),
-    MLItem( _parent )
+MLAlbumTrack::MLAlbumTrack(const ml_media_t *_data, QObject *_parent )
+    : QObject( _parent )
+    , m_id         ( _data->i_id)
+    , m_title      ( QString::fromUtf8( _data->psz_title ) )
+    , m_trackNumber( _data->album_track.i_track_nb )
+    , m_duration   ( _data->i_duration )
 {
-    // Only select album-related info if it's an album track
-    if (_data->subType() == medialibrary::IMedia::SubType::AlbumTrack)
-    {
-        m_albumTitle = QString::fromStdString( _data->albumTrack()->album()->title() );
-        m_cover = QString::fromStdString( _data->albumTrack()->album()->artworkMrl() );
-    }
-    // Look for a file of type 'Main' (this is the file to play)
-    const std::vector<medialibrary::FilePtr>& files = _data->files();
-    int i=0;
-    while( i<files.size() && files[i]->type() == medialibrary::IFile::Type::Main )
-        i++;
-    if ( i >= files.size() )
-        m_mrl = QString::fromStdString( files[0]->mrl() );
-    else
-        m_mrl = QString::fromStdString( files[i]->mrl() );
+    assert( _data );
+    assert( _data->i_type == ML_MEDIA_TYPE_AUDIO );
+
+    for( const ml_file_t& file: ml_range_iterate<ml_file_t>( _data->p_files ) )
+        if( file.i_type == ML_FILE_TYPE_MAIN )
+        {
+            //FIXME should we store every mrl
+            m_mrl = QString::fromUtf8(file.psz_mrl);
+            break;
+        }
+}
+
+uint64_t MLAlbumTrack::getId() const
+{
+    return m_id;
 }
 
 QString MLAlbumTrack::getTitle() const
@@ -62,33 +64,14 @@ QString MLAlbumTrack::getCover() const
     return m_cover;
 }
 
-QString MLAlbumTrack::getTrackNumber() const
+unsigned int MLAlbumTrack::getTrackNumber() const
 {
-    return QString::number( m_trackNumber );
+    return m_trackNumber;
 }
 
-QString MLAlbumTrack::getDuration() const
+unsigned int MLAlbumTrack::getDuration() const
 {
-    unsigned int sec = m_duration / 1000;
-    unsigned int min = sec / 60;
-    unsigned int hour = min / 60;
-    std::string sec_str = std::to_string( sec - min * 60 );
-    std::string min_str = std::to_string( min - hour * 60 );
-    std::string hour_str = std::to_string( hour );
-    QString sec_disp = QString::fromStdString(
-        std::string(2-sec_str.length(), '0').append(sec_str)
-    );
-    QString min_disp = QString::fromStdString(
-        std::string(2-min_str.length(), '0').append(min_str)
-    );
-    QString hour_disp = QString::fromStdString(
-        std::string(2-hour_str.length(), '0').append(hour_str)
-    );
-
-    if ( hour > 0 )
-        return hour_disp + ":" + min_disp + ":" + sec_disp;
-    else
-        return min_disp + ":" + sec_disp;
+    return m_duration;
 }
 
 QString MLAlbumTrack::getMRL() const
@@ -109,16 +92,4 @@ QString MLAlbumTrack::getPresImage() const
 QString MLAlbumTrack::getPresInfo() const
 {
     return "";
-}
-
-QList<MLAlbumTrack*> MLAlbumTrack::getPLTracks() const
-{
-    QList<MLAlbumTrack*> result;
-    result.append( new MLAlbumTrack(m_data, this->parent() ) );
-    return result;
-}
-
-QList<std::shared_ptr<MLItem>> MLAlbumTrack::getDetailsObjects(medialibrary::SortingCriteria sort, bool desc)
-{
-    return QList<std::shared_ptr<MLItem>>();
 }

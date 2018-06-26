@@ -21,35 +21,21 @@
  * 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
  *****************************************************************************/
 
+#include <cassert>
 #include "mlgenre.hpp"
 
-MLGenre::MLGenre(medialibrary::GenrePtr _data, QObject *_parent ) :
-    m_data    ( _data ),
-    m_id      ( _data->id() ),
-    m_name    ( QString::fromStdString( _data->name() ) ),
-    m_nbTracks( _data->nbTracks() ),
-    m_artists ( QList<std::shared_ptr<MLItem>>() ),
-    m_tracks  ( QList<std::shared_ptr<MLItem>>() ),
-    m_albums  ( QList<std::shared_ptr<MLItem>>() ),
-    MLItem(_parent)
+MLGenre::MLGenre(const ml_genre_t *_data, QObject *_parent )
+    : QObject(_parent)
+    , m_id      ( _data->i_id )
+    , m_name    ( QString::fromUtf8( _data->psz_name ) )
+
 {
-    // Fill m_artists
-    std::vector<medialibrary::ArtistPtr> a = _data->artists()->all();
-    for (int i=0 ; i<a.size() ; i++ )
-        m_artists.append( std::make_shared<MLArtist>( a[i] ) );
-    // Fill m_tracks
-    std::vector<medialibrary::MediaPtr> t = _data->tracks()->all();
-    for (int i=0 ; i<t.size() ; i++ )
-        m_tracks.append( std::make_shared<MLAlbumTrack>( t[i] ) );
-    // Fill m_albums
-    std::vector<medialibrary::AlbumPtr> a2 = _data->albums()->all();
-    for (int i=0 ; i<a2.size() ; i++ )
-        m_albums.append( std::make_shared<MLAlbum>( a2[i] ) );
+    assert(_data);
 }
 
-QString MLGenre::getId() const
+uint64_t MLGenre::getId() const
 {
-    return QString::number( m_id );
+    return m_id;
 }
 
 QString MLGenre::getName() const
@@ -57,56 +43,41 @@ QString MLGenre::getName() const
     return m_name;
 }
 
-QString MLGenre::getNbTracks() const
+unsigned int MLGenre::getNbTracks() const
 {
-    return QString::number( m_nbTracks );
+    return m_nbTracks;
 }
 
-MLItemModel* MLGenre::getArtists() const
-{
-    return new MLItemModel( m_artists );
-}
+//QString MLGenre::getPresName() const
+//{
+//    return m_name;
+//}
+//
+//QString MLGenre::getPresImage() const
+//{
+//    return QString();
+//}
+//
+//QString MLGenre::getPresInfo() const
+//{
+//    return QString();
+//}
 
-MLItemModel* MLGenre::getTracks() const
-{
-    return new MLItemModel( m_tracks );
-}
-
-MLItemModel* MLGenre::getAlbums() const
-{
-    return new MLItemModel( m_albums );
-}
-
-QString MLGenre::getPresName() const
-{
-    return m_name;
-}
-
-QString MLGenre::getPresImage() const
-{
-    return QString();
-}
-
-QString MLGenre::getPresInfo() const
-{
-    return QString();
-}
-
-QList<MLAlbumTrack*> MLGenre::getPLTracks() const
-{
-    QList<MLAlbumTrack*> result;
-    std::vector<medialibrary::MediaPtr> t = m_data->tracks()->all();
-    for (int i=0 ; i<t.size() ; i++ )
-        result.append( new MLAlbumTrack( t[i] ) );
-    return result;
-}
-
-QList<std::shared_ptr<MLItem>> MLGenre::getDetailsObjects(medialibrary::SortingCriteria sort, bool desc)
-{
-    QList<std::shared_ptr<MLItem>> result;
-    medialibrary::QueryParameters queryparam{ sort, desc  };
-    std::vector<medialibrary::AlbumPtr> t = m_data->albums(&queryparam)->all();
-    for (int i=0 ; i<t.size() ; i++ )
-        result.append( std::make_shared<MLAlbum>( t[i] ) );
-    return result;
-}
+//QList<MLAlbumTrack*> MLGenre::getPLTracks() const
+//{
+//    QList<MLAlbumTrack*> result;
+//    std::vector<medialibrary::MediaPtr> t = m_data->tracks()->all();
+//    for (int i=0 ; i<t.size() ; i++ )
+//        result.append( new MLAlbumTrack( t[i] ) );
+//    return result;
+//}
+//
+//QList<std::shared_ptr<MLItem>> MLGenre::getDetailsObjects(medialibrary::SortingCriteria sort, bool desc)
+//{
+//    QList<std::shared_ptr<MLItem>> result;
+//    medialibrary::QueryParameters queryparam{ sort, desc  };
+//    std::vector<medialibrary::AlbumPtr> t = m_data->albums(&queryparam)->all();
+//    for (int i=0 ; i<t.size() ; i++ )
+//        result.append( std::make_shared<MLAlbum>( t[i] ) );
+//    return result;
+//}

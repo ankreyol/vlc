@@ -41,7 +41,7 @@ Row {
         width: VLCStyle.cover_large
         height: VLCStyle.cover_large
 
-        source: model.album_cover || VLCStyle.noArtCover
+        source: model.cover || VLCStyle.noArtCover
     }
 
     Column {
@@ -64,7 +64,7 @@ Row {
             Text {
                 id: expand_infos_title_id
 
-                text: "<b>"+(model.album_title || "Unknown title")+"</b>"
+                text: "<b>"+(model.title || "Unknown title")+"</b>"
                 color: VLCStyle.textColor
             }
         }
@@ -75,13 +75,13 @@ Row {
             z: expand_infos_titleRect_id.z - 1
             height: Math.min(
                 root.height - expand_infos_titleRect_id.height - expand_infos_id.spacing,
-                model.album_nb_tracks * (
+                model.nb_tracks * (
                     expand_infos_id.spacing + VLCStyle.margin_xxxsmall + VLCStyle.fontSize_normal
                 ) - VLCStyle.margin_xxxsmall - expand_infos_id.spacing
             )
             width: expand_infos_id.width - x
 
-            tracks: model.album_tracks
+            tracks: model.tracks
             parentIndex: currentIndex
         }
     }

@@ -23,7 +23,6 @@
 
 #include "mlmovie.hpp"
 
-MLMovie::MLMovie(medialibrary::AlbumPtr data)
+MLMovie::MLMovie(const ml_media_t * _data)
 {
-
 }

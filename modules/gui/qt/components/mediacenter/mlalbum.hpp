@@ -23,42 +23,50 @@
 
 #pragma once
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <QObject>
 #include <QString>
 #include <QList>
-#include <medialibrary/IAlbum.h>
-#include <medialibrary/IArtist.h>
-#include <medialibrary/Types.h>
-
 #include <memory>
+#include "vlc_media_library.h"
+#include "mlhelper.hpp"
 
 #include "mlalbumtrack.hpp"
 #include "mlitem.hpp"
-#include "components/utils/mlitemmodel.hpp"
 
-class MLAlbum : public MLItem
+class MLAlbum : public QObject
 {
     Q_OBJECT
 
-public:
-    MLAlbum( medialibrary::AlbumPtr _data, QObject *_parent = nullptr);
+    Q_PROPERTY(int64_t id READ getId)
+    Q_PROPERTY(QString title READ getTitle)
+    Q_PROPERTY(unsigned int releaseyear READ getReleaseYear)
+    Q_PROPERTY(QString shortsummary READ getShortSummary)
+    Q_PROPERTY(QString cover READ getCover)
+    Q_PROPERTY(QString artist READ getArtist)
+    Q_PROPERTY(QList<QString> artists READ getArtists)
+    Q_PROPERTY(unsigned int nbtracks READ getNbTracks)
+    Q_PROPERTY(unsigned int duration READ getDuration)
 
-    Q_INVOKABLE QString getId() const;
-    Q_INVOKABLE QString getTitle() const;
-    Q_INVOKABLE QString getReleaseYear() const;
-    Q_INVOKABLE QString getShortSummary() const;
-    Q_INVOKABLE QString getCover() const;
-    Q_INVOKABLE MLItemModel* getTracks() const;
-    Q_INVOKABLE QString getArtist() const;
-    Q_INVOKABLE QList<QString> getArtists() const;
-    Q_INVOKABLE QString getNbTracks() const;
-    Q_INVOKABLE QString getDuration() const;
+public:
+    MLAlbum(const ml_album_t *_data, QObject *_parent = nullptr);
+
+    int64_t getId() const;
+    QString getTitle() const;
+    unsigned int getReleaseYear() const;
+    QString getShortSummary() const;
+    QString getCover() const;
+    QString getArtist() const;
+    QList<QString> getArtists() const;
+    unsigned int getNbTracks() const;
+    unsigned int getDuration() const;
 
     Q_INVOKABLE QString getPresName() const;
     Q_INVOKABLE QString getPresImage() const;
     Q_INVOKABLE QString getPresInfo() const;
-    Q_INVOKABLE QList<MLAlbumTrack *> getPLTracks() const;
-    QList<std::shared_ptr<MLItem>> getDetailsObjects(medialibrary::SortingCriteria sort = medialibrary::SortingCriteria::Default, bool desc = false);
 
 private:
     int64_t m_id;
@@ -66,11 +74,8 @@ private:
     unsigned int m_releaseYear;
     QString m_shortSummary;
     QString m_cover;
-    QList<std::shared_ptr<MLItem>> m_tracks;
     QString m_mainArtist;
     QList<QString> m_otherArtists;
-    uint32_t m_nbTracks;
+    unsigned int m_nbTracks;
     unsigned int m_duration;
-
-    medialibrary::AlbumPtr m_data;
 };

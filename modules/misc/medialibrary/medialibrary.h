@@ -129,10 +129,18 @@ public:
     void* Get( int query, int64_t id );
 
 private:
-    static medialibrary::IMedia::MetadataType metadataType( int meta );
     int getMeta( int64_t mediaId, int meta, char** result );
     int setMeta(int64_t mediaId, int meta, const char* value );
     int filterListChildrenQuery( int query, int parentType );
+    int listAlbums( int listQuery, const medialibrary::QueryParameters* paramsPtr,
+                    uint32_t nbItems, uint32_t offset, va_list args );
+    int listArtists( int listQuery, const medialibrary::QueryParameters* paramsPtr,
+                    uint32_t nbItems, uint32_t offset, va_list args );
+    int listGenre( int listQuery, const medialibrary::QueryParameters* paramsPtr,
+                    uint32_t nbItems, uint32_t offset, va_list args );
+
+    static medialibrary::IMedia::MetadataType metadataType( int meta );
+    static medialibrary::SortingCriteria sortingCriteria( int sort );
 
 private:
     std::unique_ptr<Logger> m_logger;

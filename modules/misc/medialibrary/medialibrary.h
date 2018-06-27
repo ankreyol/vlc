@@ -200,20 +200,6 @@ void Release( T* entity )
     free( entity );
 }
 
-// Dispatcher to libvlccore's ml release functions
-static inline void Release( vlc_ml_show_t* show ) { vlc_ml_show_release( show ); }
-static inline void Release( vlc_ml_artist_t* artist ) { vlc_ml_artist_release( artist ); }
-static inline void Release( vlc_ml_album_t* album ) { vlc_ml_album_release( album ); }
-static inline void Release( vlc_ml_genre_t* genre ) { vlc_ml_genre_release( genre ); }
-static inline void Release( vlc_ml_media_t* media ) { vlc_ml_media_release( media ); }
-static inline void Release( vlc_ml_label_list_t* list ) { vlc_ml_label_list_release( list ); }
-static inline void Release( vlc_ml_file_list_t* list ) { vlc_ml_file_list_release( list ); }
-static inline void Release( vlc_ml_artist_list_t* list ) { vlc_ml_artist_list_release( list ); }
-static inline void Release( vlc_ml_media_list_t* list ) { vlc_ml_media_list_release( list ); }
-static inline void Release( vlc_ml_album_list_t* list ) { vlc_ml_album_list_release( list ); }
-static inline void Release( vlc_ml_show_list_t* list ) { vlc_ml_show_list_release( list ); }
-static inline void Release( vlc_ml_genre_list_t* list ) { vlc_ml_genre_list_release( list ); }
-
 template <typename To, typename From>
 To* ml_convert_list( const std::vector<std::shared_ptr<From>>& input )
 {
@@ -226,7 +212,7 @@ To* ml_convert_list( const std::vector<std::shared_ptr<From>>& input )
     // Allocate the ml_*_list_t
     auto list = wrapCPtr<To>(
         reinterpret_cast<To*>( malloc( sizeof( To ) ) ),
-        static_cast<void(*)(To*)>( &Release ) );
+        static_cast<void(*)(To*)>( &vlc_ml_release_obj ) );
     if ( unlikely( list == nullptr ) )
         return nullptr;
     using ItemType = typename std::remove_pointer<decltype(To::p_items)>::type;
@@ -251,7 +237,7 @@ T* CreateAndConvert( const Input* input )
 {
     auto res = wrapCPtr<T>(
                 reinterpret_cast<T*>( malloc( sizeof( T ) ) ),
-                static_cast<void(*)(T*)>( &Release ) );
+                static_cast<void(*)(T*)>( &vlc_ml_release_obj ) );
     if ( unlikely( res == nullptr ) )
         return nullptr;
     if ( Convert( input, *res ) == false )

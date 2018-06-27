@@ -370,66 +370,106 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
 
         case VLC_ML_LIST_VIDEOS:
         {
-            auto query = m_ml->videoFiles( paramsPtr );
+            medialibrary::Query<medialibrary::IMedia> query;
+            if ( params->psz_pattern != nullptr )
+                query = m_ml->searchVideo( params->psz_pattern, paramsPtr );
+            else
+                query = m_ml->videoFiles( paramsPtr );
             auto res = ml_convert_list<vlc_ml_media_list_t>( query->items( nbItems, offset ) );
             *va_arg( args, vlc_ml_media_list_t**) = res;
             break;
         }
         case VLC_ML_COUNT_VIDEOS:
         {
-            auto query = m_ml->videoFiles( paramsPtr );
+            medialibrary::Query<medialibrary::IMedia> query;
+            if ( params->psz_pattern != nullptr )
+                query = m_ml->searchVideo( params->psz_pattern, paramsPtr );
+            else
+                query = m_ml->videoFiles( paramsPtr );
             *va_arg( args, size_t* ) = query->count();
             break;
         }
         case VLC_ML_LIST_AUDIOS:
         {
-            auto query = m_ml->audioFiles( paramsPtr );
+            medialibrary::Query<medialibrary::IMedia> query;
+            if ( params->psz_pattern != nullptr )
+                query = m_ml->searchAudio( params->psz_pattern, paramsPtr );
+            else
+                query = m_ml->audioFiles( paramsPtr );
             auto res = ml_convert_list<vlc_ml_media_list_t>( query->items( nbItems, offset ) );
             *va_arg( args, vlc_ml_media_list_t**) = res;
             break;
         }
         case VLC_ML_COUNT_AUDIOS:
         {
-            auto query = m_ml->audioFiles( paramsPtr );
+            medialibrary::Query<medialibrary::IMedia> query;
+            if ( params->psz_pattern != nullptr )
+                query = m_ml->searchAudio( params->psz_pattern, paramsPtr );
+            else
+                query = m_ml->audioFiles( paramsPtr );
             *va_arg( args, size_t* ) = query->count();
             break;
         }
         case VLC_ML_LIST_ALBUMS:
         {
-            auto query = m_ml->albums( paramsPtr );
+            medialibrary::Query<medialibrary::IAlbum> query;
+            if ( params->psz_pattern != nullptr )
+                query = m_ml->searchAlbums( params->psz_pattern, paramsPtr );
+            else
+                query = m_ml->albums( paramsPtr );
             auto res = ml_convert_list<vlc_ml_album_list_t>( query->items( nbItems, offset ) );
             *va_arg( args, vlc_ml_album_list_t**) = res;
             break;
         }
         case VLC_ML_COUNT_ALBUMS:
         {
-            auto query = m_ml->albums( paramsPtr );
+            medialibrary::Query<medialibrary::IAlbum> query;
+            if ( params->psz_pattern != nullptr )
+                query = m_ml->searchAlbums( params->psz_pattern, paramsPtr );
+            else
+                query = m_ml->albums( paramsPtr );
             *va_arg( args, size_t* ) = query->count();
             break;
         }
         case VLC_ML_LIST_GENRES:
         {
-            auto query = m_ml->genres( paramsPtr );
+            medialibrary::Query<medialibrary::IGenre> query;
+            if ( params->psz_pattern != nullptr )
+                query = m_ml->searchGenre( params->psz_pattern, paramsPtr );
+            else
+                query = m_ml->genres( paramsPtr );
             auto res = ml_convert_list<vlc_ml_genre_list_t>( query->items( nbItems, offset ) );
             *va_arg( args, vlc_ml_genre_list_t**) = res;
             break;
         }
         case VLC_ML_COUNT_GENRES:
         {
-            auto query = m_ml->genres( paramsPtr );
+            medialibrary::Query<medialibrary::IGenre> query;
+            if ( params->psz_pattern != nullptr )
+                query = m_ml->searchGenre( params->psz_pattern, paramsPtr );
+            else
+                query = m_ml->genres( paramsPtr );
             *va_arg( args, size_t* ) = query->count();
             break;
         }
         case VLC_ML_LIST_ARTISTS:
         {
-            auto query = m_ml->artists( paramsPtr );
+            medialibrary::Query<medialibrary::IArtist> query;
+            if ( params->psz_pattern != nullptr )
+                query = m_ml->searchArtists( params->psz_pattern, paramsPtr );
+            else
+                query = m_ml->artists( paramsPtr );
             auto res = ml_convert_list<vlc_ml_artist_list_t>( query->items( nbItems, offset ) );
             *va_arg( args, vlc_ml_artist_list_t**) = res;
             break;
         }
         case VLC_ML_COUNT_ARTISTS:
         {
-            auto query = m_ml->artists( paramsPtr );
+            medialibrary::Query<medialibrary::IArtist> query;
+            if ( params->psz_pattern != nullptr )
+                query = m_ml->searchArtists( params->psz_pattern, paramsPtr );
+            else
+                query = m_ml->artists( paramsPtr );
             *va_arg( args, size_t* ) = query->count();
             break;
         }

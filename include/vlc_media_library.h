@@ -264,11 +264,22 @@ typedef struct vlc_ml_query_params_t vlc_ml_query_params_t;
 struct vlc_ml_query_params_t
 {
     const char* psz_pattern;
-    vlc_ml_sorting_criteria_t i_sort;
     uint32_t i_nbResults;
     uint32_t i_offset;
+    vlc_ml_sorting_criteria_t i_sort;
     bool b_desc;
 };
+
+static inline vlc_ml_query_params_t vlc_ml_query_params_create()
+{
+    return (vlc_ml_query_params_t) {
+        .psz_pattern = NULL,
+        .i_nbResults = 0,
+        .i_offset = 0,
+        .i_sort = VLC_ML_SORTING_DEFAULT,
+        .b_desc = false
+    };
+}
 
 struct vlc_medialibrary_t
 {

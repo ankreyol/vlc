@@ -181,24 +181,11 @@ bool Convert( const medialibrary::IAlbum* input, vlc_ml_album_t& output );
 
 bool Convert( const medialibrary::IArtist* input, vlc_ml_artist_t& output );
 
-void Release( vlc_ml_genre_t& genre );
 bool Convert( const medialibrary::IGenre* input, vlc_ml_genre_t& output );
 
 bool Convert( const medialibrary::IShow* input, vlc_ml_show_t& output );
 
 bool Convert( const medialibrary::ILabel* input, vlc_ml_label_t& output );
-
-/**
- * Release a heap allocated instance of T.
- */
-template <typename T>
-void Release( T* entity )
-{
-    if ( entity == nullptr )
-        return;
-    Release( *entity );
-    free( entity );
-}
 
 template <typename To, typename From>
 To* ml_convert_list( const std::vector<std::shared_ptr<From>>& input )

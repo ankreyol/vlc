@@ -331,12 +331,14 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
     medialibrary::QueryParameters* paramsPtr = nullptr;
     uint32_t nbItems = 0;
     uint32_t offset = 0;
+    const char* psz_pattern = nullptr;
     if ( params )
     {
         p.desc = params->b_desc;
         p.sort = sortingCriteria( params->i_sort );
         nbItems = params->i_nbResults;
         offset = params->i_offset;
+        psz_pattern = params->psz_pattern;
         paramsPtr = &p;
     }
     switch ( listQuery )
@@ -371,8 +373,8 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
         case VLC_ML_LIST_VIDEOS:
         {
             medialibrary::Query<medialibrary::IMedia> query;
-            if ( params->psz_pattern != nullptr )
-                query = m_ml->searchVideo( params->psz_pattern, paramsPtr );
+            if ( psz_pattern != nullptr )
+                query = m_ml->searchVideo( psz_pattern, paramsPtr );
             else
                 query = m_ml->videoFiles( paramsPtr );
             auto res = ml_convert_list<vlc_ml_media_list_t>( query->items( nbItems, offset ) );
@@ -382,8 +384,8 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
         case VLC_ML_COUNT_VIDEOS:
         {
             medialibrary::Query<medialibrary::IMedia> query;
-            if ( params->psz_pattern != nullptr )
-                query = m_ml->searchVideo( params->psz_pattern, paramsPtr );
+            if ( psz_pattern != nullptr )
+                query = m_ml->searchVideo( psz_pattern, paramsPtr );
             else
                 query = m_ml->videoFiles( paramsPtr );
             *va_arg( args, size_t* ) = query->count();
@@ -392,8 +394,8 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
         case VLC_ML_LIST_AUDIOS:
         {
             medialibrary::Query<medialibrary::IMedia> query;
-            if ( params->psz_pattern != nullptr )
-                query = m_ml->searchAudio( params->psz_pattern, paramsPtr );
+            if ( psz_pattern != nullptr )
+                query = m_ml->searchAudio( psz_pattern, paramsPtr );
             else
                 query = m_ml->audioFiles( paramsPtr );
             auto res = ml_convert_list<vlc_ml_media_list_t>( query->items( nbItems, offset ) );
@@ -403,8 +405,8 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
         case VLC_ML_COUNT_AUDIOS:
         {
             medialibrary::Query<medialibrary::IMedia> query;
-            if ( params->psz_pattern != nullptr )
-                query = m_ml->searchAudio( params->psz_pattern, paramsPtr );
+            if ( psz_pattern != nullptr )
+                query = m_ml->searchAudio( psz_pattern, paramsPtr );
             else
                 query = m_ml->audioFiles( paramsPtr );
             *va_arg( args, size_t* ) = query->count();
@@ -413,8 +415,8 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
         case VLC_ML_LIST_ALBUMS:
         {
             medialibrary::Query<medialibrary::IAlbum> query;
-            if ( params->psz_pattern != nullptr )
-                query = m_ml->searchAlbums( params->psz_pattern, paramsPtr );
+            if ( psz_pattern != nullptr )
+                query = m_ml->searchAlbums( psz_pattern, paramsPtr );
             else
                 query = m_ml->albums( paramsPtr );
             auto res = ml_convert_list<vlc_ml_album_list_t>( query->items( nbItems, offset ) );
@@ -424,8 +426,8 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
         case VLC_ML_COUNT_ALBUMS:
         {
             medialibrary::Query<medialibrary::IAlbum> query;
-            if ( params->psz_pattern != nullptr )
-                query = m_ml->searchAlbums( params->psz_pattern, paramsPtr );
+            if ( psz_pattern != nullptr )
+                query = m_ml->searchAlbums( psz_pattern, paramsPtr );
             else
                 query = m_ml->albums( paramsPtr );
             *va_arg( args, size_t* ) = query->count();
@@ -434,8 +436,8 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
         case VLC_ML_LIST_GENRES:
         {
             medialibrary::Query<medialibrary::IGenre> query;
-            if ( params->psz_pattern != nullptr )
-                query = m_ml->searchGenre( params->psz_pattern, paramsPtr );
+            if ( psz_pattern != nullptr )
+                query = m_ml->searchGenre( psz_pattern, paramsPtr );
             else
                 query = m_ml->genres( paramsPtr );
             auto res = ml_convert_list<vlc_ml_genre_list_t>( query->items( nbItems, offset ) );
@@ -445,8 +447,8 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
         case VLC_ML_COUNT_GENRES:
         {
             medialibrary::Query<medialibrary::IGenre> query;
-            if ( params->psz_pattern != nullptr )
-                query = m_ml->searchGenre( params->psz_pattern, paramsPtr );
+            if ( psz_pattern != nullptr )
+                query = m_ml->searchGenre( psz_pattern, paramsPtr );
             else
                 query = m_ml->genres( paramsPtr );
             *va_arg( args, size_t* ) = query->count();
@@ -455,8 +457,8 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
         case VLC_ML_LIST_ARTISTS:
         {
             medialibrary::Query<medialibrary::IArtist> query;
-            if ( params->psz_pattern != nullptr )
-                query = m_ml->searchArtists( params->psz_pattern, paramsPtr );
+            if ( psz_pattern != nullptr )
+                query = m_ml->searchArtists( psz_pattern, paramsPtr );
             else
                 query = m_ml->artists( paramsPtr );
             auto res = ml_convert_list<vlc_ml_artist_list_t>( query->items( nbItems, offset ) );
@@ -466,8 +468,8 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
         case VLC_ML_COUNT_ARTISTS:
         {
             medialibrary::Query<medialibrary::IArtist> query;
-            if ( params->psz_pattern != nullptr )
-                query = m_ml->searchArtists( params->psz_pattern, paramsPtr );
+            if ( psz_pattern != nullptr )
+                query = m_ml->searchArtists( psz_pattern, paramsPtr );
             else
                 query = m_ml->artists( paramsPtr );
             *va_arg( args, size_t* ) = query->count();

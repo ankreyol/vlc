@@ -522,7 +522,11 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
             auto show = m_ml->show( va_arg( args, int64_t ) );
             if ( show == nullptr )
                  return VLC_EGENERIC;
-            auto query = show->episodes( paramsPtr );
+            medialibrary::Query<medialibrary::IMedia> query;
+            if ( psz_pattern != nullptr )
+                query = show->searchEpisodes( psz_pattern, paramsPtr );
+            else
+                query = show->episodes( paramsPtr );
             switch ( listQuery )
             {
                 case VLC_ML_LIST_SHOW_EPISODES:

@@ -1,4 +1,4 @@
-MEDIALIBRARY_HASH := 3ec9e091ea1b76014ae39a55c4231fb250c5a243
+MEDIALIBRARY_HASH := 10de486beb2bc0630b6c17d0a5b73d0c65115077
 MEDIALIBRARY_VERSION := git-$(MEDIALIBRARY_HASH)
 MEDIALIBRARY_GITURL := https://code.videolan.org/videolan/medialibrary/-/archive/$(MEDIALIBRARY_HASH)/medialibrary-$(MEDIALIBRARY_HASH).tar.gz
 
@@ -17,7 +17,7 @@ $(TARBALLS)/medialibrary-$(MEDIALIBRARY_VERSION).tar.gz:
 	touch $@
 
 medialibrary: medialibrary-$(MEDIALIBRARY_VERSION).tar.gz .sum-medialibrary
-	rm -rf $@-$(MEDIALIBRARY_VERSION)
+	rm -rf $@-$(MEDIALIBRARY_VERSION) $@
 	mkdir -p $@-$(MEDIALIBRARY_VERSION)
 	tar xvzf "$<" --strip-components=1 -C $@-$(MEDIALIBRARY_VERSION)
 	$(call pkg_static, "medialibrary.pc.in")

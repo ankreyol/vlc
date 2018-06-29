@@ -362,13 +362,13 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
         case VLC_ML_COUNT_ALBUM_TRACKS:
         case VLC_ML_LIST_ALBUM_ARTISTS:
         case VLC_ML_COUNT_ALBUM_ARTISTS:
-            return listAlbums( listQuery, paramsPtr, nbItems, offset, args );
+            return listAlbums( listQuery, paramsPtr, psz_pattern, nbItems, offset, args );
 
         case VLC_ML_LIST_ARTIST_ALBUMS:
         case VLC_ML_COUNT_ARTIST_ALBUMS:
         case VLC_ML_LIST_ARTIST_TRACKS:
         case VLC_ML_COUNT_ARTIST_TRACKS:
-            return listArtists( listQuery, paramsPtr, nbItems, offset, args );
+            return listArtists( listQuery, paramsPtr, psz_pattern, nbItems, offset, args );
 
         case VLC_ML_LIST_VIDEOS:
         {
@@ -481,7 +481,7 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
         case VLC_ML_COUNT_GENRE_TRACKS:
         case VLC_ML_LIST_GENRE_ALBUMS:
         case VLC_ML_COUNT_GENRE_ALBUMS:
-            return listGenre( listQuery, paramsPtr, nbItems, offset, args );
+            return listGenre( listQuery, paramsPtr, psz_pattern, nbItems, offset, args );
 
         case VLC_ML_LIST_MEDIA_LABELS:
         case VLC_ML_COUNT_MEDIA_LABELS:
@@ -767,7 +767,7 @@ int MediaLibrary::filterListChildrenQuery( int query, int parentType )
 }
 
 int MediaLibrary::listAlbums( int listQuery, const medialibrary::QueryParameters* paramsPtr,
-                              uint32_t nbItems, uint32_t offset, va_list args )
+                              const char* pattern, uint32_t nbItems, uint32_t offset, va_list args )
 {
     auto album = m_ml->album( va_arg( args, int64_t ) );
     if ( album == nullptr )
@@ -777,7 +777,11 @@ int MediaLibrary::listAlbums( int listQuery, const medialibrary::QueryParameters
         case VLC_ML_LIST_ALBUM_TRACKS:
         case VLC_ML_COUNT_ALBUM_TRACKS:
         {
-            auto query = album->tracks( paramsPtr );
+            medialibrary::Query<medialibrary::IMedia> query;
+            if ( pattern != nullptr )
+                query = album->searchTracks( pattern, paramsPtr );
+            else
+                query = album->tracks( paramsPtr );
             switch ( listQuery )
             {
                 case VLC_ML_LIST_ALBUM_TRACKS:
@@ -814,7 +818,8 @@ int MediaLibrary::listAlbums( int listQuery, const medialibrary::QueryParameters
 }
 
 int MediaLibrary::listArtists( int listQuery, const medialibrary::QueryParameters* paramsPtr,
-                               uint32_t nbItems, uint32_t offset, va_list args )
+                               const char* pattern, uint32_t nbItems, uint32_t offset,
+                               va_list args )
 {
     auto artist = m_ml->artist( va_arg( args, int64_t ) );
     if ( artist == nullptr )
@@ -824,7 +829,11 @@ int MediaLibrary::listArtists( int listQuery, const medialibrary::QueryParameter
         case VLC_ML_LIST_ARTIST_ALBUMS:
         case VLC_ML_COUNT_ARTIST_ALBUMS:
         {
-            auto query = artist->albums( paramsPtr );
+            medialibrary::Query<medialibrary::IAlbum> query;
+            if ( pattern != nullptr )
+                query = artist->searchAlbums( pattern, paramsPtr );
+            else
+                query = artist->albums( paramsPtr );
             switch ( listQuery )
             {
                 case VLC_ML_LIST_ARTIST_ALBUMS:
@@ -841,7 +850,11 @@ int MediaLibrary::listArtists( int listQuery, const medialibrary::QueryParameter
         case VLC_ML_LIST_ARTIST_TRACKS:
         case VLC_ML_COUNT_ARTIST_TRACKS:
         {
-            auto query = artist->media( paramsPtr );
+            medialibrary::Query<medialibrary::IMedia> query;
+            if ( pattern != nullptr )
+                query = artist->searchTracks( pattern, paramsPtr );
+            else
+                query = artist->tracks( paramsPtr );
             switch ( listQuery )
             {
                 case VLC_ML_LIST_ARTIST_TRACKS:
@@ -860,7 +873,8 @@ int MediaLibrary::listArtists( int listQuery, const medialibrary::QueryParameter
     }
 }
 
-int MediaLibrary::listGenre(int listQuery, const medialibrary::QueryParameters* paramsPtr, uint32_t nbItems, uint32_t offset, va_list args)
+int MediaLibrary::listGenre( int listQuery, const medialibrary::QueryParameters* paramsPtr,
+                             const char* pattern, uint32_t nbItems, uint32_t offset, va_list args )
 {
     auto genre = m_ml->genre( va_arg( args, int64_t ) );
     if ( genre == nullptr )
@@ -870,7 +884,11 @@ int MediaLibrary::listGenre(int listQuery, const medialibrary::QueryParameters* 
         case VLC_ML_LIST_GENRE_ARTISTS:
         case VLC_ML_COUNT_GENRE_ARTISTS:
         {
-            auto query = genre->artists( paramsPtr );
+            medialibrary::Query<medialibrary::IArtist> query;
+            if ( pattern != nullptr )
+                query = genre->searchArtists( pattern, paramsPtr );
+            else
+                query = genre->artists( paramsPtr );
             switch ( listQuery )
             {
                 case VLC_ML_LIST_GENRE_ARTISTS:
@@ -887,7 +905,11 @@ int MediaLibrary::listGenre(int listQuery, const medialibrary::QueryParameters* 
         case VLC_ML_LIST_GENRE_TRACKS:
         case VLC_ML_COUNT_GENRE_TRACKS:
         {
-            auto query = genre->tracks( paramsPtr );
+            medialibrary::Query<medialibrary::IMedia> query;
+            if ( pattern != nullptr )
+                query = genre->searchTracks( pattern, paramsPtr );
+            else
+                query = genre->tracks( paramsPtr );
             switch ( listQuery )
             {
                 case VLC_ML_LIST_GENRE_TRACKS:
@@ -903,7 +925,11 @@ int MediaLibrary::listGenre(int listQuery, const medialibrary::QueryParameters* 
         case VLC_ML_LIST_GENRE_ALBUMS:
         case VLC_ML_COUNT_GENRE_ALBUMS:
         {
-            auto query = genre->albums( paramsPtr );
+            medialibrary::Query<medialibrary::IAlbum> query;
+            if ( pattern != nullptr )
+                query = genre->searchAlbums( pattern, paramsPtr );
+            else
+                query = genre->albums( paramsPtr );
             switch ( listQuery )
             {
                 case VLC_ML_LIST_GENRE_ALBUMS:

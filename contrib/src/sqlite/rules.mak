@@ -16,6 +16,7 @@ $(TARBALLS)/sqlite-autoconf-$(SQLITE_VERSION).tar.gz:
 
 sqlite: sqlite-autoconf-$(SQLITE_VERSION).tar.gz .sum-sqlite
 	$(UNPACK)
+	$(call pkg_static, "sqlite3.pc.in")
 	$(MOVE)
 
 .sqlite: sqlite

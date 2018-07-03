@@ -36,12 +36,12 @@ Rectangle {
     function changedCategory() {
         viewLoader.sourceComponent = chooseCat();
         reloadData();
-        console.log( "Changed category : "+medialib.getCategory() );
+        console.log( "Changed category : "+medialib.category );
     }
 
     // Function to get which component to display according to the category
     function chooseCat() {
-        var cat = medialib.getCategory();
+        var cat = medialib.category;
         if (cat === 0)
             return albumsDisplayComponent;
         else if (cat === 1)

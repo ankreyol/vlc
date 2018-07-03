@@ -28,12 +28,13 @@ int MLAlbumModel::rowCount(const QModelIndex &parent) const
     // other (valid) parents, rowCount() should return 0 so that it does not become a tree model.
     if (parent.isValid())
         return 0;
-
+    printf("*** MLAlbumModel::rowCount %lu\n", m_item_list.size() );
     return m_item_list.size();
 }
 
 QVariant MLAlbumModel::data(const QModelIndex &index, int role) const
 {
+    printf("*** MLAlbumModel::data \n");
     if (!index.isValid())
         return QVariant();
 
@@ -69,6 +70,7 @@ QVariant MLAlbumModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> MLAlbumModel::roleNames() const
 {
+    printf("*** MLAlbumModel::roleNames \n");
     QHash<int, QByteArray> roles;
 
     // Albums
@@ -93,6 +95,7 @@ void MLAlbumModel::reload()
     m_item_list.clear();
 
     ml_unique_ptr<ml_album_list_t> album_list( ml_list_albums(m_ml.get(), &m_query_param) );
+    printf("*** MLAlbumModel::reload %lu \n", album_list->i_nb_items);
     for( const ml_album_t& album: ml_range_iterate<ml_album_t>( album_list ) )
         m_item_list.push_back( new MLAlbum( &album, this ) );
 }

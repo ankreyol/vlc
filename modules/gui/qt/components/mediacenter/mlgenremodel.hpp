@@ -30,4 +30,5 @@ private:
     std::vector<MLGenre*> m_item_list;
 };
 
+
 #endif // MLGENREMODEL_HPP

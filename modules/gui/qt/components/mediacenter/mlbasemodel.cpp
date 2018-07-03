@@ -15,13 +15,13 @@ MLBaseModel::~MLBaseModel()
 {
 }
 
-void MLBaseModel::sort(int column, Qt::SortOrder order)
-{
-    m_query_param.b_desc = (order == Qt::SortOrder::DescendingOrder) ? true : false;
-    beginResetModel();
-    reload();
-    endResetModel();
-}
+//void MLBaseModel::sort(int column, Qt::SortOrder order)
+//{
+//    m_query_param.b_desc = (order == Qt::SortOrder::DescendingOrder) ? true : false;
+//    beginResetModel();
+//    reload();
+//    endResetModel();
+//}
 
 int MLBaseModel::sortRole() const
 {

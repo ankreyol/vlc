@@ -48,7 +48,7 @@ Loader {
             cellWidth: VLCStyle.cover_normal
             cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
 
-            model: medialib.getArtists()
+            model: medialib.artists
             delegate : Utils.GridItem {
                 width: gridView_id.cellWidth
                 height: gridView_id.cellHeight
@@ -83,7 +83,7 @@ Loader {
         ListView {
             spacing: 2
 
-            model: medialib.getArtists()
+            model: medialib.artists
             delegate : Utils.ListItem {
                 height: VLCStyle.icon_normal
                 width: parent.width

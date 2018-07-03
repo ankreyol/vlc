@@ -17,8 +17,8 @@ public:
     explicit MLAlbumModel(std::shared_ptr<vlc_medialibrary_t>& ml, QObject *parent = nullptr);
 
     int rowCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
-    QHash<int, QByteArray> roleNames() const override;
+    Q_INVOKABLE QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    Q_INVOKABLE QHash<int, QByteArray> roleNames() const override;
 private:
     void reload() override;
     ml_sorting_criteria_t roleToCriteria(int role) const override;

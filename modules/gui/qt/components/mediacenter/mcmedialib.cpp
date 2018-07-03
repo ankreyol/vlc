@@ -262,7 +262,7 @@ void MCMediaLib::selectSource( const QString &name )
 }
 
 // Retriever to fetch items in medialib : Recalculate a specific list of root objects
-MLAlbumModel* MCMediaLib::getAlbums()
+MLAlbumModel *MCMediaLib::getAlbums()
 {
     return m_albumModel;
 }

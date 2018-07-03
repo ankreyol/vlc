@@ -25,7 +25,7 @@
 #define PLITEM_HPP
 
 #include "qt.hpp"
-#include <qt5/QtCore/QString>
+#include <QString>
 #include "components/mediacenter/mlalbumtrack.hpp"
 
 

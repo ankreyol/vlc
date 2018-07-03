@@ -47,10 +47,6 @@
 #include "components/playlist/plitem.hpp"
 #include "components/playlist/plmodel.hpp"
 
-#include <medialibrary/IMediaLibrary.h>
-#include <medialibrary/IAlbum.h>
-#include <medialibrary/Types.h>
-
 #include "mlgenremodel.hpp"
 #include "mlalbummodel.hpp"
 #include "mlartistmodel.hpp"
@@ -72,6 +68,11 @@ class MCMediaLib : public QObject
     Q_PROPERTY(bool gridView READ isGridView WRITE setGridView NOTIFY gridViewChanged)
     Q_PROPERTY(int category READ getCategory WRITE setCategory NOTIFY categoryChanged)
 
+    Q_PROPERTY(MLAlbumModel* albums READ getAlbums NOTIFY albumsChanged)
+    Q_PROPERTY(MLArtistModel* artists READ getArtists NOTIFY artistsChanged)
+    Q_PROPERTY(MLGenreModel* genres READ getGenres NOTIFY genreChanged)
+    Q_PROPERTY(MLAlbumTrackModel* tracks READ getTracks NOTIFY tracksChanged)
+
 public:
     MCMediaLib(
         intf_thread_t* _intf,
@@ -90,10 +91,10 @@ public:
     void setGridView(bool);
     Q_INVOKABLE void toogleGridView();
 
-    Q_INVOKABLE MLAlbumModel* getAlbums();
-    Q_INVOKABLE MLArtistModel* getArtists();
-    Q_INVOKABLE MLGenreModel* getGenres();
-    Q_INVOKABLE MLAlbumTrackModel* getTracks();
+    MLAlbumModel* getAlbums();
+    MLArtistModel* getArtists();
+    MLGenreModel* getGenres();
+    MLAlbumTrackModel* getTracks();
     Q_INVOKABLE void getMovies();
     Q_INVOKABLE void getSeries();
 
@@ -107,6 +108,11 @@ public:
 signals:
     void gridViewChanged();
     void categoryChanged();
+
+    void albumsChanged();
+    void artistsChanged();
+    void genreChanged();
+    void tracksChanged();
 
 private:
     intf_thread_t* m_intf;

@@ -32,7 +32,7 @@ Rectangle {
     // Choose wich listModel of sub-source to choose
     // according to the current category
     function chooseSubSources() {
-        var c = medialib.getCategory();
+        var c = medialib.category;
         if (c >= 0 && c <= 3) {
             return model_music_id;
         } else if (c===4) {
@@ -50,7 +50,7 @@ Rectangle {
     // Choose the color of the text depending on the fact the
     // sub-source is the current one (red) or not (black/white)
     function chooseColor(index) {
-        var c = medialib.getCategory();
+        var c = medialib.category;
         if ( (c === 0 && index === 0) ||
              (c === 1 && index === 1) ||
              (c === 2 && index === 2) ||

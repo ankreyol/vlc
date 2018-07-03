@@ -19,7 +19,7 @@ public:
     explicit MLBaseModel(std::shared_ptr<vlc_medialibrary_t>& ml, QObject *parent = nullptr);
     virtual ~MLBaseModel();
 
-    virtual void sort(int column, Qt::SortOrder order) override;
+    //virtual void sort(int column, Qt::SortOrder order) override;
 
     int sortRole() const;
     void setSortRole(int role);

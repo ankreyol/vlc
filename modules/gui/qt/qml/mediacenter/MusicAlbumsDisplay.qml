@@ -32,20 +32,21 @@ Loader {
 
     // Force the data to be reloaded
     function reloadData() {
-        viewLoader.item.model = medialib.getAlbums();
+        viewLoader.item.model = medialib.albums;
         console.log( "Data reloaded" );
     }
 
     sourceComponent: medialib.gridView ? gridViewComponent_id : listViewComponent_id
 
     /* Grid View */
+
     Component {
         id: gridViewComponent_id
 
         Utils.ExpandGridView {
             id: gridView_id
 
-            model: medialib.getAlbums()
+            model: medialib.albums
 
             cellWidth: VLCStyle.cover_normal
             cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
@@ -67,7 +68,7 @@ Loader {
                 date : model.release_year !== "0" ? model.release_year : ""
                 infos : model.duration + " - " + model.nb_tracks + " tracks"
 
-                onItemClicked : console.log('Clicked on details : '+model.title)
+                onItemClicked : console.log('Clicked on details : '+ model.title)
                 onPlayClicked: {
                     console.log('Clicked on play : '+model.title);
                     medialib.addAndPlay(currentIndex)
@@ -86,6 +87,7 @@ Loader {
         }
     }
 
+
     /* List View */
     Component {
         id: listViewComponent_id
@@ -93,7 +95,7 @@ Loader {
         ListView {
             spacing: VLCStyle.margin_xxxsmall
 
-            model: medialib.getAlbums()
+            model: medialib.albums
             delegate : Utils.ListExpandItem {
                 height: VLCStyle.icon_normal
                 width: parent.width
@@ -104,7 +106,7 @@ Loader {
                     width: VLCStyle.icon_normal
                     height: VLCStyle.icon_normal
 
-                    source: model.cover || VLCStyle.noArtCover
+                    source: cover || VLCStyle.noArtCover
 
                     states: State {
                         name: "expanded"
@@ -114,14 +116,14 @@ Loader {
                     Behavior on width { PropertyAnimation { duration: VLCStyle.timingListExpandOpen } }
                 }
                 line1: Text{
-                    text: (model.title || "Unknown title")+" ["+model.duration+"]"
+                    text: (title || "Unknown title")+" ["+duration+"]"
                     font.bold: true
                     elide: Text.ElideRight
                     color: VLCStyle.textColor
                     font.pixelSize: VLCStyle.fontSize_normal
                 }
                 line2: Text{
-                    text: model.main_artist || "Unknown artist"
+                    text: main_artist || "Unknown artist"
                     elide: Text.ElideRight
                     color: VLCStyle.textColor
                     font.pixelSize: VLCStyle.fontSize_xsmall
@@ -135,11 +137,11 @@ Loader {
                 }
 
                 onPlayClicked: {
-                    console.log('Clicked on play : '+model.title);
+                    console.log('Clicked on play : '+title);
                     medialib.addAndPlay(index)
                 }
                 onAddToPlaylistClicked: {
-                    console.log('Clicked on addToPlaylist : '+model.title);
+                    console.log('Clicked on addToPlaylist : '+title);
                     medialib.addToPlaylist(index);
                 }
             }

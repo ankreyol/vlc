@@ -3,18 +3,31 @@
 
 #include <memory>
 
-template<typename T>
-void ml_release_obj(T* obj)
-{
-    obj->pf_release(obj);
-}
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include "vlc_media_library.h"
+
+inline void MLRelease( ml_show_t* show ) { vlc_ml_show_release( show ); }
+inline void MLRelease( ml_artist_t* artist ) { vlc_ml_artist_release( artist ); }
+inline void MLRelease( ml_album_t* album ) { vlc_ml_album_release( album ); }
+inline void MLRelease( ml_genre_t* genre ) { vlc_ml_genre_release( genre ); }
+inline void MLRelease( ml_media_t* media ) { vlc_ml_media_release( media ); }
+inline void MLRelease( ml_label_list_t* list ) { vlc_ml_label_list_release( list ); }
+inline void MLRelease( ml_file_list_t* list ) { vlc_ml_file_list_release( list ); }
+inline void MLRelease( ml_artist_list_t* list ) { vlc_ml_artist_list_release( list ); }
+inline void MLRelease( ml_media_list_t* list ) { vlc_ml_media_list_release( list ); }
+inline void MLRelease( ml_album_list_t* list ) { vlc_ml_album_list_release( list ); }
+inline void MLRelease( ml_show_list_t* list ) { vlc_ml_show_list_release( list ); }
+inline void MLRelease( ml_genre_list_t* list ) { vlc_ml_genre_list_release( list ); }
 
 template<typename T>
 class MLDeleter
 {
 public:
     void operator() (T* obj) {
-        ml_release_obj(obj);
+        MLRelease(obj);
     }
 };
 

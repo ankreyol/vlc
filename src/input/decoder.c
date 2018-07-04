@@ -324,6 +324,20 @@ static void OutputChangeRate( decoder_t *p_dec, float rate )
 /*****************************************************************************
  * Buffers allocation callbacks for the decoders
  *****************************************************************************/
+static void out_change_state( decoder_t *p_dec )
+{
+    struct decoder_owner *p_owner = dec_get_owner( p_dec );
+
+    vlc_fifo_Lock( p_owner->p_fifo );
+    float rate = p_owner->rate;
+    vlc_tick_t pause_date = p_owner->pause_date;
+    bool paused = p_owner->paused;
+    vlc_fifo_Unlock( p_owner->p_fifo );
+
+    OutputChangePause( p_dec, paused, pause_date );
+    OutputChangeRate( p_dec, rate );
+}
+
 static vout_thread_t *aout_request_vout( void *p_private,
                                          vout_thread_t *p_vout,
                                          const video_format_t *p_fmt, bool b_recyle )
@@ -446,6 +460,8 @@ static int aout_update_format( decoder_t *p_dec )
             p_owner->fmt.audio.i_bytes_per_frame;
         p_dec->fmt_out.audio.i_frame_length =
             p_owner->fmt.audio.i_frame_length;
+
+        out_change_state( p_dec );
     }
     return 0;
 }
@@ -578,6 +594,8 @@ static int vout_update_format( decoder_t *p_dec )
             msg_Err( p_dec, "failed to create video output" );
             return -1;
         }
+
+        out_change_state( p_dec );
     }
 
     if ( memcmp( &p_dec->fmt_out.video.mastering,

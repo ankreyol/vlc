@@ -1,4 +1,4 @@
-MEDIALIBRARY_HASH := 1812b4a4a00d1c7e1b1b06676bf3d7467ae22a88
+MEDIALIBRARY_HASH := 9e0aec0684a7763fdfc9514bfbbde7f66e8f5c00
 MEDIALIBRARY_VERSION := git-$(MEDIALIBRARY_HASH)
 MEDIALIBRARY_GITURL := https://code.videolan.org/videolan/medialibrary/-/archive/$(MEDIALIBRARY_HASH)/medialibrary-$(MEDIALIBRARY_HASH).tar.gz
 

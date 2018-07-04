@@ -550,7 +550,20 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
         case VLC_ML_LIST_PLAYLISTS:
         case VLC_ML_COUNT_PLAYLISTS:
             return listPlaylist( listQuery, paramsPtr, psz_pattern, nbItems, offset, args );
-
+        case VLC_ML_LIST_HISTORY:
+        {
+            auto query = m_ml->history();
+            *va_arg( args, vlc_ml_media_list_t**) = ml_convert_list<vlc_ml_media_list_t>(
+                        query->items( nbItems, offset ) );
+            return VLC_SUCCESS;
+        }
+        case VLC_ML_LIST_STREAM_HISTORY:
+        {
+            auto query = m_ml->streamHistory();
+            *va_arg( args, vlc_ml_media_list_t**) = ml_convert_list<vlc_ml_media_list_t>(
+                        query->items( nbItems, offset ) );
+            return VLC_SUCCESS;
+        }
     }
     return VLC_SUCCESS;
 }

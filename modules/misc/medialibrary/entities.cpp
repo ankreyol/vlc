@@ -150,6 +150,9 @@ bool Convert( const medialibrary::IMedia* input, vlc_ml_media_t& output )
         case medialibrary::IMedia::Type::External:
             output.i_type = VLC_ML_MEDIA_TYPE_EXTERNAL;
             break;
+        case medialibrary::IMedia::Type::Stream:
+            output.i_type = VLC_ML_MEDIA_TYPE_STREAM;
+            break;
         case medialibrary::IMedia::Type::Unknown:
             vlc_assert_unreachable();
     }

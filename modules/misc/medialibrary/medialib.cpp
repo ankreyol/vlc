@@ -296,6 +296,24 @@ int MediaLibrary::Control( int query, va_list args )
         case VLC_ML_CLEAR_HISTORY:
             m_ml->clearHistory();
             break;
+        case VLC_ML_NEW_EXTERNAL_MEDIA:
+        {
+            auto mrl = va_arg( args, const char* );
+            auto media = m_ml->addExternalMedia( mrl );
+            if ( media == nullptr )
+                return VLC_EGENERIC;
+            *va_arg( args, vlc_ml_media_t**) = CreateAndConvert<vlc_ml_media_t>( media.get() );
+            return VLC_SUCCESS;
+        }
+        case VLC_ML_NEW_STREAM:
+        {
+            auto mrl = va_arg( args, const char* );
+            auto media = m_ml->addStream( mrl );
+            if ( media == nullptr )
+                return VLC_EGENERIC;
+            *va_arg( args, vlc_ml_media_t**) = CreateAndConvert<vlc_ml_media_t>( media.get() );
+            return VLC_SUCCESS;
+        }
         case VLC_ML_MEDIA_INCREASE_PLAY_COUNT:
         case VLC_ML_MEDIA_GET_MEDIA_PLAYBACK_PREF:
         case VLC_ML_MEDIA_SET_MEDIA_PLAYBACK_PREF:
@@ -727,6 +745,33 @@ int MediaLibrary::controlMedia( int query, va_list args )
         {
             auto mrl = va_arg( args, const char* );
             m->setThumbnail( mrl );
+            return VLC_SUCCESS;
+        }
+        case VLC_ML_MEDIA_ADD_EXTERNAL_MRL:
+        {
+            auto mrl = va_arg( args, const char* );
+            auto type = va_arg( args, int );
+            medialibrary::IFile::Type mlType;
+            switch ( type )
+            {
+                case VLC_ML_FILE_TYPE_UNKNOWN:
+                // The type can't be main since this is added to an existing media
+                // which must already have a file
+                case VLC_ML_FILE_TYPE_MAIN:
+                case VLC_ML_FILE_TYPE_PLAYLIST:
+                    return VLC_EGENERIC;
+                case VLC_ML_FILE_TYPE_PART:
+                    mlType = medialibrary::IFile::Type::Part;
+                    break;
+                case VLC_ML_FILE_TYPE_SOUNDTRACK:
+                    mlType = medialibrary::IFile::Type::Soundtrack;
+                    break;
+                case VLC_ML_FILE_TYPE_SUBTITLE:
+                    mlType = medialibrary::IFile::Type::Subtitles;
+                    break;
+            }
+            if ( m->addExternalMrl( mrl, mlType ) == nullptr )
+                return VLC_EGENERIC;
             return VLC_SUCCESS;
         }
         default:

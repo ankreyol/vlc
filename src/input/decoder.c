@@ -279,6 +279,48 @@ static void DecoderUpdateFormatLocked( decoder_t *p_dec )
     p_owner->b_fmt_description = true;
 }
 
+static void OutputChangePause( decoder_t *p_dec, bool paused, vlc_tick_t date )
+{
+    struct decoder_owner *p_owner = dec_get_owner( p_dec );
+
+    msg_Dbg( p_dec, "toggling %s", paused ? "resume" : "pause" );
+    switch( p_dec->fmt_out.i_cat )
+    {
+        case VIDEO_ES:
+            if( p_owner->p_vout != NULL )
+                vout_ChangePause( p_owner->p_vout, paused, date );
+            break;
+        case AUDIO_ES:
+            if( p_owner->p_aout != NULL )
+                aout_DecChangePause( p_owner->p_aout, paused, date );
+            break;
+        case SPU_ES:
+            break;
+        default:
+            vlc_assert_unreachable();
+    }
+}
+
+static void OutputChangeRate( decoder_t *p_dec, float rate )
+{
+    struct decoder_owner *p_owner = dec_get_owner( p_dec );
+
+    msg_Dbg( p_dec, "changing rate: %f", rate );
+    switch( p_dec->fmt_out.i_cat )
+    {
+        case VIDEO_ES:
+            break;
+        case AUDIO_ES:
+            if( p_owner->p_aout != NULL )
+                aout_DecChangeRate( p_owner->p_aout, rate );
+            break;
+        case SPU_ES:
+            break;
+        default:
+            vlc_assert_unreachable();
+    }
+}
+
 /*****************************************************************************
  * Buffers allocation callbacks for the decoders
  *****************************************************************************/
@@ -1482,48 +1524,6 @@ static void DecoderProcessFlush( decoder_t *p_dec )
     vlc_mutex_lock( &p_owner->lock );
     p_owner->i_preroll_end = (vlc_tick_t)INT64_MIN;
     vlc_mutex_unlock( &p_owner->lock );
-}
-
-static void OutputChangePause( decoder_t *p_dec, bool paused, vlc_tick_t date )
-{
-    struct decoder_owner *p_owner = dec_get_owner( p_dec );
-
-    msg_Dbg( p_dec, "toggling %s", paused ? "resume" : "pause" );
-    switch( p_dec->fmt_out.i_cat )
-    {
-        case VIDEO_ES:
-            if( p_owner->p_vout != NULL )
-                vout_ChangePause( p_owner->p_vout, paused, date );
-            break;
-        case AUDIO_ES:
-            if( p_owner->p_aout != NULL )
-                aout_DecChangePause( p_owner->p_aout, paused, date );
-            break;
-        case SPU_ES:
-            break;
-        default:
-            vlc_assert_unreachable();
-    }
-}
-
-static void OutputChangeRate( decoder_t *p_dec, float rate )
-{
-    struct decoder_owner *p_owner = dec_get_owner( p_dec );
-
-    msg_Dbg( p_dec, "changing rate: %f", rate );
-    switch( p_dec->fmt_out.i_cat )
-    {
-        case VIDEO_ES:
-            break;
-        case AUDIO_ES:
-            if( p_owner->p_aout != NULL )
-                aout_DecChangeRate( p_owner->p_aout, rate );
-            break;
-        case SPU_ES:
-            break;
-        default:
-            vlc_assert_unreachable();
-    }
 }
 
 /**

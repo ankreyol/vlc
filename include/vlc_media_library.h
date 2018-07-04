@@ -353,6 +353,7 @@ enum vlc_ml_control
     VLC_ML_MEDIA_INCREASE_PLAY_COUNT,       /**< arg1: media id; can fail */
     VLC_ML_MEDIA_GET_MEDIA_PLAYBACK_PREF,   /**< arg1: media id; arg2 vlc_ml_playback_pref; arg3: char**; */
     VLC_ML_MEDIA_SET_MEDIA_PLAYBACK_PREF,   /**< arg1: media id; arg2 vlc_ml_playback_pref; arg3: const char*; */
+    VLC_ML_MEDIA_SET_THUMBNAIL,             /**< arg1: media id; arg2 const char*; */
 };
 
 /**
@@ -442,6 +443,11 @@ static inline int vlc_ml_get_playback_pref( vlc_medialibrary_t* p_ml, int64_t i_
 static inline int vlc_ml_set_playback_pref( vlc_medialibrary_t* p_ml, int64_t i_media_id, int i_pref, const char* psz_value )
 {
     return p_ml->pf_control( p_ml, VLC_ML_MEDIA_SET_MEDIA_PLAYBACK_PREF, i_media_id, i_pref, psz_value );
+}
+
+static inline int vlc_ml_media_set_thumbnail( vlc_medialibrary_t* p_ml, int64_t i_media_id, const char* psz_mrl )
+{
+    return p_ml->pf_control( p_ml, VLC_ML_MEDIA_SET_THUMBNAIL, i_media_id, psz_mrl );
 }
 
 enum vlc_ml_get_queries

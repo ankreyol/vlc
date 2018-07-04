@@ -430,17 +430,17 @@ static inline void vlc_ml_clear_history( vlc_medialibrary_t* p_ml )
     p_ml->pf_control( p_ml, VLC_ML_CLEAR_HISTORY );
 }
 
-static inline int vlc_ml_increase_playcount( vlc_medialibrary_t* p_ml, int64_t i_media_id )
+static inline int vlc_ml_media_increase_playcount( vlc_medialibrary_t* p_ml, int64_t i_media_id )
 {
     return p_ml->pf_control( p_ml, VLC_ML_MEDIA_INCREASE_PLAY_COUNT, i_media_id );
 }
 
-static inline int vlc_ml_get_playback_pref( vlc_medialibrary_t* p_ml, int64_t i_media_id, int i_pref, char** ppsz_result )
+static inline int vlc_ml_media_get_playback_pref( vlc_medialibrary_t* p_ml, int64_t i_media_id, int i_pref, char** ppsz_result )
 {
     return p_ml->pf_control( p_ml, VLC_ML_MEDIA_GET_MEDIA_PLAYBACK_PREF, i_media_id, i_pref, ppsz_result );
 }
 
-static inline int vlc_ml_set_playback_pref( vlc_medialibrary_t* p_ml, int64_t i_media_id, int i_pref, const char* psz_value )
+static inline int vlc_ml_media_set_playback_pref( vlc_medialibrary_t* p_ml, int64_t i_media_id, int i_pref, const char* psz_value )
 {
     return p_ml->pf_control( p_ml, VLC_ML_MEDIA_SET_MEDIA_PLAYBACK_PREF, i_media_id, i_pref, psz_value );
 }

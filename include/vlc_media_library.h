@@ -136,6 +136,7 @@ typedef struct vlc_ml_media_t
     /* Duration in milliseconds */
     int64_t i_duration;
     uint32_t i_playcount;
+    time_t i_last_played_date;
     char* psz_title;
 
     char* psz_artwork_mrl;

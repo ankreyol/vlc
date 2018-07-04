@@ -41,6 +41,7 @@ typedef enum vlc_ml_media_type_t
     VLC_ML_MEDIA_TYPE_VIDEO,
     VLC_ML_MEDIA_TYPE_AUDIO,
     VLC_ML_MEDIA_TYPE_EXTERNAL,
+    VLC_ML_MEDIA_TYPE_STREAM,
 } vlc_ml_media_type_t;
 
 typedef enum vlc_ml_media_subtype_t
@@ -156,7 +157,8 @@ typedef struct vlc_ml_playlist_t
     char* psz_artwork_mrl;
 } vlc_ml_playlist_t;
 
-typedef struct vlc_ml_artist_t {
+typedef struct vlc_ml_artist_t
+{
     int64_t i_id;
     char* psz_name;
     char* psz_shortbio;
@@ -500,6 +502,8 @@ enum vlc_ml_list_queries
     VLC_ML_COUNT_SHOWS,           /**< arg1 (out): size_t*                    */
     VLC_ML_LIST_PLAYLISTS,        /**< arg1 (out): vlc_ml_playlist_list_t**   */
     VLC_ML_COUNT_PLAYLISTS,       /**< arg1 (out): size_t*                    */
+    VLC_ML_LIST_HISTORY,          /**< arg1 (out): vlc_ml_media_list_t**      */
+    VLC_ML_LIST_STREAM_HISTORY,  /**< arg1 (out): vlc_ml_media_list_t**      */
 
     /* Album specific listings */
     VLC_ML_LIST_ALBUM_TRACKS,     /**< arg1: The album id. arg2 (out): vlc_ml_media_list_t**  */
@@ -837,6 +841,22 @@ static inline size_t vlc_ml_count_media_labels( vlc_medialibrary_t* p_ml, vlc_ml
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_MEDIA_LABELS, params, i_media_id, &count ) != VLC_SUCCESS )
         return 0;
     return count;
+}
+
+static inline vlc_ml_media_list_t* vlc_ml_list_history( vlc_medialibrary_t* p_ml, vlc_ml_query_params_t* params )
+{
+    vlc_ml_media_list_t* res;
+    if ( p_ml->pf_list( p_ml, VLC_ML_LIST_HISTORY, params, &res ) != VLC_SUCCESS )
+        return NULL;
+    return res;
+}
+
+static inline vlc_ml_media_list_t* vlc_ml_list_stream_history( vlc_medialibrary_t* p_ml, vlc_ml_query_params_t* params )
+{
+    vlc_ml_media_list_t* res;
+    if ( p_ml->pf_list( p_ml, VLC_ML_LIST_STREAM_HISTORY, params, &res ) != VLC_SUCCESS )
+        return NULL;
+    return res;
 }
 
 #ifdef __cplusplus

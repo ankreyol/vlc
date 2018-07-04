@@ -129,8 +129,9 @@ public:
     void* Get( int query, int64_t id );
 
 private:
-    int getMeta( int64_t mediaId, int meta, char** result );
-    int setMeta(int64_t mediaId, int meta, const char* value );
+    int controlMedia( int query, va_list args );
+    int getMeta( const medialibrary::IMedia& media, int meta, char** result );
+    int setMeta( medialibrary::IMedia& media, int meta, const char* value );
     int filterListChildrenQuery( int query, int parentType );
     int listAlbums( int listQuery, const medialibrary::QueryParameters* paramsPtr,
                     const char* pattern, uint32_t nbItems, uint32_t offset, va_list args );

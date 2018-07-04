@@ -297,39 +297,10 @@ int MediaLibrary::Control( int query, va_list args )
             m_ml->clearHistory();
             break;
         case VLC_ML_MEDIA_INCREASE_PLAY_COUNT:
-        {
-            auto mediaId = va_arg( args, int64_t );
-            auto m = m_ml->media( mediaId );
-            if ( m == nullptr )
-                return VLC_EGENERIC;
-            if ( m->increasePlayCount() == false )
-                return VLC_EGENERIC;
-            break;
-        }
         case VLC_ML_MEDIA_GET_MEDIA_PLAYBACK_PREF:
-        {
-            auto mediaId = va_arg( args, int64_t );
-            auto meta = va_arg( args, int );
-            auto res = va_arg( args, char** );
-            return getMeta( mediaId, meta, res );
-        }
         case VLC_ML_MEDIA_SET_MEDIA_PLAYBACK_PREF:
-        {
-            auto mediaId = va_arg( args, int64_t );
-            auto meta = va_arg( args, int );
-            auto value = va_arg( args, const char* );
-            return setMeta( mediaId, meta, value );
-        }
         case VLC_ML_MEDIA_SET_THUMBNAIL:
-        {
-            auto mediaId = va_arg( args, int64_t );
-            auto mrl = va_arg( args, const char* );
-            auto media = m_ml->media( mediaId );
-            if ( media == nullptr )
-                return VLC_EGENERIC;
-            media->setThumbnail( mrl );
-            return VLC_SUCCESS;
-        }
+            return controlMedia( query, args );
         default:
             return VLC_EGENERIC;
     }
@@ -702,12 +673,9 @@ medialibrary::SortingCriteria MediaLibrary::sortingCriteria(int sort)
     }
 }
 
-int MediaLibrary::getMeta( int64_t mediaId, int meta, char** result )
+int MediaLibrary::getMeta( const medialibrary::IMedia& media, int meta, char** result )
 {
-    auto media = m_ml->media( mediaId );
-    if ( media == nullptr )
-        return VLC_EGENERIC;
-    auto& md = media->metadata( metadataType( meta ) );
+    auto& md = media.metadata( metadataType( meta ) );
     if ( md.isSet() == false )
     {
         *result = nullptr;
@@ -719,19 +687,51 @@ int MediaLibrary::getMeta( int64_t mediaId, int meta, char** result )
     return VLC_SUCCESS;
 }
 
-int MediaLibrary::setMeta( int64_t mediaId, int meta, const char* value )
+int MediaLibrary::setMeta( medialibrary::IMedia& media, int meta, const char* value )
 {
-    auto media = m_ml->media( mediaId );
-    if ( media == nullptr )
-        return VLC_EGENERIC;
     bool res;
     if ( value == nullptr )
-        res = media->unsetMetadata( metadataType( meta ) );
+        res = media.unsetMetadata( metadataType( meta ) );
     else
-        res = media->setMetadata( metadataType( meta ), value );
+        res = media.setMetadata( metadataType( meta ), value );
     if ( res == false )
         return VLC_EGENERIC;
     return VLC_SUCCESS;
+}
+
+int MediaLibrary::controlMedia( int query, va_list args )
+{
+    auto mediaId = va_arg( args, int64_t );
+    auto m = m_ml->media( mediaId );
+    if ( m == nullptr )
+        return VLC_EGENERIC;
+    switch( query )
+    {
+        case VLC_ML_MEDIA_INCREASE_PLAY_COUNT:
+            if ( m->increasePlayCount() == false )
+                return VLC_EGENERIC;
+            return VLC_SUCCESS;
+        case VLC_ML_MEDIA_GET_MEDIA_PLAYBACK_PREF:
+        {
+            auto meta = va_arg( args, int );
+            auto res = va_arg( args, char** );
+            return getMeta( *m, meta, res );
+        }
+        case VLC_ML_MEDIA_SET_MEDIA_PLAYBACK_PREF:
+        {
+            auto meta = va_arg( args, int );
+            auto value = va_arg( args, const char* );
+            return setMeta( *m, meta, value );
+        }
+        case VLC_ML_MEDIA_SET_THUMBNAIL:
+        {
+            auto mrl = va_arg( args, const char* );
+            m->setThumbnail( mrl );
+            return VLC_SUCCESS;
+        }
+        default:
+            vlc_assert_unreachable();
+    }
 }
 
 int MediaLibrary::filterListChildrenQuery( int query, int parentType )

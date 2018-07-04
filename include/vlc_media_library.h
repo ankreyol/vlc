@@ -488,22 +488,22 @@ enum vlc_ml_list_queries
 {
     /* General listing: */
 
-    VLC_ML_LIST_VIDEOS,           /**< arg1 (out): vlc_ml_media_list_t**      */
-    VLC_ML_COUNT_VIDEOS,          /**< arg1 (out): size_t*                    */
-    VLC_ML_LIST_AUDIOS,           /**< arg1 (out): vlc_ml_media_list_t**      */
-    VLC_ML_COUNT_AUDIOS,          /**< arg1 (out): size_t*                    */
-    VLC_ML_LIST_ALBUMS,           /**< arg1 (out): vlc_ml_album_list_t**      */
-    VLC_ML_COUNT_ALBUMS,          /**< arg1 (out): size_t*                    */
-    VLC_ML_LIST_GENRES,           /**< arg1 (out): vlc_ml_genre_list_t**      */
-    VLC_ML_COUNT_GENRES,          /**< arg1 (out): size_t*                    */
-    VLC_ML_LIST_ARTISTS,          /**< arg1 (out): vlc_ml_genre_list_t**      */
-    VLC_ML_COUNT_ARTISTS,         /**< arg1 (out): size_t*                    */
-    VLC_ML_LIST_SHOWS,            /**< arg1 (out): vlc_ml_show_list_t**       */
-    VLC_ML_COUNT_SHOWS,           /**< arg1 (out): size_t*                    */
-    VLC_ML_LIST_PLAYLISTS,        /**< arg1 (out): vlc_ml_playlist_list_t**   */
-    VLC_ML_COUNT_PLAYLISTS,       /**< arg1 (out): size_t*                    */
-    VLC_ML_LIST_HISTORY,          /**< arg1 (out): vlc_ml_media_list_t**      */
-    VLC_ML_LIST_STREAM_HISTORY,  /**< arg1 (out): vlc_ml_media_list_t**      */
+    VLC_ML_LIST_VIDEOS,           /**< arg1 (out): vlc_ml_media_list_t**                            */
+    VLC_ML_COUNT_VIDEOS,          /**< arg1 (out): size_t*                                          */
+    VLC_ML_LIST_AUDIOS,           /**< arg1 (out): vlc_ml_media_list_t**                            */
+    VLC_ML_COUNT_AUDIOS,          /**< arg1 (out): size_t*                                          */
+    VLC_ML_LIST_ALBUMS,           /**< arg1 (out): vlc_ml_album_list_t**                            */
+    VLC_ML_COUNT_ALBUMS,          /**< arg1 (out): size_t*                                          */
+    VLC_ML_LIST_GENRES,           /**< arg1 (out): vlc_ml_genre_list_t**                            */
+    VLC_ML_COUNT_GENRES,          /**< arg1 (out): size_t*                                          */
+    VLC_ML_LIST_ARTISTS,          /**< arg1: bool: includeAll; arg2 (out): vlc_ml_genre_list_t**    */
+    VLC_ML_COUNT_ARTISTS,         /**< arg1 (out): size_t*                                          */
+    VLC_ML_LIST_SHOWS,            /**< arg1 (out): vlc_ml_show_list_t**                             */
+    VLC_ML_COUNT_SHOWS,           /**< arg1 (out): size_t*                                          */
+    VLC_ML_LIST_PLAYLISTS,        /**< arg1 (out): vlc_ml_playlist_list_t**                         */
+    VLC_ML_COUNT_PLAYLISTS,       /**< arg1 (out): size_t*                                          */
+    VLC_ML_LIST_HISTORY,          /**< arg1 (out): vlc_ml_media_list_t**                            */
+    VLC_ML_LIST_STREAM_HISTORY,   /**< arg1 (out): vlc_ml_media_list_t**                            */
 
     /* Album specific listings */
     VLC_ML_LIST_ALBUM_TRACKS,     /**< arg1: The album id. arg2 (out): vlc_ml_media_list_t**  */
@@ -731,10 +731,16 @@ static inline size_t vlc_ml_count_genres( vlc_medialibrary_t* p_ml, vlc_ml_query
     return count;
 }
 
-static inline vlc_ml_artist_list_t* vlc_ml_list_artists( vlc_medialibrary_t* p_ml, vlc_ml_query_params_t* params )
+/**
+ * @brief vlc_ml_list_artists
+ * @param b_include_all True if you wish to fetch artists without at least an album.
+ * @param params Query parameters, or NULL for the default
+ * @return
+ */
+static inline vlc_ml_artist_list_t* vlc_ml_list_artists( vlc_medialibrary_t* p_ml, vlc_ml_query_params_t* params, bool b_include_all )
 {
     vlc_ml_artist_list_t* res;
-    if ( p_ml->pf_list( p_ml, VLC_ML_LIST_ARTISTS, params, &res ) != VLC_SUCCESS )
+    if ( p_ml->pf_list( p_ml, VLC_ML_LIST_ARTISTS, params, (int)b_include_all, &res ) != VLC_SUCCESS )
         return NULL;
     return res;
 }

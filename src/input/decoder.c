@@ -1573,7 +1573,9 @@ static void *DecoderThread( void *p_data )
             paused = p_owner->paused;
             vlc_fifo_Unlock( p_owner->p_fifo );
 
+            vlc_mutex_lock( &p_owner->lock );
             OutputChangePause( p_dec, paused, date );
+            vlc_mutex_unlock( &p_owner->lock );
 
             vlc_restorecancel( canc );
             vlc_fifo_Lock( p_owner->p_fifo );
@@ -1587,7 +1589,9 @@ static void *DecoderThread( void *p_data )
             rate = p_owner->rate;
             vlc_fifo_Unlock( p_owner->p_fifo );
 
+            vlc_mutex_lock( &p_owner->lock );
             OutputChangeRate( p_dec, rate );
+            vlc_mutex_unlock( &p_owner->lock );
 
             vlc_restorecancel( canc );
             vlc_fifo_Lock( p_owner->p_fifo );

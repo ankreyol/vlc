@@ -350,11 +350,16 @@ enum vlc_ml_control
     /* Misc operations */
     VLC_ML_CLEAR_HISTORY,           /**< no args; can't fail */
 
+    /* Create media */
+    VLC_ML_NEW_EXTERNAL_MEDIA,      /**< arg1: const char*; arg2(out): vlc_ml_media_t** */
+    VLC_ML_NEW_STREAM,              /**< arg1: const char*; arg2(out): vlc_ml_media_t** */
+
     /* Media management */
     VLC_ML_MEDIA_INCREASE_PLAY_COUNT,       /**< arg1: media id; can fail */
-    VLC_ML_MEDIA_GET_MEDIA_PLAYBACK_PREF,   /**< arg1: media id; arg2 vlc_ml_playback_pref; arg3: char**; */
-    VLC_ML_MEDIA_SET_MEDIA_PLAYBACK_PREF,   /**< arg1: media id; arg2 vlc_ml_playback_pref; arg3: const char*; */
-    VLC_ML_MEDIA_SET_THUMBNAIL,             /**< arg1: media id; arg2 const char*; */
+    VLC_ML_MEDIA_GET_MEDIA_PLAYBACK_PREF,   /**< arg1: media id; arg2: vlc_ml_playback_pref; arg3: char**; */
+    VLC_ML_MEDIA_SET_MEDIA_PLAYBACK_PREF,   /**< arg1: media id; arg2: vlc_ml_playback_pref; arg3: const char*; */
+    VLC_ML_MEDIA_SET_THUMBNAIL,             /**< arg1: media id; arg2: const char*; */
+    VLC_ML_MEDIA_ADD_EXTERNAL_MRL,          /**< arg1: media id; arg2: const char*; arg3: type(vlc_ml_file_type_t) */
 };
 
 /**
@@ -431,6 +436,22 @@ static inline void vlc_ml_clear_history( vlc_medialibrary_t* p_ml )
     p_ml->pf_control( p_ml, VLC_ML_CLEAR_HISTORY );
 }
 
+static inline vlc_ml_media_t* vlc_ml_new_external_media( vlc_medialibrary_t* p_ml, const char* psz_mrl )
+{
+    vlc_ml_media_t* res;
+    if ( p_ml->pf_control( p_ml, VLC_ML_NEW_EXTERNAL_MEDIA, psz_mrl, &res ) != VLC_SUCCESS )
+        return NULL;
+    return res;
+}
+
+static inline vlc_ml_media_t* vlc_ml_new_stream( vlc_medialibrary_t* p_ml, const char* psz_mrl )
+{
+    vlc_ml_media_t* res;
+    if ( p_ml->pf_control( p_ml, VLC_ML_NEW_STREAM, psz_mrl, &res ) != VLC_SUCCESS )
+        return NULL;
+    return res;
+}
+
 static inline int vlc_ml_media_increase_playcount( vlc_medialibrary_t* p_ml, int64_t i_media_id )
 {
     return p_ml->pf_control( p_ml, VLC_ML_MEDIA_INCREASE_PLAY_COUNT, i_media_id );
@@ -449,6 +470,12 @@ static inline int vlc_ml_media_set_playback_pref( vlc_medialibrary_t* p_ml, int6
 static inline int vlc_ml_media_set_thumbnail( vlc_medialibrary_t* p_ml, int64_t i_media_id, const char* psz_mrl )
 {
     return p_ml->pf_control( p_ml, VLC_ML_MEDIA_SET_THUMBNAIL, i_media_id, psz_mrl );
+}
+
+static inline int vlc_ml_media_add_external_mrl( vlc_medialibrary_t* p_ml, int64_t i_media_id,
+                                                 const char* psz_mrl, int i_type )
+{
+    return p_ml->pf_control( p_ml, VLC_ML_MEDIA_ADD_EXTERNAL_MRL, i_media_id, psz_mrl, i_type );
 }
 
 enum vlc_ml_get_queries

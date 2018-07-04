@@ -320,6 +320,16 @@ int MediaLibrary::Control( int query, va_list args )
             auto value = va_arg( args, const char* );
             return setMeta( mediaId, meta, value );
         }
+        case VLC_ML_MEDIA_SET_THUMBNAIL:
+        {
+            auto mediaId = va_arg( args, int64_t );
+            auto mrl = va_arg( args, const char* );
+            auto media = m_ml->media( mediaId );
+            if ( media == nullptr )
+                return VLC_EGENERIC;
+            media->setThumbnail( mrl );
+            return VLC_SUCCESS;
+        }
         default:
             return VLC_EGENERIC;
     }

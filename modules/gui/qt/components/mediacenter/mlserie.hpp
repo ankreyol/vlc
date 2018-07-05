@@ -37,10 +37,10 @@ class MLShow : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(uint64_t id READ getId)
-    Q_PROPERTY(QString title READ getTitle)
-    Q_PROPERTY(QString duration READ getDuration)
-    Q_PROPERTY(QString cover READ getCover)
+    Q_PROPERTY(uint64_t id READ getId CONSTANT)
+    Q_PROPERTY(QString title READ getTitle CONSTANT)
+    Q_PROPERTY(QString duration READ getDuration CONSTANT)
+    Q_PROPERTY(QString cover READ getCover CONSTANT)
 
 public:
     MLShow( const ml_show_t *_data );

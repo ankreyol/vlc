@@ -34,6 +34,7 @@ MLAlbum::MLAlbum(const ml_album_t *_data, QObject *_parent)
     , m_otherArtists( QList<QString>() )
     , m_nbTracks    ( _data->i_nb_tracks )
     , m_duration    ( _data->i_duration )
+    , m_albumstracks(nullptr)
 {
     assert(_data);
     // Fill m_otherArtists
@@ -86,6 +87,15 @@ unsigned int MLAlbum::getNbTracks() const
 unsigned int MLAlbum::getDuration() const
 {
     return m_duration;
+}
+
+MLAlbumTrackModel *MLAlbum::getTracks()
+{
+    if (m_albumstracks == nullptr)
+    {
+        //FIXME
+    }
+    return m_albumstracks;
 }
 
 QString MLAlbum::getPresName() const

@@ -37,10 +37,10 @@ class MLMovie : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(uint64_t id READ getId)
-    Q_PROPERTY(QString title READ getTitle)
-    Q_PROPERTY(unsigned int duration READ getDuration)
-    Q_PROPERTY(QString cover READ getCover)
+    Q_PROPERTY(uint64_t id READ getId CONSTANT)
+    Q_PROPERTY(QString title READ getTitle CONSTANT)
+    Q_PROPERTY(unsigned int duration READ getDuration CONSTANT)
+    Q_PROPERTY(QString cover READ getCover CONSTANT)
 
 public:
     MLMovie( const ml_media_t *data );

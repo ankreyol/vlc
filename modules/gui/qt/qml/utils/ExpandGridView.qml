@@ -21,8 +21,87 @@
  * 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
  *****************************************************************************/
 
+import QtQuick.Layouts 1.1
 import QtQuick 2.0
 
+GridLayout {
+    id: grid
+
+    property int cellHeight: 0          // Height of a cell
+    property int cellWidth: 0           // Width of a cell
+    property int expandHeight: 0        // Height of the expanded zone
+    property int expandSpacing: 0       // Space between a row and the expanded zone
+
+    columns: Math.floor( parent.width / (cellWidth + columnSpacing) )
+    rows: Math.ceil( model.count / columns ) + 1
+
+    // Should the width of the expanded zone be the root's width (true)
+    // or the row's width (false) (different when there is space left at end of row) ?
+    property bool expandFillWidth: false
+    // Should the height of the expanded zone be expandHeight or should it be compacted
+    // so it's the minimum between expandHeight and the height of the expandDelegate ?
+    property bool expandCompact : false
+    // Should the height of the expanded zone be always the height of the epxand Delegate ?
+    // (if true, properties expandHeight and expandCompact becom useless)
+    property bool expandAdaptHeight: false
+
+    property int expandDelay: 0         // The delay before the expanding animation starts (in ms)
+    property int collapseDelay: 0       // The delay before the collapsing animation starts (in ms)
+    property int expandDuration: 0      // The time the expanding animation lasts (in ms)
+    property int collapseDuration: 0    // The time the collapsing animation lasts (in ms)
+
+    property var model                  // The model (data) to use
+    property Component delegate         // The delegate for the cells
+    property Component expandDelegate   // The delegate for the expanding zone
+    property int expanditem: -1;
+
+
+    Repeater {
+        model: parent.model
+        Rectangle {
+            id: cell
+            property var itemModel: model
+            width: grid.cellWidth
+            height: grid.cellHeight
+            Layout.column: index % grid.columns
+            Layout.row: (index < (Math.floor(grid.expanditem / grid.columns) + 1) * grid.columns  ) ? Math.floor(index / grid.columns) : (Math.floor(index / grid.columns) + 2)
+            Loader {
+                sourceComponent: grid.delegate
+                property var model: parent.itemModel
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    if (grid.expanditem == index )
+                        grid.expanditem = -1
+                    else
+                        grid.expanditem = index;
+                }
+            }
+        }
+
+    }
+
+    Rectangle {
+        id: expand
+        visible: grid.expanditem != -1
+        Layout.column: 0
+        Layout.row: Math.floor(grid.expanditem / grid.columns) + 1
+        Layout.columnSpan: grid.columns
+        Layout.fillWidth: true
+        Layout.topMargin: expandSpacing
+        Layout.bottomMargin: expandSpacing
+        height: grid.expandHeight
+
+        Loader {
+            property var model: grid.model.get(grid.expanditem)
+            sourceComponent: grid.expandDelegate
+            active: grid.expanditem != -1
+        }
+    }
+}
+
+/*
 Flickable {
     id: root
 
@@ -79,9 +158,9 @@ Flickable {
     }
     function calc_end(row_num) {
         return Math.min(
-            calc_begin(row_num+1) - 1,
-            nb_item(model) - 1
-        );
+                    calc_begin(row_num+1) - 1,
+                    nb_item(model) - 1
+                    );
     }
     function calc_row_spacing() {
         if (fillHeight) {
@@ -165,3 +244,4 @@ Flickable {
         }
     }
 }
+*/

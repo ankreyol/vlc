@@ -88,6 +88,14 @@ QHash<int, QByteArray> MLAlbumModel::roleNames() const
     return roles;
 }
 
+QObject *MLAlbumModel::get(int idx)
+{
+    printf("Get %i\n");
+    if (idx >= m_item_list.size())
+        return NULL;
+    return m_item_list.at(idx);
+}
+
 void MLAlbumModel::reload()
 {
     for (MLAlbum* album : m_item_list )

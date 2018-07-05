@@ -124,41 +124,6 @@ Column {
             width: expandPanel_container_id.width
             height: expandPanel_container_id.height
         }
-
-        states: State {
-            name: "expanded"; when: validExpandItemIndex()
-            PropertyChanges {
-                target: expandPanel_loader_id;
-                sourceComponent: expandZone
-            }
-            PropertyChanges {
-                target: expandPanel_container_id;
-                height: calc_expandzone_height()
-            }
-            PropertyChanges {
-                target: expandPanel_container_id;
-                width: expandFillWidth ? rootMaxWidth : itemsPerRow * (cellWidth+main_row.spacing) - main_row.spacing
-            }
-        }
-
-        transitions: [
-            Transition {
-                from: ""; to: "expanded"
-                SequentialAnimation {
-                    PropertyAnimation { properties: "width"; duration: expandDelay }
-                    PropertyAnimation { properties: "sourceComponent"; duration: 0 }
-                    PropertyAnimation { properties: "height"; duration: expandDuration }
-                }
-            },
-            Transition {
-                from: "expanded"; to: ""
-                SequentialAnimation {
-                    PropertyAnimation { duration: collapseDelay }
-                    PropertyAnimation { properties: "height"; duration: collapseDuration }
-                    PropertyAnimation { properties: "sourceComponent, width"; duration: 0 }
-                }
-            }
-        ]
     }
     
     Component {

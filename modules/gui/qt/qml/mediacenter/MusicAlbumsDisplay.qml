@@ -36,8 +36,19 @@ Loader {
         console.log( "Data reloaded" );
     }
 
-    sourceComponent: medialib.gridView ? gridViewComponent_id : listViewComponent_id
+    function formatDuration(t_ms) {
+        var t_sec = parseInt(t_ms / 1000)
+        var sec = t_sec % 60
+        var min = parseInt(t_sec / 60) % 60
+        var hour = parseInt(t_sec / 3600)
+        if (hour === 0)
+            return "" + min + ":" + sec
+        else
+            return "" + hour + ":" + min + ":" + sec
+    }
 
+    //sourceComponent: medialib.gridView ? gridViewComponent_id : listViewComponent_id
+    sourceComponent: gridViewComponent_id
     /* Grid View */
 
     Component {
@@ -53,7 +64,7 @@ Loader {
             expandHeight: VLCStyle.heightBar_xxlarge
 
             rowSpacing: VLCStyle.margin_xxxsmall
-            colSpacing: VLCStyle.margin_xxxsmall
+            columnSpacing: VLCStyle.margin_xxxsmall
             expandSpacing: VLCStyle.margin_xxxsmall
             expandCompact: true
 
@@ -66,7 +77,7 @@ Loader {
                 cover : Image { source: model.cover || VLCStyle.noArtCover }
                 name : model.title || "Unknown title"
                 date : model.release_year !== "0" ? model.release_year : ""
-                infos : model.duration + " - " + model.nb_tracks + " tracks"
+                infos : formatDuration(model.duration) + " - " + model.nb_tracks + " tracks"
 
                 onItemClicked : console.log('Clicked on details : '+ model.title)
                 onPlayClicked: {
@@ -78,17 +89,18 @@ Loader {
                     medialib.addToPlaylist(currentIndex);
                 }
             }
+
             expandDelegate: MusicAlbumsGridExpandDelegate {
-                width: parent.parent.width
                 height: gridView_id.expandHeight
             }
 
-            ScrollBar.vertical: ScrollBar { }
+            //ScrollBar.vertical: ScrollBar { }
         }
     }
 
 
     /* List View */
+    /*
     Component {
         id: listViewComponent_id
 
@@ -149,4 +161,5 @@ Loader {
             ScrollBar.vertical: ScrollBar { }
         }
     }
+    */
 }

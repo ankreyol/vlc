@@ -19,6 +19,8 @@ public:
     int rowCount(const QModelIndex &parent) const override;
     Q_INVOKABLE QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Q_INVOKABLE QHash<int, QByteArray> roleNames() const override;
+
+    Q_INVOKABLE QObject *get(int idx);
 private:
     void reload() override;
     ml_sorting_criteria_t roleToCriteria(int role) const override;

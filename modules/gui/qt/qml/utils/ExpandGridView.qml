@@ -92,6 +92,7 @@ GridLayout {
         Layout.topMargin: expandSpacing
         Layout.bottomMargin: expandSpacing
         height: grid.expandHeight
+        color: "transparent"
 
         Loader {
             property var model: grid.model.get(grid.expanditem)

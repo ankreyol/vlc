@@ -44,7 +44,7 @@ Item {
             width: parent.width
 
             line1: Text{
-                text: (model.track_title || "Unknown track")+" - "+model.track_duration
+                text: (model.title || "Unknown track")+" - "+model.duration
                 elide: Text.ElideRight
                 font.pixelSize: VLCStyle.fontSize_normal
                 color: VLCStyle.textColor

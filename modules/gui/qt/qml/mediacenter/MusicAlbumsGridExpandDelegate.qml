@@ -59,8 +59,6 @@ Row {
             height: expand_infos_title_id.implicitHeight
             width: expand_infos_id.width
 
-            color: VLCStyle.bgColor
-
             Text {
                 id: expand_infos_title_id
 
@@ -75,14 +73,15 @@ Row {
             z: expand_infos_titleRect_id.z - 1
             height: Math.min(
                 root.height - expand_infos_titleRect_id.height - expand_infos_id.spacing,
-                model.nb_tracks * (
-                    expand_infos_id.spacing + VLCStyle.margin_xxxsmall + VLCStyle.fontSize_normal
-                ) - VLCStyle.margin_xxxsmall - expand_infos_id.spacing
+                        6666666666666666
+                //model.nb_tracks * (
+                //    expand_infos_id.spacing + VLCStyle.margin_xxxsmall + VLCStyle.fontSize_normal
+                //) - VLCStyle.margin_xxxsmall - expand_infos_id.spacing
             )
             width: expand_infos_id.width - x
 
             tracks: model.tracks
-            parentIndex: currentIndex
+            parentIndex: 4
         }
     }
 }

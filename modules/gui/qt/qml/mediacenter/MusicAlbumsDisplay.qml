@@ -36,17 +36,6 @@ Loader {
         console.log( "Data reloaded" );
     }
 
-    function formatDuration(t_ms) {
-        var t_sec = parseInt(t_ms / 1000)
-        var sec = t_sec % 60
-        var min = parseInt(t_sec / 60) % 60
-        var hour = parseInt(t_sec / 3600)
-        if (hour === 0)
-            return "" + min + ":" + sec
-        else
-            return "" + hour + ":" + min + ":" + sec
-    }
-
     //sourceComponent: medialib.gridView ? gridViewComponent_id : listViewComponent_id
     sourceComponent: gridViewComponent_id
     /* Grid View */
@@ -54,47 +43,55 @@ Loader {
     Component {
         id: gridViewComponent_id
 
-        Utils.ExpandGridView {
-            id: gridView_id
+        Flickable {
+            ScrollBar.vertical: ScrollBar { }
+            width: parent.width
+            height: parent.height
+            contentHeight: gridView_id.height
+            //contentWidth: gridView_id.width
 
-            model: medialib.albums
+            Utils.ExpandGridView {
 
-            cellWidth: VLCStyle.cover_normal
-            cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
-            expandHeight: VLCStyle.heightBar_xxlarge
+                id: gridView_id
 
-            rowSpacing: VLCStyle.margin_xxxsmall
-            columnSpacing: VLCStyle.margin_xxxsmall
-            expandSpacing: VLCStyle.margin_xxxsmall
-            expandCompact: true
+                model: medialib.albums
 
-            expandDuration: VLCStyle.timingGridExpandOpen
+                cellWidth: VLCStyle.cover_normal
+                cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
+                expandHeight: VLCStyle.heightBar_xxlarge
 
-            delegate : Utils.GridItem {
-                width: gridView_id.cellWidth
-                height: gridView_id.cellHeight
+                rowSpacing: VLCStyle.margin_xxxsmall
+                columnSpacing: VLCStyle.margin_xxxsmall
+                expandSpacing: VLCStyle.margin_xxxsmall
+                expandCompact: true
 
-                cover : Image { source: model.cover || VLCStyle.noArtCover }
-                name : model.title || "Unknown title"
-                date : model.release_year !== "0" ? model.release_year : ""
-                infos : formatDuration(model.duration) + " - " + model.nb_tracks + " tracks"
+                expandDuration: VLCStyle.timingGridExpandOpen
 
-                onItemClicked : console.log('Clicked on details : '+ model.title)
-                onPlayClicked: {
-                    console.log('Clicked on play : '+model.title);
-                    medialib.addAndPlay(currentIndex)
+                delegate : Utils.GridItem {
+                    width: gridView_id.cellWidth
+                    height: gridView_id.cellHeight
+
+                    cover : Image { source: model.cover || VLCStyle.noArtCover }
+                    name : model.title || "Unknown title"
+                    date : model.release_year !== "0" ? model.release_year : ""
+                    infos : model.duration + " - " + model.nb_tracks + " tracks"
+
+                    onItemClicked : console.log('Clicked on details : '+ model.title)
+                    onPlayClicked: {
+                        console.log('Clicked on play : '+model.title);
+                        medialib.addAndPlay(currentIndex)
+                    }
+                    onAddToPlaylistClicked : {
+                        console.log('Clicked on addToPlaylist : '+model.title);
+                        medialib.addToPlaylist(currentIndex);
+                    }
                 }
-                onAddToPlaylistClicked : {
-                    console.log('Clicked on addToPlaylist : '+model.title);
-                    medialib.addToPlaylist(currentIndex);
+
+                expandDelegate: MusicAlbumsGridExpandDelegate {
+                    height: gridView_id.expandHeight
                 }
-            }
 
-            expandDelegate: MusicAlbumsGridExpandDelegate {
-                height: gridView_id.expandHeight
             }
-
-            //ScrollBar.vertical: ScrollBar { }
         }
     }
 

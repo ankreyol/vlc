@@ -11,8 +11,16 @@ enum Role {
 
 }
 
-MLAlbumTrackModel::MLAlbumTrackModel(std::shared_ptr<vlc_medialibrary_t> &ml, QObject *parent):
-    MLBaseModel( ml, parent )
+MLAlbumTrackModel::MLAlbumTrackModel(std::shared_ptr<vlc_medialibrary_t> &ml, QObject *parent)
+    : MLBaseModel( ml, parent )
+{
+    reload();
+}
+
+MLAlbumTrackModel::MLAlbumTrackModel(std::shared_ptr<vlc_medialibrary_t> &ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent)
+    : MLBaseModel( ml, parent )
+    , m_parent_type (parent_type)
+    , m_parent_id   (parent_id)
 {
     reload();
 }
@@ -71,22 +79,26 @@ void MLAlbumTrackModel::reload()
         delete track;
     m_item_list.clear();
 
-    ml_unique_ptr<ml_media_list_t> media_list( ml_list_audio_media(m_ml.get(), &m_query_param) );
-    for( const ml_media_t& media: ml_range_iterate<ml_media_t>( media_list ) )
+    ml_unique_ptr<vlc_ml_media_list_t> media_list;
+    if ( m_parent_type != -1 )
+        media_list.reset( vlc_ml_list_media_of(m_ml.get(), &m_query_param, m_parent_type, m_parent_id ) );
+    else
+        media_list.reset( vlc_ml_list_audio_media(m_ml.get(), &m_query_param) );
+    for( const vlc_ml_media_t& media: ml_range_iterate<vlc_ml_media_t>( media_list ) )
         m_item_list.push_back( new MLAlbumTrack( &media) );
 }
 
-ml_sorting_criteria_t MLAlbumTrackModel::roleToCriteria(int role) const
+vlc_ml_sorting_criteria_t MLAlbumTrackModel::roleToCriteria(int role) const
 {
     switch (role) {
     case TRACK_TITLE :
-        return ML_SORTING_ALPHA;
+        return VLC_ML_SORTING_ALPHA;
     case TRACK_NUMBER :
-        return ML_SORTING_TRACKNUMBER;
+        return VLC_ML_SORTING_TRACKNUMBER;
     case TRACK_DURATION :
-        return ML_SORTING_DURATION;
+        return VLC_ML_SORTING_DURATION;
     default:
-        return ML_SORTING_DEFAULT;
+        return VLC_ML_SORTING_DEFAULT;
     }
 }
 

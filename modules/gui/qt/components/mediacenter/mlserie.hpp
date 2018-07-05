@@ -43,7 +43,7 @@ class MLShow : public QObject
     Q_PROPERTY(QString cover READ getCover CONSTANT)
 
 public:
-    MLShow( const ml_show_t *_data );
+    MLShow(const vlc_ml_show_t *_data );
 
     uint64_t getId() { return 0; }
     QString getTitle() { return QString(""); }

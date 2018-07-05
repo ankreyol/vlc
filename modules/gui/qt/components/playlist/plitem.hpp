@@ -36,7 +36,7 @@ public:
     QString getTitle();
     QString getAlbumTitle();
     QString getName();
-    unsigned int getDuration();
+    QString getDuration();
     QString getCover();
 
     input_item_t* getInputItem() { return inputItem; }

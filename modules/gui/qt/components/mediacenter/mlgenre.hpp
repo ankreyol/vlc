@@ -44,7 +44,7 @@ class MLGenre : public QObject
     Q_PROPERTY(unsigned int nbtracks READ getNbTracks CONSTANT)
 
 public:
-    MLGenre( const ml_genre_t *_data, QObject *_parent = nullptr);
+    MLGenre( const vlc_ml_genre_t *_data, QObject *_parent = nullptr);
 
     uint64_t getId() const;
     QString getName() const;

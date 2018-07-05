@@ -20,10 +20,10 @@ public:
     Q_INVOKABLE QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Q_INVOKABLE QHash<int, QByteArray> roleNames() const override;
 
-    Q_INVOKABLE QObject *get(int idx);
+    Q_INVOKABLE QObject *get(unsigned int idx);
 private:
     void reload() override;
-    ml_sorting_criteria_t roleToCriteria(int role) const override;
+    vlc_ml_sorting_criteria_t roleToCriteria(int role) const override;
 
     const MLAlbum *getItem(const QModelIndex &index) const;
 

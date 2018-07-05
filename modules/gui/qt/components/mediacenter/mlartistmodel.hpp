@@ -22,7 +22,7 @@ public:
 
 private:
     void reload() override;
-    ml_sorting_criteria_t roleToCriteria(int role) const override;
+    vlc_ml_sorting_criteria_t roleToCriteria(int role) const override;
 
 
     const MLArtist* getItem(const QModelIndex &index) const;

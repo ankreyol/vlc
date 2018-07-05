@@ -47,13 +47,12 @@ class MLAlbum : public QObject
     Q_PROPERTY(QString shortsummary READ getShortSummary CONSTANT)
     Q_PROPERTY(QString cover READ getCover CONSTANT)
     Q_PROPERTY(QString artist READ getArtist CONSTANT)
-    Q_PROPERTY(QList<QString> artists READ getArtists CONSTANT)
     Q_PROPERTY(unsigned int nbtracks READ getNbTracks CONSTANT)
-    Q_PROPERTY(unsigned int duration READ getDuration CONSTANT)
+    Q_PROPERTY(QString duration READ getDuration CONSTANT)
     Q_PROPERTY(MLAlbumTrackModel* tracks READ getTracks CONSTANT)
 
 public:
-    MLAlbum(const ml_album_t *_data, QObject *_parent = nullptr);
+    MLAlbum(std::shared_ptr<vlc_medialibrary_t> &_ml, const vlc_ml_album_t *_data, QObject *_parent = nullptr);
 
     int64_t getId() const;
     QString getTitle() const;
@@ -61,9 +60,8 @@ public:
     QString getShortSummary() const;
     QString getCover() const;
     QString getArtist() const;
-    QList<QString> getArtists() const;
     unsigned int getNbTracks() const;
-    unsigned int getDuration() const;
+    QString getDuration() const;
 
     MLAlbumTrackModel *getTracks();
 
@@ -72,6 +70,8 @@ public:
     Q_INVOKABLE QString getPresInfo() const;
 
 private:
+    std::shared_ptr<vlc_medialibrary_t> m_ml;
+
     int64_t m_id;
     QString m_title;
     unsigned int m_releaseYear;
@@ -80,7 +80,7 @@ private:
     QString m_mainArtist;
     QList<QString> m_otherArtists;
     unsigned int m_nbTracks;
-    unsigned int m_duration;
+    QString m_duration;
 
     MLAlbumTrackModel* m_albumstracks;
 };

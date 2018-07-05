@@ -43,7 +43,7 @@ class MLMovie : public QObject
     Q_PROPERTY(QString cover READ getCover CONSTANT)
 
 public:
-    MLMovie( const ml_media_t *data );
+    MLMovie( const vlc_ml_media_t *data );
 
     uint64_t getId() { return 0; }
     QString getTitle() { return QString(""); }

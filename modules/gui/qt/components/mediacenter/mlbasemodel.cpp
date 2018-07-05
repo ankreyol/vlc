@@ -6,9 +6,9 @@ MLBaseModel::MLBaseModel(std::shared_ptr<vlc_medialibrary_t> &ml, QObject *paren
     , m_ml(ml)
 {
     assert(ml != nullptr);
-    memset(&m_query_param, 0, sizeof(ml_query_params_t));
+    memset(&m_query_param, 0, sizeof(vlc_ml_query_params_t));
     m_query_param.b_desc = false;
-    m_query_param.i_sort = ML_SORTING_DEFAULT;
+    m_query_param.i_sort = VLC_ML_SORTING_DEFAULT;
 }
 
 MLBaseModel::~MLBaseModel()

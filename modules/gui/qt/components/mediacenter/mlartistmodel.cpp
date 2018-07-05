@@ -71,19 +71,19 @@ void MLArtistModel::reload()
         delete artist;
 
     m_item_list.clear();
-    ml_unique_ptr<ml_artist_list_t> artist_list( ml_list_artists(m_ml.get(), &m_query_param) );
-    for( const ml_artist_t& artist: ml_range_iterate<ml_artist_t>( artist_list ) )
+    ml_unique_ptr<vlc_ml_artist_list_t> artist_list( vlc_ml_list_artists(m_ml.get(), &m_query_param, true) );
+    for( const vlc_ml_artist_t& artist: ml_range_iterate<vlc_ml_artist_t>( artist_list ) )
         m_item_list.push_back( new MLArtist( &artist, this ) );
 }
 
-ml_sorting_criteria_t MLArtistModel::roleToCriteria(int role) const
+vlc_ml_sorting_criteria_t MLArtistModel::roleToCriteria(int role) const
 {
     switch (role)
     {
     case ARTIST_NAME :
-        return ML_SORTING_ALPHA;
+        return VLC_ML_SORTING_ALPHA;
     default :
-        return ML_SORTING_DEFAULT;
+        return VLC_ML_SORTING_DEFAULT;
     }
 }
 

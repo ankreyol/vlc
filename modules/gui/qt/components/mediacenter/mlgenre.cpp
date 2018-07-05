@@ -24,7 +24,7 @@
 #include <cassert>
 #include "mlgenre.hpp"
 
-MLGenre::MLGenre(const ml_genre_t *_data, QObject *_parent )
+MLGenre::MLGenre(const vlc_ml_genre_t *_data, QObject *_parent )
     : QObject(_parent)
     , m_id      ( _data->i_id )
     , m_name    ( QString::fromUtf8( _data->psz_name ) )

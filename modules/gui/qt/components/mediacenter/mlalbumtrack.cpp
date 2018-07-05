@@ -25,18 +25,31 @@
 #include "mlalbumtrack.hpp"
 #include "mlhelper.hpp"
 
-MLAlbumTrack::MLAlbumTrack(const ml_media_t *_data, QObject *_parent )
+MLAlbumTrack::MLAlbumTrack(const vlc_ml_media_t *_data, QObject *_parent )
     : QObject( _parent )
     , m_id         ( _data->i_id)
     , m_title      ( QString::fromUtf8( _data->psz_title ) )
     , m_trackNumber( _data->album_track.i_track_nb )
-    , m_duration   ( _data->i_duration )
 {
     assert( _data );
-    assert( _data->i_type == ML_MEDIA_TYPE_AUDIO );
+    assert( _data->i_type == VLC_ML_MEDIA_TYPE_AUDIO );
 
-    for( const ml_file_t& file: ml_range_iterate<ml_file_t>( _data->p_files ) )
-        if( file.i_type == ML_FILE_TYPE_MAIN )
+    int t_sec = _data->i_duration / 1000000;
+    int sec = t_sec % 60;
+    int min = (t_sec / 60) % 60;
+    int hour = t_sec / 3600;
+    if (hour == 0)
+        m_duration = QString("%1:%2")
+                .arg(min, 2, 10, QChar('0'))
+                .arg(sec, 2, 10, QChar('0'));
+    else
+        m_duration = QString("%1:%2:%3")
+                .arg(hour, 2, 10, QChar('0'))
+                .arg(min, 2, 10, QChar('0'))
+                .arg(sec, 2, 10, QChar('0'));
+
+    for( const vlc_ml_file_t& file: ml_range_iterate<vlc_ml_file_t>( _data->p_files ) )
+        if( file.i_type == VLC_ML_FILE_TYPE_MAIN )
         {
             //FIXME should we store every mrl
             m_mrl = QString::fromUtf8(file.psz_mrl);
@@ -69,7 +82,7 @@ unsigned int MLAlbumTrack::getTrackNumber() const
     return m_trackNumber;
 }
 
-unsigned int MLAlbumTrack::getDuration() const
+QString MLAlbumTrack::getDuration() const
 {
     return m_duration;
 }

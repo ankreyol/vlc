@@ -23,24 +23,34 @@
 #include <cassert>
 #include "mlalbum.hpp"
 
-MLAlbum::MLAlbum(const ml_album_t *_data, QObject *_parent)
+MLAlbum::MLAlbum(std::shared_ptr<vlc_medialibrary_t> &_ml, const vlc_ml_album_t *_data, QObject *_parent)
     : QObject( _parent )
+    , m_ml          ( _ml )
     , m_id          ( _data->i_id )
     , m_title       ( QString::fromUtf8( _data->psz_title ) )
     , m_releaseYear ( _data->i_year )
     , m_shortSummary( QString::fromUtf8( _data->psz_summary ) )
     , m_cover       ( QString::fromUtf8( _data->psz_artwork_mrl ) )
     , m_mainArtist  ( QString::fromUtf8( _data->psz_artist ) )
-    , m_otherArtists( QList<QString>() )
     , m_nbTracks    ( _data->i_nb_tracks )
-    , m_duration    ( _data->i_duration )
     , m_albumstracks(nullptr)
 {
-    assert(_data);
-    // Fill m_otherArtists
-    if (_data->p_featuring)
-        for (int i=0 ; i < _data->p_featuring->i_nb_items ; i++ )
-            m_otherArtists.append( QString::fromUtf8( _data->p_featuring->p_items[i].psz_name ) );
+    assert( _data );
+    assert( _ml );
+
+    int t_sec = _data->i_duration / 1000000;
+    int sec = t_sec % 60;
+    int min = (t_sec / 60) % 60;
+    int hour = t_sec / 3600;
+    if (hour == 0)
+        m_duration = QString("%1:%2")
+                .arg(min, 2, 10, QChar('0'))
+                .arg(sec, 2, 10, QChar('0'));
+    else
+        m_duration = QString("%1:%2:%3")
+                .arg(hour, 2, 10, QChar('0'))
+                .arg(min, 2, 10, QChar('0'))
+                .arg(sec, 2, 10, QChar('0'));
 }
 
 int64_t MLAlbum::getId() const
@@ -74,17 +84,12 @@ QString MLAlbum::getArtist() const
     return m_mainArtist;
 }
 
-QList<QString> MLAlbum::getArtists() const
-{
-    return m_otherArtists;
-}
-
 unsigned int MLAlbum::getNbTracks() const
 {
     return m_nbTracks;
 }
 
-unsigned int MLAlbum::getDuration() const
+QString MLAlbum::getDuration() const
 {
     return m_duration;
 }
@@ -92,9 +97,7 @@ unsigned int MLAlbum::getDuration() const
 MLAlbumTrackModel *MLAlbum::getTracks()
 {
     if (m_albumstracks == nullptr)
-    {
-        //FIXME
-    }
+        m_albumstracks = new MLAlbumTrackModel(m_ml, VLC_ML_PARENT_ALBUM, m_id, this);
     return m_albumstracks;
 }
 

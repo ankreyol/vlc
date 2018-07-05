@@ -29,11 +29,11 @@ signals:
 
 protected:
     virtual void reload() = 0;
-    virtual ml_sorting_criteria_t roleToCriteria(int role) const = 0;
+    virtual vlc_ml_sorting_criteria_t roleToCriteria(int role) const = 0;
 
     std::shared_ptr<vlc_medialibrary_t> m_ml;
     int m_sort_role;
-    ml_query_params_t m_query_param;
+    vlc_ml_query_params_t m_query_param;
 };
 
 #endif // MLBASEMODEL_HPP

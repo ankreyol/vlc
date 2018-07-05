@@ -23,7 +23,7 @@
 
 #include "mlserie.hpp"
 
-MLShow::MLShow(const ml_show_t * data)
+MLShow::MLShow(const vlc_ml_show_t * data)
 {
 
 }

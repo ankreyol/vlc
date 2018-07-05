@@ -50,7 +50,7 @@ class MLArtist : public QObject
     Q_PROPERTY(unsigned int nbtracks READ getNbTracks CONSTANT)
 
 public:
-    MLArtist(const ml_artist_t *_data, QObject *_parent = nullptr);
+    MLArtist(const vlc_ml_artist_t *_data, QObject *_parent = nullptr);
 
     uint64_t getId() const;
     QString getName() const;

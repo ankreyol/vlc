@@ -15,15 +15,14 @@ class MLGenreModel : public MLBaseModel
     Q_OBJECT
 
 public:
-    explicit MLGenreModel(std::shared_ptr<vlc_medialibrary_t>& ml, QObject *parent = nullptr);
-
+    explicit MLGenreModel(std::shared_ptr<vlc_medialibrary_t>& ml,  QObject *parent = nullptr);
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
 
 private:
     void reload() override;
-    ml_sorting_criteria_t roleToCriteria(int role) const override;
+    vlc_ml_sorting_criteria_t roleToCriteria(int role) const override;
 
     const MLGenre* getItem(const QModelIndex &index) const;
 

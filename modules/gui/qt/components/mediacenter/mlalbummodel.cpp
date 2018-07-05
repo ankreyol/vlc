@@ -10,7 +10,6 @@ namespace {
         ALBUM_COVER,
         ALBUM_TRACKS,
         ALBUM_MAIN_ARTIST,
-        ALBUM_ARTISTS,
         ALBUM_NB_TRACKS,
         ALBUM_DURATION
     };
@@ -56,8 +55,6 @@ QVariant MLAlbumModel::data(const QModelIndex &index, int role) const
         return QVariant::fromValue( ml_item->getCover() );
     case ALBUM_MAIN_ARTIST :
         return QVariant::fromValue( ml_item->getArtist() );
-    case ALBUM_ARTISTS :
-        return QVariant::fromValue( ml_item->getArtists() );
     case ALBUM_NB_TRACKS :
         return QVariant::fromValue( ml_item->getNbTracks() );
     case ALBUM_DURATION:
@@ -81,16 +78,14 @@ QHash<int, QByteArray> MLAlbumModel::roleNames() const
     roles[ALBUM_COVER] = "cover";
     roles[ALBUM_TRACKS] = "tracks";
     roles[ALBUM_MAIN_ARTIST] = "main_artist";
-    roles[ALBUM_ARTISTS] = "artists";
     roles[ALBUM_NB_TRACKS] = "nb_tracks";
     roles[ALBUM_DURATION] = "duration";
 
     return roles;
 }
 
-QObject *MLAlbumModel::get(int idx)
+QObject *MLAlbumModel::get(unsigned int idx)
 {
-    printf("Get %i\n");
     if (idx >= m_item_list.size())
         return NULL;
     return m_item_list.at(idx);
@@ -102,26 +97,26 @@ void MLAlbumModel::reload()
         delete album;
     m_item_list.clear();
 
-    ml_unique_ptr<ml_album_list_t> album_list( ml_list_albums(m_ml.get(), &m_query_param) );
+    ml_unique_ptr<vlc_ml_album_list_t> album_list( vlc_ml_list_albums(m_ml.get(), &m_query_param) );
     printf("*** MLAlbumModel::reload %lu \n", album_list->i_nb_items);
-    for( const ml_album_t& album: ml_range_iterate<ml_album_t>( album_list ) )
-        m_item_list.push_back( new MLAlbum( &album, this ) );
+    for( const vlc_ml_album_t& album: ml_range_iterate<vlc_ml_album_t>( album_list ) )
+        m_item_list.push_back( new MLAlbum( m_ml, &album, this ) );
 }
 
-ml_sorting_criteria_t MLAlbumModel::roleToCriteria(int role) const
+vlc_ml_sorting_criteria_t MLAlbumModel::roleToCriteria(int role) const
 {
     switch (role)
     {
     case ALBUM_TITLE :
-        return ML_SORTING_ALPHA;
+        return VLC_ML_SORTING_ALPHA;
     case ALBUM_RELEASE_YEAR :
-        return ML_SORTING_RELEASEDATE;
+        return VLC_ML_SORTING_RELEASEDATE;
     case ALBUM_MAIN_ARTIST :
-        return ML_SORTING_ARTIST;
+        return VLC_ML_SORTING_ARTIST;
     case ALBUM_DURATION:
-        return ML_SORTING_DURATION;
+        return VLC_ML_SORTING_DURATION;
     default:
-        return ML_SORTING_DEFAULT;
+        return VLC_ML_SORTING_DEFAULT;
     }
 }
 

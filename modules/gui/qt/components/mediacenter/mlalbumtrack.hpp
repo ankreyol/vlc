@@ -43,18 +43,18 @@ class MLAlbumTrack : public QObject
     Q_PROPERTY(QString albumtitle READ getAlbumTitle CONSTANT)
     Q_PROPERTY(QString cover READ getCover CONSTANT)
     Q_PROPERTY(unsigned int tracknumber READ getTrackNumber CONSTANT)
-    Q_PROPERTY(unsigned int duration READ getDuration CONSTANT)
+    Q_PROPERTY(QString duration READ getDuration CONSTANT)
     Q_PROPERTY(QString mrl READ getMRL CONSTANT)
 
 public:
-    MLAlbumTrack(const ml_media_t *_data, QObject *_parent = nullptr);
+    MLAlbumTrack(const vlc_ml_media_t *_data, QObject *_parent = nullptr);
 
     uint64_t getId() const;
     QString getTitle() const;
     QString getAlbumTitle() const;
     QString getCover() const;
     unsigned int getTrackNumber() const;
-    unsigned int getDuration() const;
+    QString getDuration() const;
     QString getMRL() const;
 
     Q_INVOKABLE QString getPresName() const;
@@ -67,10 +67,10 @@ private:
     QString m_albumTitle;
     QString m_cover;
     unsigned int m_trackNumber;
-    unsigned int m_duration;
+    QString m_duration;
     QString m_mrl;
 
-   ml_unique_ptr<ml_media_t> m_data;
+   ml_unique_ptr<vlc_ml_media_t> m_data;
 
 signals:
 

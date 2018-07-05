@@ -24,7 +24,7 @@
 #include <cassert>
 #include "mlartist.hpp"
 
-MLArtist::MLArtist(const ml_artist_t* _data, QObject *_parent)
+MLArtist::MLArtist(const vlc_ml_artist_t* _data, QObject *_parent)
     : QObject(_parent)
     , m_id      ( _data->i_id )
     , m_name    ( QString::fromUtf8( _data->psz_name ) )

@@ -63,7 +63,7 @@ public:
     unsigned int getNbTracks() const;
     QString getDuration() const;
 
-    MLAlbumTrackModel *getTracks();
+    MLAlbumTrackModel *getTracks() const;
 
     Q_INVOKABLE QString getPresName() const;
     Q_INVOKABLE QString getPresImage() const;

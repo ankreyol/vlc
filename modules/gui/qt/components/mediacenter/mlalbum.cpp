@@ -51,6 +51,8 @@ MLAlbum::MLAlbum(std::shared_ptr<vlc_medialibrary_t> &_ml, const vlc_ml_album_t 
                 .arg(hour, 2, 10, QChar('0'))
                 .arg(min, 2, 10, QChar('0'))
                 .arg(sec, 2, 10, QChar('0'));
+
+    m_albumstracks = new MLAlbumTrackModel(m_ml, VLC_ML_PARENT_ALBUM, m_id, this);
 }
 
 int64_t MLAlbum::getId() const
@@ -94,10 +96,8 @@ QString MLAlbum::getDuration() const
     return m_duration;
 }
 
-MLAlbumTrackModel *MLAlbum::getTracks()
+MLAlbumTrackModel *MLAlbum::getTracks() const
 {
-    if (m_albumstracks == nullptr)
-        m_albumstracks = new MLAlbumTrackModel(m_ml, VLC_ML_PARENT_ALBUM, m_id, this);
     return m_albumstracks;
 }
 

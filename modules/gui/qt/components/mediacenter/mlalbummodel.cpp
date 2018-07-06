@@ -27,13 +27,11 @@ int MLAlbumModel::rowCount(const QModelIndex &parent) const
     // other (valid) parents, rowCount() should return 0 so that it does not become a tree model.
     if (parent.isValid())
         return 0;
-    printf("*** MLAlbumModel::rowCount %lu\n", m_item_list.size() );
     return m_item_list.size();
 }
 
 QVariant MLAlbumModel::data(const QModelIndex &index, int role) const
 {
-    printf("*** MLAlbumModel::data \n");
     if (!index.isValid())
         return QVariant();
 
@@ -57,6 +55,8 @@ QVariant MLAlbumModel::data(const QModelIndex &index, int role) const
         return QVariant::fromValue( ml_item->getArtist() );
     case ALBUM_NB_TRACKS :
         return QVariant::fromValue( ml_item->getNbTracks() );
+    case ALBUM_TRACKS :
+        return QVariant::fromValue( (QObject*)ml_item->getTracks());
     case ALBUM_DURATION:
         return QVariant::fromValue( ml_item->getDuration() );
     default:

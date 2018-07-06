@@ -35,6 +35,8 @@
 #include <medialibrary/IGenre.h>
 #include <medialibrary/ILabel.h>
 #include <medialibrary/IPlaylist.h>
+#include <medialibrary/IAudioTrack.h>
+#include <medialibrary/IVideoTrack.h>
 
 bool Convert( const medialibrary::IAlbumTrack* input, vlc_ml_album_track_t& output )
 {
@@ -87,6 +89,81 @@ bool Convert( const medialibrary::IMovie* input, vlc_ml_movie_t& output )
     }
     else
         output.psz_summary = nullptr;
+    return true;
+}
+
+static bool convertTracksCommon( vlc_ml_media_track_t* output, const std::string& codec,
+                                 const std::string& language, const std::string& desc )
+{
+    if ( codec.empty() == false )
+    {
+        output->psz_codec = strdup( codec.c_str() );
+        if ( unlikely( output->psz_codec == nullptr ) )
+            return false;
+    }
+    else
+        output->psz_codec = nullptr;
+
+    if ( language.empty() == false )
+    {
+        output->psz_language = strdup( language.c_str() );
+        if ( unlikely( output->psz_language == nullptr ) )
+            return false;
+    }
+    else
+        output->psz_language = nullptr;
+
+    if ( desc.empty() == false )
+    {
+        output->psz_description = strdup( desc.c_str() );
+        if ( unlikely( output->psz_description == nullptr ) )
+            return false;
+    }
+    else
+        output->psz_description = nullptr;
+    return true;
+}
+
+static bool convertTracks( const medialibrary::IMedia* inputMedia, vlc_ml_media_t& outputMedia )
+{
+    auto videoTracks = inputMedia->videoTracks()->all();
+    auto audioTracks = inputMedia->audioTracks()->all();
+    outputMedia.p_tracks = static_cast<vlc_ml_media_track_list_t*>(
+                malloc( sizeof( *outputMedia.p_tracks ) ) );
+    if ( unlikely( outputMedia.p_tracks == nullptr ) )
+        return false;
+    auto nbItems = videoTracks.size() + audioTracks.size();
+    outputMedia.p_tracks->i_nb_items = 0;
+    outputMedia.p_tracks->p_items = static_cast<vlc_ml_media_track_t*>( calloc(
+         nbItems, sizeof( *outputMedia.p_tracks->p_items ) ) );
+    if ( unlikely( outputMedia.p_tracks->p_items == nullptr ) )
+        return false;
+
+    vlc_ml_media_track_t* items = outputMedia.p_tracks->p_items;
+    for ( const auto& t : videoTracks )
+    {
+        vlc_ml_media_track_t* output = &items[outputMedia.p_tracks->i_nb_items++];
+
+        if ( convertTracksCommon( output, t->codec(), t->language(), t->description() ) == false )
+            return false;
+        output->i_type = VLC_ML_TRACK_TYPE_VIDEO;
+        output->i_bitrate = t->bitrate();
+        output->v.i_fpsNum = t->fpsNum();
+        output->v.i_fpsDen = t->fpsDen();
+        output->v.i_sarNum = t->sarNum();
+        output->v.i_sarDen = t->sarDen();
+    }
+    for ( const auto& t : audioTracks )
+    {
+        vlc_ml_media_track_t* output = &items[outputMedia.p_tracks->i_nb_items++];
+
+        if ( convertTracksCommon( output, t->codec(), t->language(), t->description() ) == false )
+            return false;
+        output->i_type = VLC_ML_TRACK_TYPE_AUDIO;
+        output->i_bitrate = t->bitrate();
+        output->a.i_nbChannels = t->nbChannels();
+        output->a.i_sampleRate = t->sampleRate();
+    }
     return true;
 }
 
@@ -169,6 +246,9 @@ bool Convert( const medialibrary::IMedia* input, vlc_ml_media_t& output )
     auto files = input->files();
     output.p_files = ml_convert_list<vlc_ml_file_list_t>( files );
     if ( output.p_files == nullptr )
+        return false;
+
+    if ( convertTracks( input, output ) == false )
         return false;
 
     if ( input->isThumbnailGenerated() == true )

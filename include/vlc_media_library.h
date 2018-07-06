@@ -62,6 +62,13 @@ typedef enum vlc_ml_file_type_t
     VLC_ML_FILE_TYPE_PLAYLIST,
 } vlc_ml_file_type_t;
 
+typedef enum vlc_ml_track_type_t
+{
+    VLC_ML_TRACK_TYPE_UNKNOWN,
+    VLC_ML_TRACK_TYPE_VIDEO,
+    VLC_ML_TRACK_TYPE_AUDIO,
+} vlc_ml_track_type_t;
+
 typedef struct vlc_ml_movie_t
 {
     char* psz_summary;
@@ -123,6 +130,40 @@ typedef struct vlc_ml_file_list_t
     vlc_ml_file_t* p_items;
 } vlc_ml_file_list_t;
 
+typedef struct vlc_ml_media_track_t
+{
+    char* psz_codec;
+    char* psz_language;
+    char* psz_description;
+    vlc_ml_track_type_t i_type;
+    uint32_t i_bitrate;
+    union
+    {
+        struct
+        {
+            // Audio
+            uint32_t i_nbChannels;
+            uint32_t i_sampleRate;
+        } a;
+        struct
+        {
+            // Video
+            uint32_t i_height;
+            uint32_t i_width;
+            uint32_t i_sarNum;
+            uint32_t i_sarDen;
+            uint32_t i_fpsNum;
+            uint32_t i_fpsDen;
+        } v;
+    };
+} vlc_ml_media_track_t;
+
+typedef struct vlc_ml_media_track_list_t
+{
+    size_t i_nb_items;
+    vlc_ml_media_track_t* p_items;
+} vlc_ml_media_track_list_t;
+
 typedef struct vlc_ml_media_t
 {
     int64_t i_id;
@@ -131,6 +172,7 @@ typedef struct vlc_ml_media_t
     vlc_ml_media_subtype_t i_subtype;
 
     vlc_ml_file_list_t* p_files;
+    vlc_ml_media_track_list_t* p_tracks;
 
     int32_t i_year;
     /* Duration in milliseconds */

@@ -76,9 +76,25 @@ void vlc_ml_show_release( vlc_ml_show_t* p_show )
     free( p_show );
 }
 
+static void vlc_ml_media_release_tracks_inner( vlc_ml_media_track_list_t* p_tracks )
+{
+    if ( p_tracks == NULL )
+        return;
+    for ( size_t i = 0; i < p_tracks->i_nb_items; ++i )
+    {
+        vlc_ml_media_track_t* p_track = &p_tracks->p_items[i];
+        free( p_track->psz_codec );
+        free( p_track->psz_language );
+        free( p_track->psz_description );
+    }
+    free( p_tracks->p_items );
+    free( p_tracks );
+}
+
 static void vlc_ml_media_release_inner( vlc_ml_media_t* p_media )
 {
     vlc_ml_file_list_release( p_media->p_files );
+    vlc_ml_media_release_tracks_inner( p_media->p_tracks );
     free( p_media->psz_title );
     free( p_media->psz_artwork_mrl );
     switch( p_media->i_subtype )

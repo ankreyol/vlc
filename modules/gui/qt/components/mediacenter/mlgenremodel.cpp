@@ -17,7 +17,6 @@ namespace {
 MLGenreModel::MLGenreModel(std::shared_ptr<vlc_medialibrary_t>& ml, QObject *parent)
     : MLBaseModel(ml, parent)
 {
-    reload();
 }
 
 int MLGenreModel::rowCount(const QModelIndex &parent) const
@@ -66,15 +65,21 @@ QHash<int, QByteArray> MLGenreModel::roleNames() const
     return roles;
 }
 
-void MLGenreModel::reload()
+bool MLGenreModel::canFetchMore(const QModelIndex &parent) const
 {
-    for ( MLGenre* item : m_item_list )
-        delete item;
-    m_item_list.clear();
-    ml_unique_ptr<vlc_ml_genre_list_t> genre_list( vlc_ml_list_genres(m_ml.get(), &m_query_param) );
-    printf("genre_list->i_nb_items: %u\n", genre_list->i_nb_items);
-    for( const vlc_ml_genre_t& genre : ml_range_iterate<vlc_ml_genre_t>( genre_list ) )
-        m_item_list.push_back( new MLGenre( &genre, this ) );
+    return m_item_list.size() < m_total_count;
+}
+
+void MLGenreModel::fetchMore(const QModelIndex &parent)
+{
+    ml_unique_ptr<vlc_ml_genre_list_t> genre_list(
+        vlc_ml_list_genres(m_ml.get(), &m_query_param)
+    );
+
+    beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + genre_list->i_nb_items - 1);
+    for( const vlc_ml_genre_t& genre: ml_range_iterate<vlc_ml_genre_t>( genre_list ) )
+        m_item_list.push_back( new MLGenre( &genre ) );
+    endInsertRows();
 }
 
 vlc_ml_sorting_criteria_t MLGenreModel::roleToCriteria(int role) const

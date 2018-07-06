@@ -47,37 +47,3 @@ unsigned int MLGenre::getNbTracks() const
 {
     return m_nbTracks;
 }
-
-//QString MLGenre::getPresName() const
-//{
-//    return m_name;
-//}
-//
-//QString MLGenre::getPresImage() const
-//{
-//    return QString();
-//}
-//
-//QString MLGenre::getPresInfo() const
-//{
-//    return QString();
-//}
-
-//QList<MLAlbumTrack*> MLGenre::getPLTracks() const
-//{
-//    QList<MLAlbumTrack*> result;
-//    std::vector<medialibrary::MediaPtr> t = m_data->tracks()->all();
-//    for (int i=0 ; i<t.size() ; i++ )
-//        result.append( new MLAlbumTrack( t[i] ) );
-//    return result;
-//}
-//
-//QList<std::shared_ptr<MLItem>> MLGenre::getDetailsObjects(medialibrary::SortingCriteria sort, bool desc)
-//{
-//    QList<std::shared_ptr<MLItem>> result;
-//    medialibrary::QueryParameters queryparam{ sort, desc  };
-//    std::vector<medialibrary::AlbumPtr> t = m_data->albums(&queryparam)->all();
-//    for (int i=0 ; i<t.size() ; i++ )
-//        result.append( std::make_shared<MLAlbum>( t[i] ) );
-//    return result;
-//}

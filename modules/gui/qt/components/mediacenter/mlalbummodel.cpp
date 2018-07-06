@@ -18,7 +18,15 @@ namespace {
 MLAlbumModel::MLAlbumModel(std::shared_ptr<vlc_medialibrary_t> &ml, QObject *parent)
     : MLBaseModel(ml, parent)
 {
-    reload();
+    m_query_param.i_nbResults = 10;
+    m_total_count = vlc_ml_count_albums(ml.get(), &m_query_param);
+}
+
+MLAlbumModel::MLAlbumModel(std::shared_ptr<vlc_medialibrary_t> &ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent)
+    : MLBaseModel(ml, parent_type, parent_id, parent)
+{
+    m_query_param.i_nbResults = 10;
+    m_total_count = vlc_ml_count_albums(ml.get(), &m_query_param);
 }
 
 int MLAlbumModel::rowCount(const QModelIndex &parent) const
@@ -34,6 +42,9 @@ QVariant MLAlbumModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
+
+    if (index.row() >= m_item_list.size() || index.row() < 0)
+            return QVariant();
 
     const MLAlbum* ml_item = getItem(index);
     if ( ml_item == NULL )
@@ -91,16 +102,24 @@ QObject *MLAlbumModel::get(unsigned int idx)
     return m_item_list.at(idx);
 }
 
-void MLAlbumModel::reload()
+bool MLAlbumModel::canFetchMore(const QModelIndex &parent) const
 {
-    for (MLAlbum* album : m_item_list )
-        delete album;
-    m_item_list.clear();
+    return m_item_list.size() < m_total_count;
+}
 
-    ml_unique_ptr<vlc_ml_album_list_t> album_list( vlc_ml_list_albums(m_ml.get(), &m_query_param) );
-    printf("*** MLAlbumModel::reload %lu \n", album_list->i_nb_items);
+void MLAlbumModel::fetchMore(const QModelIndex &)
+{
+    ml_unique_ptr<vlc_ml_album_list_t> album_list;
+    if ( m_parent_type == -1 )
+        album_list.reset( vlc_ml_list_albums(m_ml.get(), &m_query_param) );
+    else
+        album_list.reset( vlc_ml_list_albums_of(m_ml.get(), &m_query_param, m_parent_type, m_parent_id) );
+
+    beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + album_list->i_nb_items - 1);
     for( const vlc_ml_album_t& album: ml_range_iterate<vlc_ml_album_t>( album_list ) )
         m_item_list.push_back( new MLAlbum( m_ml, &album, this ) );
+    m_query_param.i_offset += album_list->i_nb_items;
+    endInsertRows();
 }
 
 vlc_ml_sorting_criteria_t MLAlbumModel::roleToCriteria(int role) const

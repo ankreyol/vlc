@@ -14,7 +14,12 @@ namespace {
 MLArtistModel::MLArtistModel(std::shared_ptr<vlc_medialibrary_t>& ml, QObject *parent)
     : MLBaseModel(ml, parent)
 {
-    reload();
+}
+
+MLArtistModel::MLArtistModel(std::shared_ptr<vlc_medialibrary_t> &ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent)
+: MLBaseModel(ml, parent_type, parent_id, parent)
+{
+
 }
 
 int MLArtistModel::rowCount(const QModelIndex &parent) const
@@ -65,15 +70,24 @@ QHash<int, QByteArray> MLArtistModel::roleNames() const
     return roles;
 }
 
-void MLArtistModel::reload()
+bool MLArtistModel::canFetchMore(const QModelIndex &parent) const
 {
-    for ( MLArtist* artist : m_item_list )
-        delete artist;
+    return m_item_list.size() < m_total_count;
+}
 
-    m_item_list.clear();
-    ml_unique_ptr<vlc_ml_artist_list_t> artist_list( vlc_ml_list_artists(m_ml.get(), &m_query_param, true) );
+void MLArtistModel::fetchMore(const QModelIndex &parent)
+{
+    ml_unique_ptr<vlc_ml_artist_list_t> artist_list;
+
+    if ( m_parent_type == -1 )
+        artist_list.reset( vlc_ml_list_artists(m_ml.get(), &m_query_param, false) );
+    else
+        artist_list.reset( vlc_ml_list_artist_of(m_ml.get(), &m_query_param, m_parent_type, m_parent_id ) );
+
+    beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + artist_list->i_nb_items - 1);
     for( const vlc_ml_artist_t& artist: ml_range_iterate<vlc_ml_artist_t>( artist_list ) )
         m_item_list.push_back( new MLArtist( &artist, this ) );
+    endInsertRows();
 }
 
 vlc_ml_sorting_criteria_t MLArtistModel::roleToCriteria(int role) const

@@ -24,13 +24,15 @@ public:
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
+
+    Q_INVOKABLE bool canFetchMore(const QModelIndex &parent) const override;
+    Q_INVOKABLE void fetchMore(const QModelIndex &parent) override;
+
 private:
-    void reload() override;
     vlc_ml_sorting_criteria_t roleToCriteria(int role) const override;
     const MLAlbumTrack* getItem(const QModelIndex &index) const;
 
-    int m_parent_type = -1;
-    uint64_t m_parent_id;
+    unsigned int m_total_count;
     std::vector<MLAlbumTrack*> m_item_list;
 };
 #endif // MLTRACKMODEL_HPP

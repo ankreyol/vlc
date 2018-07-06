@@ -14,15 +14,13 @@ enum Role {
 MLAlbumTrackModel::MLAlbumTrackModel(std::shared_ptr<vlc_medialibrary_t> &ml, QObject *parent)
     : MLBaseModel( ml, parent )
 {
-    reload();
+    m_total_count = vlc_ml_count_audio_media(ml.get(), &m_query_param);
 }
 
 MLAlbumTrackModel::MLAlbumTrackModel(std::shared_ptr<vlc_medialibrary_t> &ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent)
-    : MLBaseModel( ml, parent )
-    , m_parent_type (parent_type)
-    , m_parent_id   (parent_id)
+    : MLBaseModel( ml, parent_type, parent_id, parent )
 {
-    reload();
+    m_total_count = vlc_ml_count_media_of(ml.get(), &m_query_param, m_parent_type, m_parent_id);
 }
 
 MLAlbumTrackModel::~MLAlbumTrackModel()
@@ -73,19 +71,24 @@ QHash<int, QByteArray> MLAlbumTrackModel::roleNames() const
     return roles;
 }
 
-void MLAlbumTrackModel::reload()
+bool MLAlbumTrackModel::canFetchMore(const QModelIndex &parent) const
 {
-    for ( MLAlbumTrack* track : m_item_list )
-        delete track;
-    m_item_list.clear();
+    return m_item_list.size() < m_total_count;
+}
 
+void MLAlbumTrackModel::fetchMore(const QModelIndex &)
+{
     ml_unique_ptr<vlc_ml_media_list_t> media_list;
-    if ( m_parent_type != -1 )
-        media_list.reset( vlc_ml_list_media_of(m_ml.get(), &m_query_param, m_parent_type, m_parent_id ) );
-    else
+
+    if ( m_parent_type == -1 )
         media_list.reset( vlc_ml_list_audio_media(m_ml.get(), &m_query_param) );
+    else
+        media_list.reset( vlc_ml_list_media_of(m_ml.get(), &m_query_param, m_parent_type, m_parent_id ) );
+
+    beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + media_list->i_nb_items - 1);
     for( const vlc_ml_media_t& media: ml_range_iterate<vlc_ml_media_t>( media_list ) )
         m_item_list.push_back( new MLAlbumTrack( &media) );
+    endInsertRows();
 }
 
 vlc_ml_sorting_criteria_t MLAlbumTrackModel::roleToCriteria(int role) const
@@ -101,6 +104,7 @@ vlc_ml_sorting_criteria_t MLAlbumTrackModel::roleToCriteria(int role) const
         return VLC_ML_SORTING_DEFAULT;
     }
 }
+
 
 const MLAlbumTrack* MLAlbumTrackModel::getItem(const QModelIndex &index) const
 {

@@ -457,11 +457,11 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
         case VLC_ML_LIST_ARTISTS:
         {
             medialibrary::Query<medialibrary::IArtist> query;
+            bool includeAll = va_arg( args, int ) != 0;
             if ( psz_pattern != nullptr )
                 query = m_ml->searchArtists( psz_pattern, paramsPtr );
             else
             {
-                bool includeAll = va_arg( args, int ) != 0;
                 query = m_ml->artists( includeAll, paramsPtr );
             }
             auto res = ml_convert_list<vlc_ml_artist_list_t>( query->items( nbItems, offset ) );
@@ -471,10 +471,11 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
         case VLC_ML_COUNT_ARTISTS:
         {
             medialibrary::Query<medialibrary::IArtist> query;
+            bool includeAll = va_arg( args, int ) != 0;
             if ( psz_pattern != nullptr )
                 query = m_ml->searchArtists( psz_pattern, paramsPtr );
             else
-                query = m_ml->artists( paramsPtr );
+                query = m_ml->artists( includeAll, paramsPtr );
             *va_arg( args, size_t* ) = query->count();
             break;
         }

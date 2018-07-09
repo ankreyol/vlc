@@ -167,40 +167,55 @@ void MediaLibrary::onMediaThumbnailReady( medialibrary::MediaPtr, bool )
 }
 
 MediaLibrary::MediaLibrary( vlc_object_t* obj )
-    : m_logger( new Logger( obj ) )
-    , m_ml( NewMediaLibrary() )
+    : m_obj( obj )
 {
-    m_ml->setVerbosity( medialibrary::LogLevel::Info );
-    m_ml->setLogger( m_logger.get() );
+}
+
+bool MediaLibrary::Start()
+{
+    if ( m_ml != nullptr )
+        return true;
+
+    std::unique_ptr<medialibrary::IMediaLibrary> ml( NewMediaLibrary() );
+
+    m_logger.reset( new Logger( m_obj ) );
+    ml->setVerbosity( medialibrary::LogLevel::Info );
+    ml->setLogger( m_logger.get() );
+
     auto userDir = wrapCPtr( config_GetUserDir( VLC_USERDATA_DIR ) );
     std::string mlDir = std::string{ userDir.get() } + "/ml/";
 
-    auto initStatus = m_ml->initialize( mlDir + "ml.db", mlDir + "thumbnails/", this );
+    auto initStatus = ml->initialize( mlDir + "ml.db", mlDir + "thumbnails/", this );
     switch ( initStatus )
     {
         case medialibrary::InitializeResult::AlreadyInitialized:
-            throw std::runtime_error( "Unexpected double medialibrary intialization" );
+            msg_Info( m_obj, "MediaLibrary was already initialized" );
+            return true;
         case medialibrary::InitializeResult::Failed:
-            throw std::runtime_error( "Medialibrary failed to initialize" );
+            msg_Err( m_obj, "Medialibrary failed to initialize" );
+            return false;
         case medialibrary::InitializeResult::DbReset:
-            msg_Info( obj, "Database was reset" );
+            msg_Info( m_obj, "Database was reset" );
             break;
         case medialibrary::InitializeResult::Success:
-            msg_Dbg( obj, "MediaLibrary successfully initialized" );
+            msg_Dbg( m_obj, "MediaLibrary successfully initialized" );
             break;
     }
 
-    m_ml->addParserService( std::make_shared<MetadataExtractor>( obj ) );
-    auto res = m_ml->start();
+    ml->addParserService( std::make_shared<MetadataExtractor>( m_obj ) );
+    auto res = ml->start();
     if ( res == false )
-        throw std::runtime_error( "Failed to start medialibrary" );
-    auto folders = wrapCPtr( var_InheritString( obj, "ml-folders" ) );
+    {
+        msg_Err( m_obj, "Failed to start the MediaLibrary" );
+        return false;
+    }
+    auto folders = wrapCPtr( var_InheritString( m_obj, "ml-folders" ) );
     if ( folders != nullptr && strlen( folders.get() ) > 0 )
     {
         std::stringstream ss( folders.get() );
         std::string folder;
         while ( std::getline( ss, folder, ';' ) )
-            m_ml->discover( folder );
+            ml->discover( folder );
     }
     else
     {
@@ -209,14 +224,14 @@ MediaLibrary::MediaLibrary( vlc_object_t* obj )
         if ( videoFolder != nullptr )
         {
             auto mrl = std::string{ "file://" } + videoFolder.get();
-            m_ml->discover( mrl );
+            ml->discover( mrl );
             varValue = mrl;
         }
         auto musicFolder = wrapCPtr( config_GetUserDir( VLC_MUSIC_DIR ) );
         if ( musicFolder != nullptr )
         {
             auto mrl = std::string{ "file://" } + musicFolder.get();
-            m_ml->discover( mrl );
+            ml->discover( mrl );
             if ( varValue.empty() == false )
                 varValue += ";";
             varValue += mrl;
@@ -224,12 +239,16 @@ MediaLibrary::MediaLibrary( vlc_object_t* obj )
         if ( varValue.empty() == false )
             config_PutPsz( "ml-folders", varValue.c_str() );
     }
-
-    m_ml->reload();
+    ml->reload();
+    m_ml = std::move( ml );
+    return true;
 }
 
 int MediaLibrary::Control( int query, va_list args )
 {
+    if ( Start() == false )
+        return VLC_EGENERIC;
+
     switch ( query )
     {
         case VLC_ML_ADD_FOLDER:
@@ -327,6 +346,9 @@ int MediaLibrary::Control( int query, va_list args )
 
 int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_list args )
 {
+    if ( Start() == false )
+        return VLC_EGENERIC;
+
     medialibrary::QueryParameters p{};
     medialibrary::QueryParameters* paramsPtr = nullptr;
     uint32_t nbItems = 0;
@@ -573,6 +595,9 @@ int MediaLibrary::List( int listQuery, const vlc_ml_query_params_t* params, va_l
 
 void* MediaLibrary::Get( int query, int64_t id )
 {
+    if ( Start() == false )
+        return nullptr;
+
     switch ( query )
     {
         case VLC_ML_GET_MEDIA:

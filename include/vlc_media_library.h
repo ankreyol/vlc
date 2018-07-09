@@ -572,8 +572,8 @@ enum vlc_ml_list_queries
     VLC_ML_COUNT_ALBUMS,          /**< arg1 (out): size_t*                                          */
     VLC_ML_LIST_GENRES,           /**< arg1 (out): vlc_ml_genre_list_t**                            */
     VLC_ML_COUNT_GENRES,          /**< arg1 (out): size_t*                                          */
-    VLC_ML_LIST_ARTISTS,          /**< arg1: bool: includeAll; arg2 (out): vlc_ml_genre_list_t**    */
-    VLC_ML_COUNT_ARTISTS,         /**< arg1 (out): size_t*                                          */
+    VLC_ML_LIST_ARTISTS,          /**< arg1 bool: includeAll; arg2 (out): vlc_ml_genre_list_t**     */
+    VLC_ML_COUNT_ARTISTS,         /**< arg1 bool: includeAll; arg2 (out): size_t*                   */
     VLC_ML_LIST_SHOWS,            /**< arg1 (out): vlc_ml_show_list_t**                             */
     VLC_ML_COUNT_SHOWS,           /**< arg1 (out): size_t*                                          */
     VLC_ML_LIST_PLAYLISTS,        /**< arg1 (out): vlc_ml_playlist_list_t**                         */
@@ -809,8 +809,8 @@ static inline size_t vlc_ml_count_genres( vlc_medialibrary_t* p_ml, vlc_ml_query
 
 /**
  * @brief vlc_ml_list_artists
- * @param b_include_all True if you wish to fetch artists without at least an album.
  * @param params Query parameters, or NULL for the default
+ * @param b_include_all True if you wish to fetch artists without at least one album.
  * @return
  */
 static inline vlc_ml_artist_list_t* vlc_ml_list_artists( vlc_medialibrary_t* p_ml, vlc_ml_query_params_t* params, bool b_include_all )
@@ -821,10 +821,10 @@ static inline vlc_ml_artist_list_t* vlc_ml_list_artists( vlc_medialibrary_t* p_m
     return res;
 }
 
-static inline size_t vlc_ml_count_artists( vlc_medialibrary_t* p_ml, vlc_ml_query_params_t* params )
+static inline size_t vlc_ml_count_artists( vlc_medialibrary_t* p_ml, vlc_ml_query_params_t* params, bool includeAll )
 {
     size_t count;
-    if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_ARTISTS, params, &count ) != VLC_SUCCESS )
+    if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_ARTISTS, params, includeAll, &count ) != VLC_SUCCESS )
         return 0;
     return count;
 }

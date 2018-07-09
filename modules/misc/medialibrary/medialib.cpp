@@ -183,7 +183,7 @@ MediaLibrary::MediaLibrary( vlc_object_t* obj )
         case medialibrary::InitializeResult::Failed:
             throw std::runtime_error( "Medialibrary failed to initialize" );
         case medialibrary::InitializeResult::DbReset:
-            msg_Info( obj, "FIXME: Handle database reset" );
+            msg_Info( obj, "Database was reset" );
             break;
         case medialibrary::InitializeResult::Success:
             msg_Dbg( obj, "MediaLibrary successfully initialized" );

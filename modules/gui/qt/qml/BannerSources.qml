@@ -21,7 +21,8 @@
  * 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
  *****************************************************************************/
 
-import QtQuick 2.0
+import QtQuick 2.9
+import QtQuick.Controls 2.2
 import "qrc:///style/"
 
 Rectangle {
@@ -31,7 +32,7 @@ Rectangle {
 
     // Triggered when the toogleView button is selected
     function toggleView () {
-        medialib.toogleView();
+        medialib.toogleGridView();
     }
     // Triggered when the toogleView button is selected
     function toogleNightmode () {
@@ -88,55 +89,50 @@ Rectangle {
         /* Button for the sources */
         Component {
             id: buttonView
+            ToolButton {
+                id: control
+                text: model.displayText
 
-            Rectangle {
-                id: rect
-
-                height: parent.height
-                width: txt.implicitWidth + icon.width + VLCStyle.margin_small*3
-
-                color: VLCStyle.bannerColor
-
-                /* Icon for this source */
-                Image {
-                    id: icon
-
-                    anchors {
-                        left: parent.left
-                        verticalCenter: parent.verticalCenter
-                        rightMargin: VLCStyle.margin_xsmall
-                        leftMargin: VLCStyle.margin_small
-                    }
-                    height: VLCStyle.icon_normal
-                    width: VLCStyle.icon_normal
-
-                    source: model.pic
-                    fillMode: Image.PreserveAspectFit
+                checkable: true
+                padding: 0
+                onClicked: {
+                    checked =  !control.checked
+                    selectSource( model.name )
                 }
 
-                /* Name of this source */
-                Text {
-                    id: txt
-
-                    anchors {
-                        left: icon.right
-                        verticalCenter: parent.verticalCenter
-                        rightMargin: VLCStyle.margin_small
-                        leftMargin: VLCStyle.margin_xsmall
-                    }
-
-                    text: model.displayText
-                    font.pixelSize: VLCStyle.fontSize_normal
-                    color: VLCStyle.textColor
+                background: Rectangle {
+                    implicitHeight: parent.height
+                    //width: btn_txt.implicitWidth+VLCStyle.margin_small*2
+                    color: control.hovered ? VLCStyle.hoverBannerColor : VLCStyle.bannerColor
                 }
 
-                MouseArea {
-                    anchors.fill: parent
+                contentItem: Row {
+                    Image {
+                        id: icon
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            rightMargin: VLCStyle.margin_xsmall
+                            leftMargin: VLCStyle.margin_small
+                        }
+                        height: VLCStyle.icon_normal
+                        width: VLCStyle.icon_normal
+                        source: model.pic
+                        fillMode: Image.PreserveAspectFit
+                    }
 
-                    onClicked: selectSource( model.name )
-                    hoverEnabled: true
-                    onEntered: { rect.color = VLCStyle.hoverBannerColor; }
-                    onExited: { rect.color = VLCStyle.bannerColor; }
+                    Label {
+                        text: control.text
+                        font: control.font
+                        //color: control.checked ? "blue" : (control.hovered ? VLCStyle.textColor_activeSource : VLCStyle.textColor)
+                        color: control.hovered ?  VLCStyle.textColor_activeSource : VLCStyle.textColor
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            rightMargin: VLCStyle.margin_xsmall
+                            leftMargin: VLCStyle.margin_small
+                        }
+                    }
                 }
             }
         }

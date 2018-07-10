@@ -61,7 +61,6 @@ Item {
                     subSourcesBanner.update();
                 }
 
-                z : 10
                 height: VLCStyle.heightBar_normal
                 Layout.preferredHeight: height
                 Layout.minimumHeight: height
@@ -71,29 +70,10 @@ Item {
                 need_toggleView_button: true
             }
 
-            /* Sub-source selection */
-            SubBannerSources {
-                id: subSourcesBanner
-
-                // function triggered when a source is selected
-                function selectSource ( name ) {
-                    medialib.selectSource(name);
-                    subSourcesBanner.update();
-                }
-
-                z : 10
-                height: VLCStyle.heightBar_normal
-                Layout.preferredHeight: height
-                Layout.minimumHeight: height
-                Layout.maximumHeight: height
-                Layout.fillWidth: true
-            }
-
             /* MediaCenter */
             MC.MCDisplay {
                 id: mcDisplay
 
-                z: 0
                 Layout.fillHeight: true
                 Layout.fillWidth: true
             }
@@ -103,8 +83,7 @@ Item {
         /* Playlist */
         PL.PLDisplay {
             id: plDisplay
-
-            z: 20
+            Layout.fillWidth:  true
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             Layout.maximumWidth: VLCStyle.maxWidthPlaylist

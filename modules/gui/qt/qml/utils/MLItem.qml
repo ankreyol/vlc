@@ -29,15 +29,15 @@ Rectangle {
 
     property bool hovered: false
     property bool force_disable: false
-
-    function active() {
-        return !force_disable && (hovered || mouseArea.containsMouse)
-    }
+    property bool active: !force_disable && (hovered || mouseArea.containsMouse)
+    //function active() {
+    //    return
+    //}
 
     signal itemClicked
 
 
-    color : active() ? VLCStyle.hoverBgColor : VLCStyle.bgColor
+    color: active ? VLCStyle.hoverBgColor : VLCStyle.bgColor
 
     MouseArea {
         id: mouseArea

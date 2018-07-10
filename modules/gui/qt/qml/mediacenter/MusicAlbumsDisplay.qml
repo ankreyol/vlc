@@ -23,6 +23,7 @@
 
 import QtQuick 2.0
 import QtQuick.Controls 2.0
+import QtQuick.Layouts 1.1
 
 import "qrc:///utils/" as Utils
 import "qrc:///style/"
@@ -36,8 +37,8 @@ Loader {
         console.log( "Data reloaded" );
     }
 
-    //sourceComponent: medialib.gridView ? gridViewComponent_id : listViewComponent_id
-    sourceComponent: gridViewComponent_id
+    sourceComponent: medialib.gridView ? gridViewComponent_id : listViewComponent_id
+    //sourceComponent: gridViewComponent_id
     /* Grid View */
 
     Component {
@@ -45,11 +46,9 @@ Loader {
 
         Flickable {
             ScrollBar.vertical: ScrollBar { }
-            width: parent.width
-            height: parent.height
+            anchors.fill: parent
             contentHeight: gridView_id.height
-            //contentWidth: gridView_id.width
-
+            clip: true
             Utils.ExpandGridView {
 
                 id: gridView_id
@@ -95,68 +94,138 @@ Loader {
         }
     }
 
-
-    /* List View */
-    /*
     Component {
         id: listViewComponent_id
 
         ListView {
+            ScrollBar.vertical: ScrollBar { }
+
             spacing: VLCStyle.margin_xxxsmall
-
+            anchors.fill: parent
             model: medialib.albums
-            delegate : Utils.ListExpandItem {
-                height: VLCStyle.icon_normal
+
+            clip: true
+            focus: true
+            highlight: Rectangle { color: VLCStyle.hoverBgColor }
+
+            delegate : Rectangle {
+                property bool hovered: false
                 width: parent.width
+                height: VLCStyle.icon_normal
+                color:  mouse.containsMouse ? VLCStyle.hoverBgColor : (
+                                                  index % 2 ? VLCStyle.bgColor : VLCStyle.bgColorAlt
+                                                  )
+                MouseArea {
+                    id: mouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                }
 
-                cover: Image {
-                    id: cover_obj
-
-                    width: VLCStyle.icon_normal
-                    height: VLCStyle.icon_normal
-
-                    source: cover || VLCStyle.noArtCover
-
-                    states: State {
-                        name: "expanded"
-                        PropertyChanges {target: cover_obj; width: VLCStyle.icon_xlarge; height: VLCStyle.icon_xlarge}
+                RowLayout {
+                    anchors.fill: parent
+                    Image {
+                        id: cover_obj
+                        Layout.preferredWidth: VLCStyle.icon_normal
+                        Layout.preferredHeight: VLCStyle.icon_normal
+                        width: VLCStyle.icon_normal
+                        height: VLCStyle.icon_normal
+                        fillMode: Image.PreserveAspectFit
+                        source: model.cover || VLCStyle.noArtCover
                     }
-                    Behavior on height { PropertyAnimation { duration: VLCStyle.timingListExpandOpen } }
-                    Behavior on width { PropertyAnimation { duration: VLCStyle.timingListExpandOpen } }
-                }
-                line1: Text{
-                    text: (title || "Unknown title")+" ["+duration+"]"
-                    font.bold: true
-                    elide: Text.ElideRight
-                    color: VLCStyle.textColor
-                    font.pixelSize: VLCStyle.fontSize_normal
-                }
-                line2: Text{
-                    text: main_artist || "Unknown artist"
-                    elide: Text.ElideRight
-                    color: VLCStyle.textColor
-                    font.pixelSize: VLCStyle.fontSize_xsmall
-                }
-                expand: Utils.TracksDisplay {
-                    height: nb_tracks * (VLCStyle.fontSize_normal + VLCStyle.margin_xxxsmall) - VLCStyle.margin_xxxsmall
-                    width: parent.width
+                    Column {
+                        Text{
+                            text: (model.title || "Unknown title")+" ["+model.duration+"]"
+                            font.bold: true
+                            elide: Text.ElideRight
+                            color: VLCStyle.textColor
+                            font.pixelSize: VLCStyle.fontSize_normal
+                        }
+                        Text{
+                            text: model.main_artist || "Unknown artist"
+                            elide: Text.ElideRight
+                            color: VLCStyle.textColor
+                            font.pixelSize: VLCStyle.fontSize_xsmall
+                        }
+                    }
 
-                    tracks: tracks
-                    parentIndex: index
-                }
+                    Item {
+                        Layout.fillWidth: true
+                    }
 
-                onPlayClicked: {
-                    console.log('Clicked on play : '+title);
-                    medialib.addAndPlay(index)
-                }
-                onAddToPlaylistClicked: {
-                    console.log('Clicked on addToPlaylist : '+title);
-                    medialib.addToPlaylist(index);
+                    Image {
+                        id: add_to_playlist_icon
+
+                        anchors.verticalCenter: parent.verticalCenter
+                        Layout.preferredWidth: VLCStyle.icon_small
+                        Layout.preferredHeight: VLCStyle.icon_small
+
+                        visible: mouse.containsMouse
+                        source: "qrc:///buttons/playlist/playlist_add.svg"
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: medialib.addAlbumToPlaylist(model.id, false);
+                        }
+                    }
+
+                    /* The icon to add to playlist and play */
+                    Image {
+                        id: add_and_play_icon
+
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.rightMargin: VLCStyle.margin_small
+                        Layout.preferredWidth: VLCStyle.icon_small
+                        Layout.preferredHeight: VLCStyle.icon_small
+                        visible: mouse.containsMouse
+                        source: "qrc:///toolbar/play_b.svg"
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: medialib.addAlbumToPlaylist(model.id, false);
+                        }
+                    }
                 }
             }
 
-            ScrollBar.vertical: ScrollBar { }
+            //delegate : MusicAlbumsGridExpandDelegate {
+            //    height: VLCStyle.heightBar_xxlarge
+            //}
+
+            //delegate: Utils.ListExpandItem {
+            //       height: VLCStyle.icon_normal
+            //       width: parent.width
+            //
+            //       cover: Image {
+            //           id: cover_obj
+            //
+            //           width: VLCStyle.icon_normal
+            //           height: VLCStyle.icon_normal
+            //
+            //           source: model.cover || VLCStyle.noArtCover
+            //
+            //           states: State {
+            //               name: "expanded"
+            //               PropertyChanges {target: cover_obj; width: VLCStyle.icon_xlarge; height: VLCStyle.icon_xlarge}
+            //           }
+            //           Behavior on height { PropertyAnimation { duration: VLCStyle.timingListExpandOpen } }
+            //           Behavior on width { PropertyAnimation { duration: VLCStyle.timingListExpandOpen } }
+            //       }
+            //       line1: Text{
+            //           text: (title || "Unknown title")+" ["+duration+"]"
+            //           font.bold: true
+            //           elide: Text.ElideRight
+            //           color: VLCStyle.textColor
+            //           font.pixelSize: VLCStyle.fontSize_normal
+            //       }
+            //       line2: Text{
+            //           text: model.main_artist || "Unknown artist"
+            //           elide: Text.ElideRight
+            //           color: VLCStyle.textColor
+            //           font.pixelSize: VLCStyle.fontSize_xsmall
+            //       }
+            //       expand: MusicAlbumsGridExpandDelegate {
+            //           height: VLCStyle.heightBar_xxlarge
+            //       }
+            //   }
         }
     }
-    */
 }

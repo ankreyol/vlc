@@ -78,7 +78,7 @@ MLItem {
 
             Rectangle {
                 anchors.fill: parent
-                visible: root.active()
+                visible: root.active
 
                 gradient: Gradient {
                     GradientStop { position: 0.0; color: "transparent" }
@@ -98,7 +98,7 @@ MLItem {
                         width: VLCStyle.icon_normal
                         fillMode: Image.PreserveAspectFit
 
-                        visible: root.active()
+                        visible: root.active
                         source: "qrc:///buttons/playlist/playlist_add.svg"
 
                         MouseArea {
@@ -113,7 +113,7 @@ MLItem {
                         width: VLCStyle.icon_normal
                         fillMode: Image.PreserveAspectFit
 
-                        visible: root.active()
+                        visible: root.active
                         source: "qrc:///toolbar/play_b.svg"
 
                         MouseArea {

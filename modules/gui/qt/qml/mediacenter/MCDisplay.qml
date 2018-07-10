@@ -39,21 +39,6 @@ Rectangle {
         console.log( "Changed category : "+medialib.category );
     }
 
-    // Function to get which component to display according to the category
-    function chooseCat() {
-        var cat = medialib.category;
-        if (cat === 0)
-            return albumsDisplayComponent;
-        else if (cat === 1)
-            return artistsDisplayComponent;
-        else if (cat === 2)
-            return genresDisplayComponent;
-        else if (cat === 3)
-            return tracksDisplayComponent;
-        else
-            return albumsDisplayComponent;
-    }
-
     // Force the data inside the displayed view to de reloaded
     function reloadData() {
         viewLoader.item.reloadData();
@@ -73,82 +58,132 @@ Rectangle {
     ColumnLayout {
         anchors.fill : parent
 
-        /* The Presentation Bar */
-        Loader {
-            id: presentationLoader_id
+        RowLayout {
 
-            z:10
-            Layout.fillWidth: true
-            height: item.height
-            Layout.preferredHeight: height
-            Layout.minimumHeight: height
-            Layout.maximumHeight: height
+            anchors.left: parent.left
+            anchors.right: parent.right
+            TabBar {
+                id: bar
+                anchors.left: parent.left
+                anchors.right: parent.right
+                /* List of sub-sources for Music */
+                Repeater {
+                    id: model_music_id
 
-            sourceComponent: medialib.hasPresentation() ? presentationComponent_id : noPresentationComponent_id
+                    model: ListModel {
+                        ListElement { displayText: "Albums" ; name: "music-albums" }
+                        ListElement { displayText: "Artistes" ; name: "music-artists" }
+                        ListElement { displayText: "Genre" ; name: "music-genre" }
+                        ListElement { displayText: "Tracks" ; name: "music-tracks" }
+                    }
 
-            // If the presentation bar should be displayed
-            Component {
-                id: presentationComponent_id
-
-                Presentation {
-                    height: VLCStyle.heightBar_xlarge
-                    Layout.preferredHeight: height
-                    Layout.minimumHeight: height
-                    Layout.maximumHeight: height
-
-                    obj: medialib.getPresObject();
+                    //Column {
+                    TabButton {
+                        id: control
+                        text: model.displayText
+                        background: Rectangle {
+                            color: control.hovered ? VLCStyle.hoverBannerColor : VLCStyle.bannerColor
+                        }
+                        contentItem: Label {
+                            text: control.text
+                            font: control.font
+                            color:  control.checked ?
+                                        VLCStyle.textColor_activeSource :
+                                        (control.hovered ?  VLCStyle.textColor_activeSource : VLCStyle.textColor)
+                            verticalAlignment: Text.AlignVCenter
+                            horizontalAlignment: Text.AlignHCenter
+                        }
+                    }
                 }
             }
-            // If the presentation bar should be hidden
-            Component {
-                id: noPresentationComponent_id
 
-                Item {
-                    height: 0
-                    Layout.preferredHeight: height
-                    Layout.minimumHeight: height
-                    Layout.maximumHeight: height
+            /* Spacer */
+            Item {
+                Layout.fillWidth: true
+            }
+
+            /* Selector to choose a specific sorting operation */
+            ComboBox {
+                id: combo
+
+                //Layout.fillHeight: true
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                Layout.preferredWidth: width
+                width: VLCStyle.widthSortBox
+                height: parent.height
+                textRole: "text"
+                model: ListModel {
+                    id: sortModel
+                    ListElement { text: "Alphabetic asc";  criteria: "alpha"; desc: false}
+                    ListElement { text: "Alphabetic desc"; criteria: "alpha"; desc: true }
+                    ListElement { text: "Duration asc";    criteria: "duration"; desc: false }
+                    ListElement { text: "Duration desc";   criteria: "duration"; desc: true }
+                    ListElement { text: "Date asc";        criteria: "date"; desc: false }
+                    ListElement { text: "Date desc";       criteria: "date"; desc: true }
+                    ListElement { text: "Artist asc";      criteria: "artist"; desc: true }
+                    ListElement { text: "Artist desc";     criteria: "artist"; desc: true }
                 }
+                onActivated: sort( sortModel.get(index).text )
             }
         }
 
+        /* The Presentation Bar */
+        //Loader {
+        //    id: presentationLoader_id
+        //
+        //    z:10
+        //    Layout.fillWidth: true
+        //    height: item.height
+        //    Layout.preferredHeight: height
+        //    Layout.minimumHeight: height
+        //    Layout.maximumHeight: height
+        //
+        //    sourceComponent: medialib.hasPresentation() ? presentationComponent_id : noPresentationComponent_id
+        //
+        //    // If the presentation bar should be displayed
+        //    Component {
+        //        id: presentationComponent_id
+        //
+        //        Presentation {
+        //            height: VLCStyle.heightBar_xlarge
+        //            Layout.preferredHeight: height
+        //            Layout.minimumHeight: height
+        //            Layout.maximumHeight: height
+        //
+        //            obj: medialib.getPresObject();
+        //        }
+        //    }
+        //    // If the presentation bar should be hidden
+        //    Component {
+        //        id: noPresentationComponent_id
+        //
+        //        Item {
+        //            height: 0
+        //            Layout.preferredHeight: height
+        //            Layout.minimumHeight: height
+        //            Layout.maximumHeight: height
+        //        }
+        //    }
+        //}
+
         /* The data elements */
-        Loader {
+        StackLayout  {
             id: viewLoader
 
-            z: 0
             Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            sourceComponent: chooseCat()
+            //Layout.fillHeight: true
+            currentIndex: bar.currentIndex
 
             // Display some 'Artists' items
-            Component {
-                id: albumsDisplayComponent
+            MusicAlbumsDisplay {
 
-                MusicAlbumsDisplay { }
             }
-
             // Display some 'Albums' items
-            Component {
-                id: artistsDisplayComponent
-
-                MusicArtistsDisplay { }
-            }
-
+            MusicArtistsDisplay { }
             // Display some 'Genres' items
-            Component {
-                id: genresDisplayComponent
-
-                MusicGenresDisplay { }
-            }
-
+            MusicGenresDisplay { }
             // Display some 'Tracks' items
-            Component {
-                id: tracksDisplayComponent
-
-                MusicTracksDisplay { }
-            }
+            MusicTracksDisplay { }
         }
     }
 }

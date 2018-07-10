@@ -81,7 +81,7 @@ MLItem {
 
                 width: parent.width
 
-                visible: false
+                active: false
                 sourceComponent: expand
             }
         }
@@ -94,7 +94,7 @@ MLItem {
             width: VLCStyle.icon_small
             height: VLCStyle.icon_small
 
-            visible: root.active()
+            visible: root.active
             source: "qrc:///buttons/playlist/playlist_add.svg"
 
             MouseArea {
@@ -113,7 +113,7 @@ MLItem {
             width: VLCStyle.icon_small
             height: VLCStyle.icon_small
 
-            visible: root.active()
+            visible: root.active
             source: "qrc:///toolbar/play_b.svg"
 
             MouseArea {
@@ -126,7 +126,7 @@ MLItem {
 
     states: State {
         name: "expanded"
-        PropertyChanges { target: expand_loader; visible: true }
+        PropertyChanges { target: expand_loader; active: true }
         PropertyChanges { target: cover_loader.item; state: "expanded"}
         PropertyChanges { target: root; height: Math.max( cover_loader.item.height, line1_loader.item.height + line2_loader.item.height + expand_loader.item.height ) }
     }

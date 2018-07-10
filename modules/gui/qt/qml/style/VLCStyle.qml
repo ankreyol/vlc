@@ -57,13 +57,14 @@ Item {
                 target: vlc_style
 
                 bgColor: myPalette.base;
+                bgColorAlt: myPalette.alternateBase;
                 textColor: myPalette.text;
 
                 bgColor_removeFromPlaylist: "#CC0000";
                 textColor_removeFromPlaylist: "#FFFFFF";
 
                 hoverBgColor: myPalette.highlight;
-                textColor_activeSource: myPalette.buttonText;
+                textColor_activeSource: vlc_orange;
                 bannerColor: myPalette.window;
                 hoverBannerColor: myPalette.highlight;
             }
@@ -120,6 +121,7 @@ Item {
     //colors
     property color bgColor: myPalette.base;
     property color textColor: myPalette.text;
+    property color bgColorAlt: myPalette.alternateBase;
 
     property color bgColor_removeFromPlaylist: "#CC0000";
     property color textColor_removeFromPlaylist: "white";
@@ -141,4 +143,6 @@ Item {
 
     //default arts
     property url noArtCover: "qrc:///noart.png";
+
+
 }

@@ -76,7 +76,7 @@ MLItem {
             width: VLCStyle.icon_small
             height: VLCStyle.icon_small
 
-            visible: root.active()
+            visible: root.active
             source: "qrc:///buttons/playlist/playlist_add.svg"
 
             MouseArea {
@@ -95,7 +95,7 @@ MLItem {
             width: VLCStyle.icon_small
             height: VLCStyle.icon_small
 
-            visible: root.active()
+            visible: root.active
             source: "qrc:///toolbar/play_b.svg"
 
             MouseArea {

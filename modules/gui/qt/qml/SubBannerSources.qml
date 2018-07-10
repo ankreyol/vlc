@@ -21,12 +21,13 @@
  * 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
  *****************************************************************************/
 
-import QtQuick 2.0
-import QtQuick.Controls 1.4
+import QtQuick 2.9
+import QtQuick.Controls 2.2
+//import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
 import "qrc:///style/"
 
-Rectangle {
+ToolBar {
     id: root_id
 
     // Choose wich listModel of sub-source to choose
@@ -73,70 +74,59 @@ Rectangle {
 
     anchors.left: parent.left
     anchors.right: parent.right
-    color:  VLCStyle.bannerColor
+    spacing: 0
 
     RowLayout {
-        anchors.fill: parent
+        //anchors.fill: parent
+        anchors.left: parent.left
+        anchors.right: parent.right
 
         Loader {
             id: stack_id
 
-            Layout.fillHeight: true
+            //Layout.fillHeight: true
             Layout.fillWidth: true
             sourceComponent: chooseSubSources()
         }
 
         /* List of sub-sources for Music */
-        Component {
+
+        Repeater {
             id: model_music_id
 
-            RowLayout {
+            model: ListModel {
+                ListElement { displayText: "Albums" ; name: "music-albums" }
+                ListElement { displayText: "Artistes" ; name: "music-artists" }
+                ListElement { displayText: "Genre" ; name: "music-genre" }
+                ListElement { displayText: "Tracks" ; name: "music-tracks" }
+            }
 
-                Repeater {
-                    id: repeater_id
+            //Column {
+            ToolButton  {
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                id: control
+                text: model.displayText
+                checkable: true
+                onClicked: {
+                    checked =  !control.checked
+                }
 
-                    model: ListModel {
-                        ListElement { displayText: "Albums" ; name: "music-albums" }
-                        ListElement { displayText: "Artistes" ; name: "music-artists" }
-                        ListElement { displayText: "Genre" ; name: "music-genre" }
-                        ListElement { displayText: "Tracks" ; name: "music-tracks" }
-                    }
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
+                //background: Rectangle {
+                //    //implicitHeight: parent.height
+                //    //width: btn_txt.implicitWidth+VLCStyle.margin_small*2
+                //    color: control.hovered ? VLCStyle.hoverBannerColor : VLCStyle.bannerColor
+                //}
 
-                    /* A single button for a sub-source */
-                    Rectangle {
-                        height: parent.height
-                        width: subsource_name_id.implicitWidth+VLCStyle.margin_small*2
-                        color: VLCStyle.bannerColor
-
-                        Text {
-                            id: subsource_name_id
-
-                            anchors {
-                                left: parent.left
-                                right: parent.right
-                                verticalCenter: parent.verticalCenter
-                                rightMargin: VLCStyle.margin_small
-                                leftMargin: VLCStyle.margin_small
-                            }
-                            text: model.displayText
-                            color: chooseColor(index)
-
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: selectSource( model.name )
-                            hoverEnabled: true
-                            onEntered: { parent.color = VLCStyle.hoverBannerColor; }
-                            onExited: { parent.color = VLCStyle.bannerColor; }
-                        }
-                    }
+                contentItem: Label {
+                    text: control.text
+                    font: control.font
+                    //color: control.checked ? "blue" : (control.hovered ? VLCStyle.textColor_activeSource : VLCStyle.textColor)
+                    color: control.hovered ?  VLCStyle.textColor_activeSource : VLCStyle.textColor
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
                 }
             }
         }
-
         /* List of sub-sources for Video */
         Component {
             id: model_video_id
@@ -239,6 +229,13 @@ Rectangle {
             }
         }
 
+
+        //Item {
+        //    //spacer
+        //    Layout.fillWidth: true
+        //    Layout.fillHeight: true
+        //}
+
         /* Selector to choose a specific sorting operation */
         ComboBox {
             id: combo
@@ -249,7 +246,7 @@ Rectangle {
             width: VLCStyle.widthSortBox
 
             model: sortModel
-            onActivated: sort( sortModel.get(index).text )
+            onActivated:   sort( sortModel.get(index).text )
         }
 
         /* Model for the different possible sorts */

@@ -35,6 +35,8 @@ GridLayout {
     columns: Math.floor( parent.width / (cellWidth + columnSpacing) )
     rows: Math.ceil( model.count / columns ) + 1
 
+    width: parent.width
+
     // Should the width of the expanded zone be the root's width (true)
     // or the row's width (false) (different when there is space left at end of row) ?
     property bool expandFillWidth: false
@@ -54,7 +56,7 @@ GridLayout {
     property Component delegate         // The delegate for the cells
     property Component expandDelegate   // The delegate for the expanding zone
     property int expanditem: -1;
-
+    property int expandItemLastInRow: (Math.floor(grid.expanditem / grid.columns) + 1) * grid.columns;
 
     Repeater {
         model: parent.model
@@ -64,12 +66,13 @@ GridLayout {
             width: grid.cellWidth
             height: grid.cellHeight
             Layout.column: index % grid.columns
-            Layout.row: (index < (Math.floor(grid.expanditem / grid.columns) + 1) * grid.columns  ) ? Math.floor(index / grid.columns) : (Math.floor(index / grid.columns) + 2)
+            Layout.row: (expandItemLastInRow == -1 || index < expandItemLastInRow) ? Math.floor(index / grid.columns) : (Math.floor(index / grid.columns) + 2)
             Loader {
                 sourceComponent: grid.delegate
                 property var model: parent.itemModel
             }
             MouseArea {
+                propagateComposedEvents: true
                 anchors.fill: parent
                 onClicked: {
                     if (grid.expanditem == index )

@@ -24,7 +24,9 @@ MLAlbumTrackModel::MLAlbumTrackModel(std::shared_ptr<vlc_medialibrary_t> &ml, vl
 }
 
 MLAlbumTrackModel::~MLAlbumTrackModel()
-{ }
+{
+    clear();
+}
 
 int MLAlbumTrackModel::rowCount(const QModelIndex &parent) const
 {
@@ -89,6 +91,13 @@ void MLAlbumTrackModel::fetchMore(const QModelIndex &)
     for( const vlc_ml_media_t& media: ml_range_iterate<vlc_ml_media_t>( media_list ) )
         m_item_list.push_back( new MLAlbumTrack( &media) );
     endInsertRows();
+}
+
+void MLAlbumTrackModel::clear()
+{
+    for ( MLAlbumTrack* track : m_item_list )
+        delete track;
+    m_item_list.clear();
 }
 
 vlc_ml_sorting_criteria_t MLAlbumTrackModel::roleToCriteria(int role) const

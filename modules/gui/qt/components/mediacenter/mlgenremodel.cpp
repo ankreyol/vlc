@@ -19,6 +19,11 @@ MLGenreModel::MLGenreModel(std::shared_ptr<vlc_medialibrary_t>& ml, QObject *par
 {
 }
 
+MLGenreModel::~MLGenreModel()
+{
+    clear();
+}
+
 int MLGenreModel::rowCount(const QModelIndex &parent) const
 {
     // For list models only the root node (an invalid parent) should return the list's size. For all
@@ -80,6 +85,13 @@ void MLGenreModel::fetchMore(const QModelIndex &parent)
     for( const vlc_ml_genre_t& genre: ml_range_iterate<vlc_ml_genre_t>( genre_list ) )
         m_item_list.push_back( new MLGenre( &genre ) );
     endInsertRows();
+}
+
+void MLGenreModel::clear()
+{
+    for ( MLGenre* genre: m_item_list )
+        delete genre;
+    m_item_list.clear();
 }
 
 vlc_ml_sorting_criteria_t MLGenreModel::roleToCriteria(int role) const

@@ -22,6 +22,11 @@ MLArtistModel::MLArtistModel(std::shared_ptr<vlc_medialibrary_t> &ml, vlc_ml_par
 
 }
 
+MLArtistModel::~MLArtistModel()
+{
+    clear();
+}
+
 int MLArtistModel::rowCount(const QModelIndex &parent) const
 {
     // For list models only the root node (an invalid parent) should return the list's size. For all
@@ -88,6 +93,13 @@ void MLArtistModel::fetchMore(const QModelIndex &parent)
     for( const vlc_ml_artist_t& artist: ml_range_iterate<vlc_ml_artist_t>( artist_list ) )
         m_item_list.push_back( new MLArtist( &artist, this ) );
     endInsertRows();
+}
+
+void MLArtistModel::clear()
+{
+    for ( MLArtist* artist  : m_item_list )
+        delete artist;
+    m_item_list.clear();
 }
 
 vlc_ml_sorting_criteria_t MLArtistModel::roleToCriteria(int role) const

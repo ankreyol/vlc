@@ -29,6 +29,15 @@ MLBaseModel::~MLBaseModel()
 {
 }
 
+void MLBaseModel::sort(int column, Qt::SortOrder order)
+{
+    setSortRole(column);
+    m_query_param.b_desc = (order == Qt::SortOrder::DescendingOrder);
+    beginResetModel();
+    clear();
+    endResetModel();
+}
+
 int MLBaseModel::sortRole() const
 {
     return m_sort_role;

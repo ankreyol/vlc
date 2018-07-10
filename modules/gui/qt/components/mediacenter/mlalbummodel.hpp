@@ -16,6 +16,7 @@ class MLAlbumModel : public MLBaseModel
 public:
     explicit MLAlbumModel(std::shared_ptr<vlc_medialibrary_t>& ml, QObject *parent = nullptr);
     explicit MLAlbumModel(std::shared_ptr<vlc_medialibrary_t>& ml,  vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent = nullptr);
+    virtual ~MLAlbumModel();
 
     int rowCount(const QModelIndex &parent) const override;
     Q_INVOKABLE QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -25,7 +26,9 @@ public:
 
     Q_INVOKABLE bool canFetchMore(const QModelIndex &parent) const override;
     Q_INVOKABLE void fetchMore(const QModelIndex &parent) override;
+
 private:
+    void clear() override;
     vlc_ml_sorting_criteria_t roleToCriteria(int role) const override;
 
     const MLAlbum *getItem(const QModelIndex &index) const;

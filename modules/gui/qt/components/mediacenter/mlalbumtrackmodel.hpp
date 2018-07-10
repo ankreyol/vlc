@@ -19,7 +19,7 @@ public:
 
     explicit MLAlbumTrackModel(std::shared_ptr<vlc_medialibrary_t>& ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent = nullptr);
 
-    ~MLAlbumTrackModel();
+    virtual ~MLAlbumTrackModel();
 
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
@@ -29,6 +29,7 @@ public:
     Q_INVOKABLE void fetchMore(const QModelIndex &parent) override;
 
 private:
+    void clear() override;
     vlc_ml_sorting_criteria_t roleToCriteria(int role) const override;
     const MLAlbumTrack* getItem(const QModelIndex &index) const;
 

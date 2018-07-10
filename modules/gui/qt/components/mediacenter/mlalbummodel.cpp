@@ -26,7 +26,12 @@ MLAlbumModel::MLAlbumModel(std::shared_ptr<vlc_medialibrary_t> &ml, vlc_ml_paren
     : MLBaseModel(ml, parent_type, parent_id, parent)
 {
     m_query_param.i_nbResults = 10;
-    m_total_count = vlc_ml_count_albums(ml.get(), &m_query_param);
+    m_total_count = vlc_ml_count_albums_of(ml.get(), &m_query_param, m_parent_type, m_parent_id);
+}
+
+MLAlbumModel::~MLAlbumModel()
+{
+    clear();
 }
 
 int MLAlbumModel::rowCount(const QModelIndex &parent) const
@@ -120,6 +125,13 @@ void MLAlbumModel::fetchMore(const QModelIndex &)
         m_item_list.push_back( new MLAlbum( m_ml, &album, this ) );
     m_query_param.i_offset += album_list->i_nb_items;
     endInsertRows();
+}
+
+void MLAlbumModel::clear()
+{
+    for ( MLAlbum* album : m_item_list )
+        delete album;
+    m_item_list.clear();
 }
 
 vlc_ml_sorting_criteria_t MLAlbumModel::roleToCriteria(int role) const

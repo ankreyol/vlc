@@ -30,17 +30,11 @@ import "qrc:///style/"
 
 Loader {
     id: viewLoader
-
-    // Force the data to be reloaded
-    function reloadData() {
-        viewLoader.item.model = medialib.albums;
-        console.log( "Data reloaded" );
-    }
+    property var model: []
 
     sourceComponent: medialib.gridView ? gridViewComponent_id : listViewComponent_id
-    //sourceComponent: gridViewComponent_id
-    /* Grid View */
 
+    /* Grid View */
     Component {
         id: gridViewComponent_id
 
@@ -53,7 +47,7 @@ Loader {
 
                 id: gridView_id
 
-                model: medialib.albums
+                model: viewLoader.model
 
                 cellWidth: VLCStyle.cover_normal
                 cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
@@ -98,27 +92,34 @@ Loader {
         id: listViewComponent_id
 
         ListView {
-            ScrollBar.vertical: ScrollBar { }
+            id: listview_id
+            ScrollBar.vertical: ScrollBar { id: scroll_id }
 
             spacing: VLCStyle.margin_xxxsmall
             anchors.fill: parent
-            model: medialib.albums
+            model: viewLoader.model
 
             clip: true
             focus: true
-            highlight: Rectangle { color: VLCStyle.hoverBgColor }
 
             delegate : Rectangle {
                 property bool hovered: false
                 width: parent.width
                 height: VLCStyle.icon_normal
-                color:  mouse.containsMouse ? VLCStyle.hoverBgColor : (
-                                                  index % 2 ? VLCStyle.bgColor : VLCStyle.bgColorAlt
-                                                  )
+                color: {
+                    if ( mouse.containsMouse || index == listview_id.currentIndex )
+                        VLCStyle.hoverBgColor
+                    else if (index % 2)
+                        VLCStyle.bgColor
+                    else VLCStyle.bgColorAlt
+                }
                 MouseArea {
                     id: mouse
                     anchors.fill: parent
                     hoverEnabled: true
+                    onClicked: {
+                        listview_id.currentIndex = index
+                    }
                 }
 
                 RowLayout {
@@ -161,7 +162,6 @@ Loader {
 
                         visible: mouse.containsMouse
                         source: "qrc:///buttons/playlist/playlist_add.svg"
-
                         MouseArea {
                             anchors.fill: parent
                             onClicked: medialib.addAlbumToPlaylist(model.id, false);
@@ -172,23 +172,18 @@ Loader {
                     Image {
                         id: add_and_play_icon
 
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.rightMargin: VLCStyle.margin_small
                         Layout.preferredWidth: VLCStyle.icon_small
                         Layout.preferredHeight: VLCStyle.icon_small
+                        Layout.rightMargin: VLCStyle.margin_large
                         visible: mouse.containsMouse
                         source: "qrc:///toolbar/play_b.svg"
                         MouseArea {
                             anchors.fill: parent
-                            onClicked: medialib.addAlbumToPlaylist(model.id, false);
+                            onClicked: medialib.addAlbumToPlaylist(model.id, true);
                         }
                     }
                 }
             }
-
-            //delegate : MusicAlbumsGridExpandDelegate {
-            //    height: VLCStyle.heightBar_xxlarge
-            //}
 
             //delegate: Utils.ListExpandItem {
             //       height: VLCStyle.icon_normal

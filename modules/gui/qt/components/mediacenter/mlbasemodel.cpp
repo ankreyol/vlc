@@ -31,21 +31,17 @@ MLBaseModel::~MLBaseModel()
 
 void MLBaseModel::sort(int column, Qt::SortOrder order)
 {
-    setSortRole(column);
+    //setSortRole(column);
     m_query_param.b_desc = (order == Qt::SortOrder::DescendingOrder);
     beginResetModel();
     clear();
     endResetModel();
 }
 
-int MLBaseModel::sortRole() const
+void MLBaseModel::sortByColumn(QByteArray name, Qt::SortOrder order)
 {
-    return m_sort_role;
+    m_query_param.b_desc = (order == Qt::SortOrder::DescendingOrder);
+    m_query_param.i_sort = nameToCriteria(name);
+    clear();
 }
 
-void MLBaseModel::setSortRole(int role)
-{
-    m_sort_role = role;
-    m_query_param.i_sort = roleToCriteria(m_sort_role);
-    emit sortRoleChanged();
-}

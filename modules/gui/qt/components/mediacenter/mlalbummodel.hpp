@@ -29,12 +29,17 @@ public:
 
 private:
     void clear() override;
-    vlc_ml_sorting_criteria_t roleToCriteria(int role) const override;
+    vlc_ml_sorting_criteria_t roleToCriteria(int role) const;
+    vlc_ml_sorting_criteria_t nameToCriteria(QByteArray name) const override;
 
     const MLAlbum *getItem(const QModelIndex &index) const;
 
     unsigned int m_total_count;
     std::vector<MLAlbum*> m_item_list;
+
+    static  QHash<int, QByteArray> m_role_names;
+    static  QHash<QByteArray, vlc_ml_sorting_criteria_t> m_names_to_criteria;
 };
+
 
 #endif // MLABLUMMODEL_H

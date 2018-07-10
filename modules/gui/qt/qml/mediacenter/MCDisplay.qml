@@ -114,16 +114,19 @@ Rectangle {
                 textRole: "text"
                 model: ListModel {
                     id: sortModel
-                    ListElement { text: "Alphabetic asc";  criteria: "alpha"; desc: false}
-                    ListElement { text: "Alphabetic desc"; criteria: "alpha"; desc: true }
-                    ListElement { text: "Duration asc";    criteria: "duration"; desc: false }
-                    ListElement { text: "Duration desc";   criteria: "duration"; desc: true }
-                    ListElement { text: "Date asc";        criteria: "date"; desc: false }
-                    ListElement { text: "Date desc";       criteria: "date"; desc: true }
-                    ListElement { text: "Artist asc";      criteria: "artist"; desc: true }
-                    ListElement { text: "Artist desc";     criteria: "artist"; desc: true }
+                    ListElement { text: "Alphabetic asc";  criteria: "title"; desc: Qt.AscendingOrder}
+                    ListElement { text: "Alphabetic desc"; criteria: "title"; desc: Qt.DescendingOrder }
+                    ListElement { text: "Duration asc";    criteria: "duration"; desc: Qt.AscendingOrder}
+                    ListElement { text: "Duration desc";   criteria: "duration"; desc: Qt.DescendingOrder }
+                    ListElement { text: "Date asc";        criteria: "release_year"; desc: Qt.AscendingOrder }
+                    ListElement { text: "Date desc";       criteria: "release_year"; desc: Qt.DescendingOrder}
+                    ListElement { text: "Artist asc";      criteria: "main_artist"; desc: Qt.AscendingOrder }
+                    ListElement { text: "Artist desc";     criteria: "main_artist"; desc: Qt.DescendingOrder }
                 }
-                onActivated: sort( sortModel.get(index).text )
+                onActivated: {
+                    var sorting = sortModel.get(index);
+                    medialib.albums.sortByColumn(sorting.criteria, sorting.desc)
+                }
             }
         }
 
@@ -176,7 +179,7 @@ Rectangle {
 
             // Display some 'Artists' items
             MusicAlbumsDisplay {
-
+                model: medialib.albums
             }
             // Display some 'Albums' items
             MusicArtistsDisplay { }

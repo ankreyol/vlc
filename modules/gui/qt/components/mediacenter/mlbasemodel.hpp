@@ -13,7 +13,6 @@
 class MLBaseModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(int sortRole READ sortRole WRITE setSortRole NOTIFY sortRoleChanged)
 
 public:
     explicit MLBaseModel(std::shared_ptr<vlc_medialibrary_t>& ml, QObject *parent = nullptr);
@@ -22,8 +21,7 @@ public:
 
     virtual void sort(int column, Qt::SortOrder order) override;
 
-    int sortRole() const;
-    void setSortRole(int role);
+    Q_INVOKABLE void sortByColumn(QByteArray name, Qt::SortOrder order);
 
 signals:
     void sortRoleChanged();
@@ -31,6 +29,9 @@ signals:
 protected:
     virtual void clear() = 0;
     virtual vlc_ml_sorting_criteria_t roleToCriteria(int role) const = 0;
+    virtual vlc_ml_sorting_criteria_t nameToCriteria(QByteArray name) const {
+        return VLC_ML_SORTING_DEFAULT;
+    }
 
     int m_parent_type = -1;
     uint64_t m_parent_id;

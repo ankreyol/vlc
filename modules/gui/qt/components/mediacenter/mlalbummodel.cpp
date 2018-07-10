@@ -15,17 +15,36 @@ namespace {
     };
 }
 
+QHash<int, QByteArray> MLAlbumModel::m_role_names = {
+    {ALBUM_ID,"id"},
+    {ALBUM_TITLE, "title"},
+    {ALBUM_RELEASE_YEAR, "release_year"},
+    {ALBUM_SHORT_SUMMARY, "shortsummary"},
+    {ALBUM_COVER, "cover"},
+    {ALBUM_TRACKS, "tracks"},
+    {ALBUM_MAIN_ARTIST, "main_artist"},
+    {ALBUM_NB_TRACKS, "nb_tracks"},
+    {ALBUM_DURATION, "duration"}
+};
+
+QHash<QByteArray, vlc_ml_sorting_criteria_t> MLAlbumModel::m_names_to_criteria = {
+    {"id", VLC_ML_SORTING_DEFAULT},
+    {"title", VLC_ML_SORTING_ALBUM},
+    {"release_year", VLC_ML_SORTING_RELEASEDATE},
+    {"main_artist", VLC_ML_SORTING_ARTIST},
+    //{"nb_tracks"},
+    {"duration", VLC_ML_SORTING_DURATION}
+};
+
 MLAlbumModel::MLAlbumModel(std::shared_ptr<vlc_medialibrary_t> &ml, QObject *parent)
     : MLBaseModel(ml, parent)
 {
-    m_query_param.i_nbResults = 10;
     m_total_count = vlc_ml_count_albums(ml.get(), &m_query_param);
 }
 
 MLAlbumModel::MLAlbumModel(std::shared_ptr<vlc_medialibrary_t> &ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent)
     : MLBaseModel(ml, parent_type, parent_id, parent)
 {
-    m_query_param.i_nbResults = 10;
     m_total_count = vlc_ml_count_albums_of(ml.get(), &m_query_param, m_parent_type, m_parent_id);
 }
 
@@ -83,21 +102,7 @@ QVariant MLAlbumModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> MLAlbumModel::roleNames() const
 {
-    printf("*** MLAlbumModel::roleNames \n");
-    QHash<int, QByteArray> roles;
-
-    // Albums
-    roles[ALBUM_ID] = "id";
-    roles[ALBUM_TITLE] = "title";
-    roles[ALBUM_RELEASE_YEAR] = "release_year";
-    roles[ALBUM_SHORT_SUMMARY] = "shortsummary";
-    roles[ALBUM_COVER] = "cover";
-    roles[ALBUM_TRACKS] = "tracks";
-    roles[ALBUM_MAIN_ARTIST] = "main_artist";
-    roles[ALBUM_NB_TRACKS] = "nb_tracks";
-    roles[ALBUM_DURATION] = "duration";
-
-    return roles;
+    return m_role_names;
 }
 
 QObject *MLAlbumModel::get(unsigned int idx)
@@ -109,6 +114,7 @@ QObject *MLAlbumModel::get(unsigned int idx)
 
 bool MLAlbumModel::canFetchMore(const QModelIndex &parent) const
 {
+    printf("MLAlbumModel::canFetchMore?");
     return m_item_list.size() < m_total_count;
 }
 
@@ -129,9 +135,17 @@ void MLAlbumModel::fetchMore(const QModelIndex &)
 
 void MLAlbumModel::clear()
 {
+    beginResetModel();
     for ( MLAlbum* album : m_item_list )
         delete album;
     m_item_list.clear();
+    m_query_param.i_offset = 0;
+    endResetModel();
+}
+
+vlc_ml_sorting_criteria_t MLAlbumModel::nameToCriteria(QByteArray name) const
+{
+    return m_names_to_criteria.value(name, VLC_ML_SORTING_DEFAULT);
 }
 
 vlc_ml_sorting_criteria_t MLAlbumModel::roleToCriteria(int role) const

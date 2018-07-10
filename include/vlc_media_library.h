@@ -28,6 +28,8 @@
 #ifndef VLC_MEDIA_LIBRARY_H
 # define VLC_MEDIA_LIBRARY_H
 
+#include <assert.h>
+
 # ifdef __cplusplus
 extern "C" {
 # endif
@@ -630,6 +632,7 @@ enum vlc_ml_parent_type
 
 static inline vlc_ml_media_list_t* vlc_ml_list_media_of( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int i_parent_type, int64_t i_parent_id )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_media_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_MEDIA_OF, params, i_parent_type, i_parent_id, &res ) != VLC_SUCCESS )
         return NULL;
@@ -638,6 +641,7 @@ static inline vlc_ml_media_list_t* vlc_ml_list_media_of( vlc_medialibrary_t* p_m
 
 static inline size_t vlc_ml_count_media_of( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int i_parent_type, int64_t i_parent_id )
 {
+    vlc_assert( p_ml != NULL );
     size_t res;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_MEDIA_OF, params, i_parent_type, i_parent_id, &res ) )
         return 0;
@@ -646,6 +650,7 @@ static inline size_t vlc_ml_count_media_of( vlc_medialibrary_t* p_ml, const vlc_
 
 static inline vlc_ml_artist_list_t* vlc_ml_list_artist_of( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int i_parent_type, int64_t i_parent_id )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_artist_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_ARTISTS_OF, params, i_parent_type, i_parent_id, &res ) != VLC_SUCCESS )
         return NULL;
@@ -654,6 +659,7 @@ static inline vlc_ml_artist_list_t* vlc_ml_list_artist_of( vlc_medialibrary_t* p
 
 static inline size_t vlc_ml_count_artists_of( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int i_parent_type, int64_t i_parent_id )
 {
+    vlc_assert( p_ml != NULL );
     size_t res;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_ARTISTS_OF, params, i_parent_type, i_parent_id, &res ) )
         return 0;
@@ -662,6 +668,7 @@ static inline size_t vlc_ml_count_artists_of( vlc_medialibrary_t* p_ml, const vl
 
 static inline vlc_ml_album_list_t* vlc_ml_list_albums_of( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int i_parent_type, int64_t i_parent_id )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_album_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_ALBUMS_OF, params, i_parent_type, i_parent_id, &res ) != VLC_SUCCESS )
         return NULL;
@@ -670,6 +677,7 @@ static inline vlc_ml_album_list_t* vlc_ml_list_albums_of( vlc_medialibrary_t* p_
 
 static inline size_t vlc_ml_count_albums_of( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int i_parent_type, int64_t i_parent_id )
 {
+    vlc_assert( p_ml != NULL );
     size_t res;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_ALBUMS_OF, params, i_parent_type, i_parent_id, &res ) )
         return 0;
@@ -678,6 +686,7 @@ static inline size_t vlc_ml_count_albums_of( vlc_medialibrary_t* p_ml, const vlc
 
 static inline vlc_ml_media_list_t* vlc_ml_list_album_tracks( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_album_id )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_media_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_ALBUM_TRACKS, params, i_album_id, &res ) != VLC_SUCCESS )
         return NULL;
@@ -686,6 +695,7 @@ static inline vlc_ml_media_list_t* vlc_ml_list_album_tracks( vlc_medialibrary_t*
 
 static inline size_t vlc_ml_count_album_tracks( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_album_id )
 {
+    vlc_assert( p_ml != NULL );
     size_t count;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_ALBUM_TRACKS, params, i_album_id, &count ) != VLC_SUCCESS )
         return 0;
@@ -694,6 +704,7 @@ static inline size_t vlc_ml_count_album_tracks( vlc_medialibrary_t* p_ml, const 
 
 static inline vlc_ml_media_list_t* vlc_ml_list_album_artists( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_album_id )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_media_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_ALBUM_ARTISTS, params, i_album_id, &res ) != VLC_SUCCESS )
         return NULL;
@@ -702,6 +713,7 @@ static inline vlc_ml_media_list_t* vlc_ml_list_album_artists( vlc_medialibrary_t
 
 static inline size_t vlc_ml_count_album_artists( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_album_id )
 {
+    vlc_assert( p_ml != NULL );
     size_t count;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_ALBUM_ARTISTS, params, i_album_id, &count ) != VLC_SUCCESS )
         return 0;
@@ -710,6 +722,7 @@ static inline size_t vlc_ml_count_album_artists( vlc_medialibrary_t* p_ml, const
 
 static inline vlc_ml_album_list_t* vlc_ml_list_artist_albums( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_artist_id )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_album_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_ARTIST_ALBUMS, params, i_artist_id, &res ) != VLC_SUCCESS )
         return NULL;
@@ -718,6 +731,7 @@ static inline vlc_ml_album_list_t* vlc_ml_list_artist_albums( vlc_medialibrary_t
 
 static inline size_t vlc_ml_count_artist_albums( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_artist_id )
 {
+    vlc_assert( p_ml != NULL );
     size_t count;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_ARTIST_ALBUMS, params, i_artist_id, &count ) != VLC_SUCCESS )
         return 0;
@@ -726,6 +740,7 @@ static inline size_t vlc_ml_count_artist_albums( vlc_medialibrary_t* p_ml, const
 
 static inline vlc_ml_media_list_t* vlc_ml_list_artist_tracks( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_artist_id )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_media_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_ARTIST_TRACKS, params, i_artist_id, &res ) != VLC_SUCCESS )
         return NULL;
@@ -734,6 +749,7 @@ static inline vlc_ml_media_list_t* vlc_ml_list_artist_tracks( vlc_medialibrary_t
 
 static inline size_t vlc_ml_count_artist_tracks( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_artist_id )
 {
+    vlc_assert( p_ml != NULL );
     size_t count;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_ARTIST_TRACKS, params, i_artist_id, &count ) != VLC_SUCCESS )
         return 0;
@@ -742,6 +758,7 @@ static inline size_t vlc_ml_count_artist_tracks( vlc_medialibrary_t* p_ml, const
 
 static inline vlc_ml_media_list_t* vlc_ml_list_video_media( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_media_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_VIDEOS, params, &res ) != VLC_SUCCESS )
         return NULL;
@@ -750,6 +767,7 @@ static inline vlc_ml_media_list_t* vlc_ml_list_video_media( vlc_medialibrary_t* 
 
 static inline size_t vlc_ml_count_video_media( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params )
 {
+    vlc_assert( p_ml != NULL );
     size_t count;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_VIDEOS, params, &count ) != VLC_SUCCESS )
         return 0;
@@ -758,6 +776,7 @@ static inline size_t vlc_ml_count_video_media( vlc_medialibrary_t* p_ml, const v
 
 static inline vlc_ml_media_list_t* vlc_ml_list_audio_media( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_media_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_AUDIOS, params, &res ) != VLC_SUCCESS )
         return NULL;
@@ -766,6 +785,7 @@ static inline vlc_ml_media_list_t* vlc_ml_list_audio_media( vlc_medialibrary_t* 
 
 static inline size_t vlc_ml_count_audio_media( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params )
 {
+    vlc_assert( p_ml != NULL );
     size_t count;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_AUDIOS, params, &count ) != VLC_SUCCESS )
         return 0;
@@ -774,6 +794,7 @@ static inline size_t vlc_ml_count_audio_media( vlc_medialibrary_t* p_ml, const v
 
 static inline vlc_ml_album_list_t* vlc_ml_list_albums( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_album_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_ALBUMS, params, &res ) != VLC_SUCCESS )
         return NULL;
@@ -782,6 +803,7 @@ static inline vlc_ml_album_list_t* vlc_ml_list_albums( vlc_medialibrary_t* p_ml,
 
 static inline size_t vlc_ml_count_albums( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params )
 {
+    vlc_assert( p_ml != NULL );
     size_t count;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_ALBUMS, params, &count ) != VLC_SUCCESS )
         return 0;
@@ -790,6 +812,7 @@ static inline size_t vlc_ml_count_albums( vlc_medialibrary_t* p_ml, const vlc_ml
 
 static inline vlc_ml_genre_list_t* vlc_ml_list_genres( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_genre_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_GENRES, params, &res ) != VLC_SUCCESS )
         return NULL;
@@ -798,6 +821,7 @@ static inline vlc_ml_genre_list_t* vlc_ml_list_genres( vlc_medialibrary_t* p_ml,
 
 static inline size_t vlc_ml_count_genres( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params )
 {
+    vlc_assert( p_ml != NULL );
     size_t count;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_GENRES, params, &count ) != VLC_SUCCESS )
         return 0;
@@ -812,6 +836,7 @@ static inline size_t vlc_ml_count_genres( vlc_medialibrary_t* p_ml, const vlc_ml
  */
 static inline vlc_ml_artist_list_t* vlc_ml_list_artists( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, bool b_include_all )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_artist_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_ARTISTS, params, (int)b_include_all, &res ) != VLC_SUCCESS )
         return NULL;
@@ -820,6 +845,7 @@ static inline vlc_ml_artist_list_t* vlc_ml_list_artists( vlc_medialibrary_t* p_m
 
 static inline size_t vlc_ml_count_artists( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, bool includeAll )
 {
+    vlc_assert( p_ml != NULL );
     size_t count;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_ARTISTS, params, includeAll, &count ) != VLC_SUCCESS )
         return 0;
@@ -828,6 +854,7 @@ static inline size_t vlc_ml_count_artists( vlc_medialibrary_t* p_ml, const vlc_m
 
 static inline vlc_ml_show_list_t* vlc_ml_list_shows( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_show_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_SHOWS, params, &res ) != VLC_SUCCESS )
         return NULL;
@@ -836,6 +863,7 @@ static inline vlc_ml_show_list_t* vlc_ml_list_shows( vlc_medialibrary_t* p_ml, c
 
 static inline size_t vlc_ml_count_shows( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params )
 {
+    vlc_assert( p_ml != NULL );
     size_t count;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_SHOWS, params, &count ) != VLC_SUCCESS )
         return 0;
@@ -844,6 +872,7 @@ static inline size_t vlc_ml_count_shows( vlc_medialibrary_t* p_ml, const vlc_ml_
 
 static inline vlc_ml_media_list_t* vlc_ml_list_genre_artists( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_genre_id )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_media_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_GENRE_ARTISTS, params, i_genre_id, &res ) != VLC_SUCCESS )
         return NULL;
@@ -852,6 +881,7 @@ static inline vlc_ml_media_list_t* vlc_ml_list_genre_artists( vlc_medialibrary_t
 
 static inline size_t vlc_ml_count_genre_artists( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_genre_id )
 {
+    vlc_assert( p_ml != NULL );
     size_t count;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_GENRE_ARTISTS, params, i_genre_id, &count ) != VLC_SUCCESS )
         return 0;
@@ -860,6 +890,7 @@ static inline size_t vlc_ml_count_genre_artists( vlc_medialibrary_t* p_ml, const
 
 static inline vlc_ml_media_list_t* vlc_ml_list_genre_tracks( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_genre_id )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_media_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_GENRE_TRACKS, params, i_genre_id, &res ) != VLC_SUCCESS )
         return NULL;
@@ -868,6 +899,7 @@ static inline vlc_ml_media_list_t* vlc_ml_list_genre_tracks( vlc_medialibrary_t*
 
 static inline size_t vlc_ml_count_genre_tracks( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_genre_id )
 {
+    vlc_assert( p_ml != NULL );
     size_t count;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_GENRE_TRACKS, params, i_genre_id, &count ) != VLC_SUCCESS )
         return 0;
@@ -876,6 +908,7 @@ static inline size_t vlc_ml_count_genre_tracks( vlc_medialibrary_t* p_ml, const 
 
 static inline vlc_ml_album_list_t* vlc_ml_list_genre_albums( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_genre_id )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_album_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_GENRE_ALBUMS, params, i_genre_id, &res ) != VLC_SUCCESS )
         return NULL;
@@ -884,6 +917,7 @@ static inline vlc_ml_album_list_t* vlc_ml_list_genre_albums( vlc_medialibrary_t*
 
 static inline size_t vlc_ml_count_genre_albums( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_genre_id )
 {
+    vlc_assert( p_ml != NULL );
     size_t count;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_GENRE_ALBUMS, params, i_genre_id, &count ) != VLC_SUCCESS )
         return 0;
@@ -892,6 +926,7 @@ static inline size_t vlc_ml_count_genre_albums( vlc_medialibrary_t* p_ml, const 
 
 static inline vlc_ml_media_list_t* vlc_ml_list_show_episodes( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_show_id )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_media_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_SHOW_EPISODES, params, i_show_id, &res ) != VLC_SUCCESS )
         return NULL;
@@ -900,6 +935,7 @@ static inline vlc_ml_media_list_t* vlc_ml_list_show_episodes( vlc_medialibrary_t
 
 static inline size_t vlc_ml_count_show_episodes( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_show_id )
 {
+    vlc_assert( p_ml != NULL );
     size_t count;
     if ( p_ml->pf_list( p_ml, VLC_ML_COUNT_GENRE_ALBUMS, params, i_show_id, &count ) != VLC_SUCCESS )
         return 0;
@@ -908,6 +944,7 @@ static inline size_t vlc_ml_count_show_episodes( vlc_medialibrary_t* p_ml, const
 
 static inline vlc_ml_label_list_t* vlc_ml_list_media_labels( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_media_id )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_label_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_MEDIA_LABELS, params, i_media_id, &res ) != VLC_SUCCESS )
         return NULL;
@@ -916,6 +953,7 @@ static inline vlc_ml_label_list_t* vlc_ml_list_media_labels( vlc_medialibrary_t*
 
 static inline size_t vlc_ml_count_media_labels( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params, int64_t i_media_id )
 {
+    vlc_assert( p_ml != NULL );
     size_t count;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_MEDIA_LABELS, params, i_media_id, &count ) != VLC_SUCCESS )
         return 0;
@@ -924,6 +962,7 @@ static inline size_t vlc_ml_count_media_labels( vlc_medialibrary_t* p_ml, const 
 
 static inline vlc_ml_media_list_t* vlc_ml_list_history( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_media_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_HISTORY, params, &res ) != VLC_SUCCESS )
         return NULL;
@@ -932,6 +971,7 @@ static inline vlc_ml_media_list_t* vlc_ml_list_history( vlc_medialibrary_t* p_ml
 
 static inline vlc_ml_media_list_t* vlc_ml_list_stream_history( vlc_medialibrary_t* p_ml, const vlc_ml_query_params_t* params )
 {
+    vlc_assert( p_ml != NULL );
     vlc_ml_media_list_t* res;
     if ( p_ml->pf_list( p_ml, VLC_ML_LIST_STREAM_HISTORY, params, &res ) != VLC_SUCCESS )
         return NULL;

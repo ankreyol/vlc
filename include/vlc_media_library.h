@@ -113,7 +113,7 @@ typedef struct vlc_ml_label_t
 typedef struct vlc_ml_label_list_t
 {
     size_t i_nb_items;
-    vlc_ml_label_t* p_items;
+    vlc_ml_label_t p_items[];
 } vlc_ml_label_list_t;
 
 typedef struct vlc_ml_file_t
@@ -126,7 +126,7 @@ typedef struct vlc_ml_file_t
 typedef struct vlc_ml_file_list_t
 {
     size_t i_nb_items;
-    vlc_ml_file_t* p_items;
+    vlc_ml_file_t p_items[];
 } vlc_ml_file_list_t;
 
 typedef struct vlc_ml_media_track_t
@@ -160,7 +160,7 @@ typedef struct vlc_ml_media_track_t
 typedef struct vlc_ml_media_track_list_t
 {
     size_t i_nb_items;
-    vlc_ml_media_track_t* p_items;
+    vlc_ml_media_track_t p_items[];
 } vlc_ml_media_track_list_t;
 
 typedef struct vlc_ml_media_t
@@ -214,7 +214,7 @@ typedef struct vlc_ml_artist_t
 typedef struct vlc_ml_artist_list_t
 {
     size_t i_nb_items;
-    vlc_ml_artist_t* p_items;
+    vlc_ml_artist_t p_items[];
 } vlc_ml_artist_list_t;
 
 typedef struct vlc_ml_album_t {
@@ -240,31 +240,31 @@ typedef struct vlc_ml_genre_t
 typedef struct vlc_ml_media_list_t
 {
     size_t i_nb_items;
-    vlc_ml_media_t* p_items;
+    vlc_ml_media_t p_items[];
 } vlc_ml_media_list_t;
 
 typedef struct vlc_ml_album_list_t
 {
     size_t i_nb_items;
-    vlc_ml_album_t* p_items;
+    vlc_ml_album_t p_items[];
 } vlc_ml_album_list_t;
 
 typedef struct vlc_ml_show_list_t
 {
     size_t i_nb_items;
-    vlc_ml_show_t* p_items;
+    vlc_ml_show_t p_items[];
 } vlc_ml_show_list_t;
 
 typedef struct vlc_ml_genre_list_t
 {
     size_t i_nb_items;
-    vlc_ml_genre_t* p_items;
+    vlc_ml_genre_t p_items[];
 } vlc_ml_genre_list_t;
 
 typedef struct vlc_ml_playlist_list_t
 {
     size_t i_nb_items;
-    vlc_ml_playlist_t* p_items;
+    vlc_ml_playlist_t p_items[];
 } vlc_ml_playlist_list_t;
 
 typedef struct vlc_ml_entrypoint_t vlc_ml_entrypoint_t;

@@ -128,16 +128,13 @@ static bool convertTracks( const medialibrary::IMedia* inputMedia, vlc_ml_media_
 {
     auto videoTracks = inputMedia->videoTracks()->all();
     auto audioTracks = inputMedia->audioTracks()->all();
+    auto nbItems = videoTracks.size() + audioTracks.size();
     outputMedia.p_tracks = static_cast<vlc_ml_media_track_list_t*>(
-                malloc( sizeof( *outputMedia.p_tracks ) ) );
+                calloc( 1, sizeof( *outputMedia.p_tracks ) +
+                        nbItems * sizeof( *outputMedia.p_tracks->p_items ) ) );
     if ( unlikely( outputMedia.p_tracks == nullptr ) )
         return false;
-    auto nbItems = videoTracks.size() + audioTracks.size();
     outputMedia.p_tracks->i_nb_items = 0;
-    outputMedia.p_tracks->p_items = static_cast<vlc_ml_media_track_t*>( calloc(
-         nbItems, sizeof( *outputMedia.p_tracks->p_items ) ) );
-    if ( unlikely( outputMedia.p_tracks->p_items == nullptr ) )
-        return false;
 
     vlc_ml_media_track_t* items = outputMedia.p_tracks->p_items;
     for ( const auto& t : videoTracks )

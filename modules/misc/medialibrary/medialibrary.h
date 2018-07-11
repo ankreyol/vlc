@@ -208,21 +208,17 @@ To* ml_convert_list( const std::vector<std::shared_ptr<From>>& input )
     // This function uses duck typing and assumes all lists have a p_items member
     static_assert( std::is_pointer<To>::value == false,
                    "Destination type must not be a pointer" );
-    static_assert( std::is_pointer<decltype(To::p_items)>::value == true,
+    static_assert( std::is_array<decltype(To::p_items)>::value == true,
                    "Missing or invalid p_items member" );
 
     // Allocate the ml_*_list_t
+    using ItemType = typename std::remove_extent<decltype(To::p_items)>::type;
     auto list = wrapCPtr<To>(
-        reinterpret_cast<To*>( malloc( sizeof( To ) ) ),
+        reinterpret_cast<To*>( malloc( sizeof( To ) + input.size() * sizeof( ItemType ) ) ),
         static_cast<void(*)(To*)>( &vlc_ml_release_obj ) );
     if ( unlikely( list == nullptr ) )
         return nullptr;
-    using ItemType = typename std::remove_pointer<decltype(To::p_items)>::type;
 
-    // And allocate it's p_items pointer
-    list->p_items = reinterpret_cast<ItemType*>( malloc( input.size() * sizeof( ItemType ) ) );
-    if ( unlikely( list->p_items == nullptr ) )
-        return nullptr;
     list->i_nb_items = 0;
 
     for ( auto i = 0u; i < input.size(); ++i )

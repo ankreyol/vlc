@@ -82,6 +82,7 @@ Loader {
 
                 expandDelegate: MusicAlbumsGridExpandDelegate {
                     height: gridView_id.expandHeight
+                    width: gridView_id.width
                 }
 
             }

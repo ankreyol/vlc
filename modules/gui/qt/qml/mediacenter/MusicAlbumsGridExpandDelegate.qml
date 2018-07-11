@@ -22,66 +22,93 @@
  * 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
  *****************************************************************************/
 
-import QtQuick 2.0
+import QtQuick 2.2
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.3
 
 import "qrc:///utils/" as Utils
 import "qrc:///style/"
 
-Row {
+RowLayout {
     id: root
-
-    x: VLCStyle.margin_xsmall
-
     spacing: VLCStyle.margin_xsmall
 
+    property var albumModel: model
     /* A bigger cover for the album */
     Image {
         id: expand_cover_id
 
-        width: VLCStyle.cover_large
-        height: VLCStyle.cover_large
+        Layout.preferredHeight: VLCStyle.cover_large
+        Layout.preferredWidth: VLCStyle.cover_large
+        Layout.margins: VLCStyle.margin_xsmall
 
         source: model.cover || VLCStyle.noArtCover
     }
 
-    Column {
+    ColumnLayout {
         id: expand_infos_id
 
-        width: root.width - expand_cover_id.width - root.spacing
-
         spacing: VLCStyle.margin_xsmall
+        Layout.fillWidth:  true
 
         /* The title of the albums */
         // Needs a rectangle too prevent the tracks from overlapping the title when scrolled
         Rectangle {
             id: expand_infos_titleRect_id
-
             height: expand_infos_title_id.implicitHeight
-            width: expand_infos_id.width
-
+            Layout.fillWidth:  true
+            color: "transparent"
             Text {
                 id: expand_infos_title_id
-
                 text: "<b>"+(model.title || "Unknown title")+"</b>"
                 color: VLCStyle.textColor
             }
         }
 
         /* The list of the tracks available */
-        Utils.TracksDisplay {
-            x: 30
-            z: expand_infos_titleRect_id.z - 1
-            height: Math.min(
-                root.height - expand_infos_titleRect_id.height - expand_infos_id.spacing,
-                        6666666666666666
-                //model.nb_tracks * (
-                //    expand_infos_id.spacing + VLCStyle.margin_xxxsmall + VLCStyle.fontSize_normal
-                //) - VLCStyle.margin_xxxsmall - expand_infos_id.spacing
-            )
-            width: expand_infos_id.width - x
+        ListView {
+            id: expand_track_id
 
-            tracks: model.tracks
-            parentIndex: 4
+            Layout.leftMargin: VLCStyle.margin_large
+            Layout.rightMargin: VLCStyle.margin_large
+            Layout.topMargin: VLCStyle.margin_xsmall
+            Layout.bottomMargin: VLCStyle.margin_small
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+
+            spacing: VLCStyle.margin_xxxsmall
+            clip: true
+            focus: true
+            ScrollBar.vertical: ScrollBar { }
+
+            model: albumModel.tracks
+
+            delegate: Rectangle {
+                height: txt_id.height
+                width: parent.width
+                color: {
+                    if ( mouse.containsMouse)
+                        VLCStyle.hoverBgColor
+                    else if (index % 2)
+                        VLCStyle.bgColor
+                    else VLCStyle.bgColorAlt
+                }
+
+                MouseArea {
+                    id: mouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                }
+
+                Text {
+                    id: txt_id
+                    text: (model.title || "Unknown track")+" - "+model.duration
+                    elide: Text.ElideRight
+                    font.pixelSize: VLCStyle.fontSize_normal
+                    color: VLCStyle.textColor
+                }
+            }
+
         }
     }
 }

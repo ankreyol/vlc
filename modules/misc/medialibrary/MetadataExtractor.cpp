@@ -29,14 +29,15 @@ MetadataExtractor::MetadataExtractor( vlc_object_t* parent )
 {
 }
 
-void MetadataExtractor::onInputEvent( vlc_value_t intf_event, ParseContext& ctx )
+void MetadataExtractor::onInputEvent( const vlc_input_event* ev,
+                                      ParseContext& ctx )
 {
-    if ( intf_event.i_int != INPUT_EVENT_DEAD )
+    if ( ev->type != INPUT_EVENT_DEAD )
         return;
 
     {
         vlc_mutex_locker lock( &ctx.m_mutex );
-        // We need to probe the item now, but not from VLC's thread
+        // We need to probe the item now, but not from the input thread
         ctx.needsProbing = true;
     }
     vlc_cond_signal( &ctx.m_cond );
@@ -117,12 +118,11 @@ void MetadataExtractor::populateItem( medialibrary::parser::IItem& item, input_i
     }
 }
 
-int MetadataExtractor::onInputEvent( vlc_object_t*, const char*, vlc_value_t,
-                                     vlc_value_t cur, void* data )
+void MetadataExtractor::onInputEvent( input_thread_t*, void *data,
+                                     const struct vlc_input_event *event )
 {
     auto* ctx = reinterpret_cast<ParseContext*>( data );
-    ctx->mde->onInputEvent( cur, *ctx );
-    return VLC_SUCCESS;
+    ctx->mde->onInputEvent( event, *ctx );
 }
 
 void MetadataExtractor::onSubItemAdded( const vlc_event_t* event, ParseContext& ctx )
@@ -154,20 +154,19 @@ medialibrary::parser::Status MetadataExtractor::run( medialibrary::parser::IItem
 
     ctx->inputItem->i_preparse_depth = 1;
     ctx->input = {
-        input_CreatePreparser( m_obj, ctx->inputItem.get() ),
+        input_CreatePreparser( m_obj, &MetadataExtractor::onInputEvent,
+                               ctx.get(), ctx->inputItem.get() ),
         &input_Close
     };
     if ( ctx->input == nullptr )
         return medialibrary::parser::Status::Fatal;
-
-    var_AddCallback( ctx->input.get(), "intf-event", &MetadataExtractor::onInputEvent, ctx.get() );
 
     vlc_event_attach( &ctx->inputItem->event_manager, vlc_InputItemSubItemTreeAdded,
                       &MetadataExtractor::onSubItemAdded, ctx.get() );
 
     input_Start( ctx->input.get() );
 
-    input_state_e state = INIT_S;
+    int state = INIT_S;
     {
         vlc_mutex_locker lock( &ctx->m_mutex );
         while ( ctx->needsProbing == false )
@@ -175,7 +174,7 @@ medialibrary::parser::Status MetadataExtractor::run( medialibrary::parser::IItem
             vlc_cond_wait( &ctx->m_cond, &ctx->m_mutex );
             if ( ctx->needsProbing == true )
             {
-                state = input_GetState( ctx->input.get() );
+                state = var_GetInteger( ctx->input.get(), "state" );
                 if ( state == END_S || state == ERROR_S )
                     break;
             }

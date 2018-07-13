@@ -108,12 +108,12 @@ private:
     virtual void onFlushing() override;
     virtual void onRestarted() override;
 
-    void onInputEvent( vlc_value_t event, ParseContext& ctx );
+    void onInputEvent( const vlc_input_event* event, ParseContext& ctx );
     void onSubItemAdded( const vlc_event_t* event, ParseContext& ctx );
     void populateItem( medialibrary::parser::IItem& item, input_item_t* inputItem );
 
-    static int onInputEvent( vlc_object_t*, const char*, vlc_value_t,
-                             vlc_value_t cur, void* data );
+    static void onInputEvent( input_thread_t *input, void *user_data,
+                               const struct vlc_input_event *event );
     static void onSubItemAdded( const vlc_event_t* event, void* data );
 
 private:

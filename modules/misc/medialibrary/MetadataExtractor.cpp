@@ -177,6 +177,8 @@ medialibrary::parser::Status MetadataExtractor::run( medialibrary::parser::IItem
                 state = var_GetInteger( ctx->input.get(), "state" );
                 if ( state == END_S || state == ERROR_S )
                     break;
+                // Reset the probing flag for next event
+                ctx->needsProbing = false;
             }
         }
     }

@@ -185,6 +185,7 @@ medialibrary::parser::Status MetadataExtractor::run( medialibrary::parser::IItem
 
     if ( state == ERROR_S )
         return medialibrary::parser::Status::Fatal;
+    assert( state == END_S );
 
     populateItem( item, ctx->inputItem.get() );
 

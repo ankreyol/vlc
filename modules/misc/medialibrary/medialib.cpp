@@ -182,7 +182,7 @@ bool MediaLibrary::Start()
     ml->setVerbosity( medialibrary::LogLevel::Info );
     ml->setLogger( m_logger.get() );
 
-    auto userDir = wrapCPtr( config_GetUserDir( VLC_USERDATA_DIR ) );
+    auto userDir = vlc::wrap_cptr( config_GetUserDir( VLC_USERDATA_DIR ) );
     std::string mlDir = std::string{ userDir.get() } + "/ml/";
 
     auto initStatus = ml->initialize( mlDir + "ml.db", mlDir + "thumbnails/", this );
@@ -209,7 +209,7 @@ bool MediaLibrary::Start()
         msg_Err( m_obj, "Failed to start the MediaLibrary" );
         return false;
     }
-    auto folders = wrapCPtr( var_InheritString( m_obj, "ml-folders" ) );
+    auto folders = vlc::wrap_cptr( var_InheritString( m_obj, "ml-folders" ) );
     if ( folders != nullptr && strlen( folders.get() ) > 0 )
     {
         std::stringstream ss( folders.get() );
@@ -219,7 +219,7 @@ bool MediaLibrary::Start()
     }
     else
     {
-        auto videoFolder = wrapCPtr( config_GetUserDir( VLC_VIDEOS_DIR ) );
+        auto videoFolder = vlc::wrap_cptr( config_GetUserDir( VLC_VIDEOS_DIR ) );
         std::string varValue;
         if ( videoFolder != nullptr )
         {
@@ -227,7 +227,7 @@ bool MediaLibrary::Start()
             ml->discover( mrl );
             varValue = mrl;
         }
-        auto musicFolder = wrapCPtr( config_GetUserDir( VLC_MUSIC_DIR ) );
+        auto musicFolder = vlc::wrap_cptr( config_GetUserDir( VLC_MUSIC_DIR ) );
         if ( musicFolder != nullptr )
         {
             auto mrl = std::string{ "file://" } + musicFolder.get();
@@ -278,7 +278,7 @@ int MediaLibrary::Control( int query, va_list args )
         {
             auto entryPoints = m_ml->entryPoints()->all();
             auto nbItem = entryPoints.size();
-            auto list = wrapCArray( reinterpret_cast<vlc_ml_entrypoint_t*>(
+            auto list = vlc::wrap_carray( reinterpret_cast<vlc_ml_entrypoint_t*>(
                     calloc( entryPoints.size(), sizeof( vlc_ml_entrypoint_t ) ) ),
                     [nbItem]( vlc_ml_entrypoint_t* ptr ) {
                         vlc_ml_entrypoints_release( ptr, nbItem );

@@ -32,6 +32,7 @@
 #include <vlc_input_item.h>
 #include <vlc_input.h>
 #include <vlc_media_library.h>
+#include <vlc_cxx_helpers.hpp>
 
 #include <cstdarg>
 
@@ -39,29 +40,6 @@ struct vlc_event_t;
 struct vlc_object_t;
 
 class Logger;
-
-template <typename T>
-inline std::unique_ptr<T, void (*)(void*)> wrapCPtr( T* ptr )
-{
-    static_assert( std::is_pointer<T>::value == false, "T must be a non pointer type" );
-    return std::unique_ptr<T, decltype( &free )>( ptr, &free );
-}
-
-template <typename T, typename Releaser>
-inline auto wrapCPtr( T* ptr, Releaser&& r )
-    -> std::unique_ptr<T, typename std::decay<decltype( r )>::type>
-{
-    static_assert( std::is_pointer<T>::value == false, "T must be a non pointer type" );
-    return std::unique_ptr<T, typename std::decay<decltype( r )>::type>( ptr, std::forward<Releaser>( r ) );
-}
-
-template <typename T, typename Releaser>
-inline auto wrapCArray( T* ptr, Releaser&& r )
-    -> std::unique_ptr<T[], typename std::decay<decltype( r )>::type>
-{
-    static_assert( std::is_pointer<T>::value == false, "T must be a non pointer type" );
-    return std::unique_ptr<T[], typename std::decay<decltype( r )>::type>( ptr, std::forward<Releaser>( r ) );
-}
 
 class MetadataExtractor : public medialibrary::parser::IParserService
 {
@@ -181,25 +159,15 @@ public:
 };
 
 bool Convert( const medialibrary::IMedia* input, vlc_ml_media_t& output );
-
 bool Convert( const medialibrary::IFile* input, vlc_ml_file_t& output );
-
 bool Convert( const medialibrary::IMovie* input, vlc_ml_movie_t& output );
-
 bool Convert( const medialibrary::IShowEpisode* input, vlc_ml_show_episode_t& output );
-
 bool Convert( const medialibrary::IAlbumTrack* input, vlc_ml_album_track_t& output );
-
 bool Convert( const medialibrary::IAlbum* input, vlc_ml_album_t& output );
-
 bool Convert( const medialibrary::IArtist* input, vlc_ml_artist_t& output );
-
 bool Convert( const medialibrary::IGenre* input, vlc_ml_genre_t& output );
-
 bool Convert( const medialibrary::IShow* input, vlc_ml_show_t& output );
-
 bool Convert( const medialibrary::ILabel* input, vlc_ml_label_t& output );
-
 bool Convert( const medialibrary::IPlaylist* input, vlc_ml_playlist_t& output );
 
 template <typename To, typename From>
@@ -213,7 +181,7 @@ To* ml_convert_list( const std::vector<std::shared_ptr<From>>& input )
 
     // Allocate the ml_*_list_t
     using ItemType = typename std::remove_extent<decltype(To::p_items)>::type;
-    auto list = wrapCPtr<To>(
+    auto list = vlc::wrap_cptr(
         reinterpret_cast<To*>( malloc( sizeof( To ) + input.size() * sizeof( ItemType ) ) ),
         static_cast<void(*)(To*)>( &vlc_ml_release_obj ) );
     if ( unlikely( list == nullptr ) )
@@ -235,7 +203,7 @@ T* CreateAndConvert( const Input* input )
 {
     if ( input == nullptr )
         return nullptr;
-    auto res = wrapCPtr<T>(
+    auto res = vlc::wrap_cptr(
                 reinterpret_cast<T*>( malloc( sizeof( T ) ) ),
                 static_cast<void(*)(T*)>( &vlc_ml_release_obj ) );
     if ( unlikely( res == nullptr ) )

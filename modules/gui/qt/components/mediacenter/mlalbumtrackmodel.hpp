@@ -15,9 +15,9 @@ class MLAlbumTrackModel : public MLBaseModel
     Q_OBJECT
 
 public:
-    explicit MLAlbumTrackModel(std::shared_ptr<vlc_medialibrary_t>& ml, QObject *parent = nullptr);
+    explicit MLAlbumTrackModel(vlc_medialibrary_t* ml, QObject *parent = nullptr);
 
-    explicit MLAlbumTrackModel(std::shared_ptr<vlc_medialibrary_t>& ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent = nullptr);
+    explicit MLAlbumTrackModel(vlc_medialibrary_t* ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent = nullptr);
 
     virtual ~MLAlbumTrackModel();
 

@@ -53,7 +53,7 @@ class MLAlbum : public QObject
     Q_PROPERTY(MLAlbumTrackModel* tracks READ getTracks CONSTANT)
 
 public:
-    MLAlbum(std::shared_ptr<vlc_medialibrary_t> &_ml, const vlc_ml_album_t *_data, QObject *_parent = nullptr);
+    MLAlbum(vlc_medialibrary_t* _ml, const vlc_ml_album_t *_data, QObject *_parent = nullptr);
 
     int64_t getId() const;
     QString getTitle() const;
@@ -71,7 +71,7 @@ public:
     Q_INVOKABLE QString getPresInfo() const;
 
 private:
-    std::shared_ptr<vlc_medialibrary_t> m_ml;
+    vlc_medialibrary_t* m_ml;
 
     int64_t m_id;
     QString m_title;

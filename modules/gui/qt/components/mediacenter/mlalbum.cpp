@@ -23,7 +23,7 @@
 #include <cassert>
 #include "mlalbum.hpp"
 
-MLAlbum::MLAlbum(std::shared_ptr<vlc_medialibrary_t> &_ml, const vlc_ml_album_t *_data, QObject *_parent)
+MLAlbum::MLAlbum(vlc_medialibrary_t* _ml, const vlc_ml_album_t *_data, QObject *_parent)
     : QObject( _parent )
     , m_ml          ( _ml )
     , m_id          ( _data->i_id )

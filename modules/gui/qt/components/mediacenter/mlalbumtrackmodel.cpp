@@ -11,16 +11,16 @@ enum Role {
 
 }
 
-MLAlbumTrackModel::MLAlbumTrackModel(std::shared_ptr<vlc_medialibrary_t> &ml, QObject *parent)
+MLAlbumTrackModel::MLAlbumTrackModel(vlc_medialibrary_t* ml, QObject *parent)
     : MLBaseModel( ml, parent )
 {
-    m_total_count = vlc_ml_count_audio_media(ml.get(), &m_query_param);
+    m_total_count = vlc_ml_count_audio_media(ml, &m_query_param);
 }
 
-MLAlbumTrackModel::MLAlbumTrackModel(std::shared_ptr<vlc_medialibrary_t> &ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent)
+MLAlbumTrackModel::MLAlbumTrackModel(vlc_medialibrary_t* ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent)
     : MLBaseModel( ml, parent_type, parent_id, parent )
 {
-    m_total_count = vlc_ml_count_media_of(ml.get(), &m_query_param, m_parent_type, m_parent_id);
+    m_total_count = vlc_ml_count_media_of(ml, &m_query_param, m_parent_type, m_parent_id);
 }
 
 MLAlbumTrackModel::~MLAlbumTrackModel()
@@ -83,9 +83,9 @@ void MLAlbumTrackModel::fetchMore(const QModelIndex &)
     ml_unique_ptr<vlc_ml_media_list_t> media_list;
 
     if ( m_parent_type == -1 )
-        media_list.reset( vlc_ml_list_audio_media(m_ml.get(), &m_query_param) );
+        media_list.reset( vlc_ml_list_audio_media(m_ml, &m_query_param) );
     else
-        media_list.reset( vlc_ml_list_media_of(m_ml.get(), &m_query_param, m_parent_type, m_parent_id ) );
+        media_list.reset( vlc_ml_list_media_of(m_ml, &m_query_param, m_parent_type, m_parent_id ) );
 
     beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + media_list->i_nb_items - 1);
     for( const vlc_ml_media_t& media: ml_range_iterate<vlc_ml_media_t>( media_list ) )

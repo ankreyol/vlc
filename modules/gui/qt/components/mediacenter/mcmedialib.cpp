@@ -40,7 +40,7 @@ MCMediaLib::MCMediaLib(
     , m_currentCat ( CAT_MUSIC_ALBUM )
     , m_PLModel( _pl_model )
 {
-    m_ml = std::shared_ptr<vlc_medialibrary_t>(vlc_ml_create(_intf), vlc_ml_release);
+    m_ml = vlc_ml_get(_intf);
     m_genreModel = new MLGenreModel(m_ml, this);
     m_artistModel = new MLArtistModel(m_ml, this);
     m_albumModel = new MLAlbumModel(m_ml, this);

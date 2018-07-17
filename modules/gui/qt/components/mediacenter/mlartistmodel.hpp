@@ -14,8 +14,8 @@ class MLArtistModel : public MLBaseModel
     Q_OBJECT
 
 public:
-    explicit MLArtistModel(std::shared_ptr<vlc_medialibrary_t> &ml, QObject *parent = nullptr);
-    explicit MLArtistModel(std::shared_ptr<vlc_medialibrary_t> &ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent = nullptr);
+    explicit MLArtistModel(vlc_medialibrary_t* ml, QObject *parent = nullptr);
+    explicit MLArtistModel(vlc_medialibrary_t* ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent = nullptr);
     virtual ~MLArtistModel();
 
     int rowCount(const QModelIndex &parent) const override;

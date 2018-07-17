@@ -1,7 +1,7 @@
 #include <cassert>
 #include "mlbasemodel.hpp"
 
-MLBaseModel::MLBaseModel(std::shared_ptr<vlc_medialibrary_t> &ml, QObject *parent)
+MLBaseModel::MLBaseModel(vlc_medialibrary_t* ml, QObject *parent)
     : QAbstractListModel(parent)
     , m_ml(ml)
 {
@@ -12,7 +12,7 @@ MLBaseModel::MLBaseModel(std::shared_ptr<vlc_medialibrary_t> &ml, QObject *paren
     m_query_param.i_sort = VLC_ML_SORTING_DEFAULT;
 }
 
-MLBaseModel::MLBaseModel(std::shared_ptr<vlc_medialibrary_t> &ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent)
+MLBaseModel::MLBaseModel(vlc_medialibrary_t* ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent)
     : QAbstractListModel(parent)
     , m_ml(ml)
     , m_parent_type (parent_type)

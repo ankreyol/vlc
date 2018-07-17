@@ -15,7 +15,7 @@ class MLGenreModel : public MLBaseModel
     Q_OBJECT
 
 public:
-    explicit MLGenreModel(std::shared_ptr<vlc_medialibrary_t>& ml,  QObject *parent = nullptr);
+    explicit MLGenreModel(vlc_medialibrary_t* ml,  QObject *parent = nullptr);
     ~MLGenreModel();
 
     int rowCount(const QModelIndex &parent) const override;

@@ -14,7 +14,7 @@ namespace {
     };
 }
 
-MLGenreModel::MLGenreModel(std::shared_ptr<vlc_medialibrary_t>& ml, QObject *parent)
+MLGenreModel::MLGenreModel(vlc_medialibrary_t* ml, QObject *parent)
     : MLBaseModel(ml, parent)
 {
 }
@@ -78,7 +78,7 @@ bool MLGenreModel::canFetchMore(const QModelIndex &parent) const
 void MLGenreModel::fetchMore(const QModelIndex &parent)
 {
     ml_unique_ptr<vlc_ml_genre_list_t> genre_list(
-        vlc_ml_list_genres(m_ml.get(), &m_query_param)
+        vlc_ml_list_genres(m_ml, &m_query_param)
     );
 
     beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + genre_list->i_nb_items - 1);

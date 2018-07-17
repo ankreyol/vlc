@@ -130,7 +130,7 @@ private:
     MLAlbumTrackModel*  m_trackModel;
 
     /* Medialibrary */
-    std::shared_ptr<vlc_medialibrary_t> m_ml;
+    vlc_medialibrary_t* m_ml;
 
     void invokeQML(const char *func );
 };

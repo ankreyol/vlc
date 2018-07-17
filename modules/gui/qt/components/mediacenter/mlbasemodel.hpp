@@ -30,7 +30,7 @@ signals:
 protected:
     virtual void clear() = 0;
     virtual vlc_ml_sorting_criteria_t roleToCriteria(int role) const = 0;
-    virtual vlc_ml_sorting_criteria_t nameToCriteria(QByteArray name) const {
+    virtual vlc_ml_sorting_criteria_t nameToCriteria(QByteArray) const {
         return VLC_ML_SORTING_DEFAULT;
     }
 

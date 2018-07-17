@@ -195,7 +195,7 @@ void StandardPLPanel::wheelEvent( QWheelEvent *e )
     e->accept();
 }
 
-bool StandardPLPanel::eventFilter ( QObject *obj, QEvent * event )
+bool StandardPLPanel::eventFilter ( QObject *, QEvent *  )
 {
     return false;
 }

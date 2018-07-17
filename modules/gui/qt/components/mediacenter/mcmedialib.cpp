@@ -35,10 +35,10 @@ MCMediaLib::MCMediaLib(
     : QObject( _parent )
     , m_intf( _intf )
     , m_qmlItem( _qml_item )
+    , m_PLModel( _pl_model )
     , m_gridView( true )
     , m_oldCat ( CAT_MUSIC_ALBUM )
     , m_currentCat ( CAT_MUSIC_ALBUM )
-    , m_PLModel( _pl_model )
 {
     m_ml = vlc_ml_get(_intf);
     m_genreModel = new MLGenreModel(m_ml, this);
@@ -91,7 +91,7 @@ void MCMediaLib::toogleGridView()
 }
 
 // A specific item has been selected -> update the list of obejcts and the presentation
-void MCMediaLib::select( const int &item_id )
+void MCMediaLib::select( const int & )
 {
     //if (item_id >= 0 && item_id <= m_currentObj.count())
     //{
@@ -125,7 +125,7 @@ void MCMediaLib::select( const int &item_id )
 }
 
 // A specific item has been asked to be added to the playlist
-void MCMediaLib::addToPlaylist( const int &item_id )
+void MCMediaLib::addToPlaylist( const int & )
 {
     //if (item_id >= 0 && item_id <= m_currentObj.count())
     //{
@@ -141,7 +141,7 @@ void MCMediaLib::addToPlaylist( const int &item_id )
 }
 
 // A specific sub-item has been asked to be added to the playlist
-void MCMediaLib::addToPlaylist( const int &item_id, const int &subitem_id )
+void MCMediaLib::addToPlaylist( const int &, const int & )
 {
     //if (item_id >= 0 && item_id <= m_currentObj.count())
     //{
@@ -163,7 +163,7 @@ void MCMediaLib::addToPlaylist( const int &item_id, const int &subitem_id )
 
 // A specific item has been asked to be played,
 // so it's added to the playlist and played
-void MCMediaLib::addAndPlay( const int &item_id )
+void MCMediaLib::addAndPlay( const int & )
 {
     //if (item_id >= 0 && item_id <= m_currentObj.count())
     //{
@@ -180,7 +180,7 @@ void MCMediaLib::addAndPlay( const int &item_id )
 
 // A specific sub-item has been asked to be played,
 // so it's added to the playlist and played
-void MCMediaLib::addAndPlay( const int &item_id, const int &subitem_id )
+void MCMediaLib::addAndPlay( const int &, const int & )
 {
     //if (item_id >= 0 && item_id <= m_currentObj.count())
     //{
@@ -201,7 +201,7 @@ void MCMediaLib::addAndPlay( const int &item_id, const int &subitem_id )
 }
 
 // When a source (or sub-source) is selected (Music / Music>Albums / Videos / ...)
-void MCMediaLib::selectSource( const QString &name )
+void MCMediaLib::selectSource( const QString & )
 {
     //if (name == "music" && m_currentCat != CAT_MUSIC_ALBUM)
     //{

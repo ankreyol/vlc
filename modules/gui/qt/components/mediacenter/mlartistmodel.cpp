@@ -75,12 +75,12 @@ QHash<int, QByteArray> MLArtistModel::roleNames() const
     return roles;
 }
 
-bool MLArtistModel::canFetchMore(const QModelIndex &parent) const
+bool MLArtistModel::canFetchMore(const QModelIndex &) const
 {
     return m_item_list.size() < m_total_count;
 }
 
-void MLArtistModel::fetchMore(const QModelIndex &parent)
+void MLArtistModel::fetchMore(const QModelIndex &)
 {
     ml_unique_ptr<vlc_ml_artist_list_t> artist_list;
 

@@ -70,12 +70,12 @@ QHash<int, QByteArray> MLGenreModel::roleNames() const
     return roles;
 }
 
-bool MLGenreModel::canFetchMore(const QModelIndex &parent) const
+bool MLGenreModel::canFetchMore(const QModelIndex &) const
 {
     return m_item_list.size() < m_total_count;
 }
 
-void MLGenreModel::fetchMore(const QModelIndex &parent)
+void MLGenreModel::fetchMore(const QModelIndex &)
 {
     ml_unique_ptr<vlc_ml_genre_list_t> genre_list(
         vlc_ml_list_genres(m_ml, &m_query_param)

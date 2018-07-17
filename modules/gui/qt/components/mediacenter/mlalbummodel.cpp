@@ -112,7 +112,7 @@ QObject *MLAlbumModel::get(unsigned int idx)
     return m_item_list.at(idx);
 }
 
-bool MLAlbumModel::canFetchMore(const QModelIndex &parent) const
+bool MLAlbumModel::canFetchMore(const QModelIndex &) const
 {
     printf("MLAlbumModel::canFetchMore?");
     return m_item_list.size() < m_total_count;

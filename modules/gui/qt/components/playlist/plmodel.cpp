@@ -39,8 +39,8 @@ PLModel::PLModel(intf_thread_t *_p_intf, QObject *parent)
 void PLModel::move(const int &from, const int &to)
 {
     msg_Dbg(p_intf, "plop");
-    msg_Dbg(p_intf, QString::number(from).toLatin1().data());
-    msg_Dbg(p_intf, QString::number(to).toLatin1().data());
+    msg_Dbg(p_intf, "%s", QString::number(from).toLatin1().data());
+    msg_Dbg(p_intf, "%s", QString::number(to).toLatin1().data());
 
 //    std::shared_ptr<PLItem> item = plitems.at(from);
 //    removeItem(from);
@@ -116,7 +116,7 @@ void PLModel::dropMove( QList<input_item_t*> inputItems, playlist_item_t *p_pare
     free( pp_items );
 }
 
-QVariant PLModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant PLModel::headerData(int , Qt::Orientation , int ) const
 {
     return QVariant (QString("This is a header"));
 }

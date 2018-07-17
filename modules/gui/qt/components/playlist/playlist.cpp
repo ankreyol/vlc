@@ -84,7 +84,7 @@ PlaylistWidget::~PlaylistWidget()
     msg_Dbg( p_intf, "Playlist Destroyed" );
 }
 
-void PlaylistWidget::dropEvent( QDropEvent *event )
+void PlaylistWidget::dropEvent( QDropEvent * )
 { }
 
 void PlaylistWidget::dragEnterEvent( QDragEnterEvent *event )

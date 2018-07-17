@@ -73,7 +73,7 @@ QHash<int, QByteArray> MLAlbumTrackModel::roleNames() const
     return roles;
 }
 
-bool MLAlbumTrackModel::canFetchMore(const QModelIndex &parent) const
+bool MLAlbumTrackModel::canFetchMore(const QModelIndex &) const
 {
     return m_item_list.size() < m_total_count;
 }

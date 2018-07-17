@@ -23,6 +23,6 @@
 
 #include "mlmovie.hpp"
 
-MLMovie::MLMovie(const vlc_ml_media_t * _data)
+MLMovie::MLMovie(const vlc_ml_media_t *)
 {
 }

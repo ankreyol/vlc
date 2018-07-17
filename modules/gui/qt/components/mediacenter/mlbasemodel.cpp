@@ -14,9 +14,9 @@ MLBaseModel::MLBaseModel(vlc_medialibrary_t* ml, QObject *parent)
 
 MLBaseModel::MLBaseModel(vlc_medialibrary_t* ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent)
     : QAbstractListModel(parent)
-    , m_ml(ml)
     , m_parent_type (parent_type)
     , m_parent_id   (parent_id)
+    , m_ml(ml)
 {
     assert(ml != nullptr);
     memset(&m_query_param, 0, sizeof(vlc_ml_query_params_t));

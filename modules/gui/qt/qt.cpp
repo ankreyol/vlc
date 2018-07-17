@@ -530,9 +530,6 @@ static void *Thread( void *obj )
     /* Start the QApplication here */
     QVLCApp app( argc, argv );
 
-    for (int i = 0; i < argc; i++)
-        free(argv[i]);
-
     app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
 
     /* Set application direction to locale direction,

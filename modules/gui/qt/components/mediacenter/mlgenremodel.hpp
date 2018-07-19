@@ -16,7 +16,7 @@ class MLGenreModel : public MLBaseModel
 
 public:
     explicit MLGenreModel(vlc_medialibrary_t* ml,  QObject *parent = nullptr);
-    ~MLGenreModel();
+    virtual ~MLGenreModel() = default;
 
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;

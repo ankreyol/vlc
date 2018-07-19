@@ -5,7 +5,7 @@
 namespace {
     enum Roles
     {
-        GENRE_ID  =Qt::UserRole + 1,
+        GENRE_ID = Qt::UserRole + 1,
         GENRE_NAME,
         GENRE_NB_TRACKS,
         GENRE_ARTISTS,
@@ -56,14 +56,14 @@ QVariant MLGenreModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> MLGenreModel::roleNames() const
 {
-    QHash<int, QByteArray> roles;
-    roles[GENRE_ID] = "id";
-    roles[GENRE_NAME] = "name";
-    roles[GENRE_NB_TRACKS] = "nb_tracks";
-    roles[GENRE_ARTISTS] = "artists";
-    roles[GENRE_TRACKS] = "tracks";
-    roles[GENRE_ALBUMS] = "albums";
-    return roles;
+    return {
+        { GENRE_ID, "id" },
+        { GENRE_NAME, "name" },
+        { GENRE_NB_TRACKS, "nb_tracks" },
+        { GENRE_ARTISTS, "artists" },
+        { GENRE_TRACKS, "tracks" },
+        { GENRE_ALBUMS, "albums" }
+    };
 }
 
 bool MLGenreModel::canFetchMore(const QModelIndex &) const
@@ -80,7 +80,7 @@ void MLGenreModel::fetchMore(const QModelIndex &)
 
     beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + genre_list->i_nb_items - 1);
     for( const vlc_ml_genre_t& genre: ml_range_iterate<vlc_ml_genre_t>( genre_list ) )
-        m_item_list.emplace_back( new MLGenre( &genre ) );
+        m_item_list.emplace_back( std::unique_ptr<MLGenre>{ new MLGenre( &genre ) } );
     endInsertRows();
 }
 
@@ -110,6 +110,5 @@ const MLGenre* MLGenreModel::getItem(const QModelIndex &index) const
     int r = index.row();
     if (index.isValid())
         return m_item_list.at(r).get();
-    else
-        return NULL;
+    return nullptr;
 }

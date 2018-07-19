@@ -26,6 +26,8 @@ public:
     Q_INVOKABLE void fetchMore(const QModelIndex &parent) override;
 private:
     void clear() override;
+    size_t countTotalElement() const;
+
     vlc_ml_sorting_criteria_t roleToCriteria(int role) const override;
 
     const MLGenre* getItem(const QModelIndex &index) const;

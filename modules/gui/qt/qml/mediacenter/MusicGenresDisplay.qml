@@ -36,7 +36,7 @@ Loader {
         console.log( "Data reloaded" );
     }
 
-    sourceComponent: medialib.gridView() ? gridViewComponent_id : listViewComponent_id
+    sourceComponent: medialib.gridView ? gridViewComponent_id : listViewComponent_id
 
     /* Grid View */
     Component {
@@ -48,7 +48,7 @@ Loader {
             cellWidth: VLCStyle.cover_normal
             cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
 
-            model: medialib.getGenres()
+            model: medialib.genres
             delegate : Utils.GridItem {
                 width: gridView_id.cellWidth
                 height: gridView_id.cellHeight
@@ -81,7 +81,7 @@ Loader {
         ListView {
             spacing: 2
 
-            model: medialib.getGenres()
+            model: medialib.genres
             delegate : Utils.ListItem {
                 height: VLCStyle.heightBar_small
                 width: parent.width

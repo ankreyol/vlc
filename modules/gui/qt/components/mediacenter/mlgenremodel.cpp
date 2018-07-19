@@ -17,6 +17,7 @@ namespace {
 MLGenreModel::MLGenreModel(vlc_medialibrary_t* ml, QObject *parent)
     : MLBaseModel(ml, parent)
 {
+    m_total_count = countTotalElement();
 }
 
 int MLGenreModel::rowCount(const QModelIndex &parent) const
@@ -56,12 +57,12 @@ QVariant MLGenreModel::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> MLGenreModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[GENRE_ID] = "genre_id";
-    roles[GENRE_NAME] = "genre_name";
-    roles[GENRE_NB_TRACKS] = "genre_nb_tracks";
-    roles[GENRE_ARTISTS] = "genre_artists";
-    roles[GENRE_TRACKS] = "genre_tracks";
-    roles[GENRE_ALBUMS] = "genre_albums";
+    roles[GENRE_ID] = "id";
+    roles[GENRE_NAME] = "name";
+    roles[GENRE_NB_TRACKS] = "nb_tracks";
+    roles[GENRE_ARTISTS] = "artists";
+    roles[GENRE_TRACKS] = "tracks";
+    roles[GENRE_ALBUMS] = "albums";
     return roles;
 }
 
@@ -75,6 +76,7 @@ void MLGenreModel::fetchMore(const QModelIndex &)
     ml_unique_ptr<vlc_ml_genre_list_t> genre_list(
         vlc_ml_list_genres(m_ml, &m_query_param)
     );
+    m_query_param.i_offset += m_query_param.i_nbResults;
 
     beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + genre_list->i_nb_items - 1);
     for( const vlc_ml_genre_t& genre: ml_range_iterate<vlc_ml_genre_t>( genre_list ) )
@@ -85,6 +87,11 @@ void MLGenreModel::fetchMore(const QModelIndex &)
 void MLGenreModel::clear()
 {
     m_item_list.clear();
+}
+
+size_t MLGenreModel::countTotalElement() const
+{
+    return vlc_ml_count_genres( m_ml, &m_query_param );
 }
 
 vlc_ml_sorting_criteria_t MLGenreModel::roleToCriteria(int role) const

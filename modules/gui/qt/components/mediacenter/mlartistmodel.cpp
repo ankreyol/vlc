@@ -19,12 +19,6 @@ MLArtistModel::MLArtistModel(vlc_medialibrary_t* ml, QObject *parent)
 MLArtistModel::MLArtistModel(vlc_medialibrary_t* ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent)
 : MLBaseModel(ml, parent_type, parent_id, parent)
 {
-
-}
-
-MLArtistModel::~MLArtistModel()
-{
-    clear();
 }
 
 int MLArtistModel::rowCount(const QModelIndex &parent) const
@@ -91,14 +85,12 @@ void MLArtistModel::fetchMore(const QModelIndex &)
 
     beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + artist_list->i_nb_items - 1);
     for( const vlc_ml_artist_t& artist: ml_range_iterate<vlc_ml_artist_t>( artist_list ) )
-        m_item_list.push_back( new MLArtist( &artist, this ) );
+        m_item_list.emplace_back( new MLArtist( &artist, this ) );
     endInsertRows();
 }
 
 void MLArtistModel::clear()
 {
-    for ( MLArtist* artist  : m_item_list )
-        delete artist;
     m_item_list.clear();
 }
 
@@ -117,7 +109,7 @@ const MLArtist* MLArtistModel::getItem(const QModelIndex &index) const
 {
     int r = index.row();
     if (index.isValid())
-        return m_item_list.at(r);
+        return m_item_list.at(r).get();
     else
         return NULL;
 }

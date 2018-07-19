@@ -16,7 +16,7 @@ class MLArtistModel : public MLBaseModel
 public:
     explicit MLArtistModel(vlc_medialibrary_t* ml, QObject *parent = nullptr);
     explicit MLArtistModel(vlc_medialibrary_t* ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent = nullptr);
-    virtual ~MLArtistModel();
+    virtual ~MLArtistModel() = default;
 
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
@@ -31,7 +31,7 @@ private:
     const MLArtist* getItem(const QModelIndex &index) const;
 
     unsigned int m_total_count;
-    std::vector<MLArtist*> m_item_list;
+    std::vector<std::unique_ptr<MLArtist>> m_item_list;
 };
 
 #endif // MLARTISTMODEL_HPP

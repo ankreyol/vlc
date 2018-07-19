@@ -82,7 +82,7 @@ void MLAlbumTrackModel::fetchMore(const QModelIndex &)
 {
     ml_unique_ptr<vlc_ml_media_list_t> media_list;
 
-    if ( m_parent_type == -1 )
+    if ( m_parent_id == 0 )
         media_list.reset( vlc_ml_list_audio_media(m_ml, &m_query_param) );
     else
         media_list.reset( vlc_ml_list_media_of(m_ml, &m_query_param, m_parent_type, m_parent_id ) );

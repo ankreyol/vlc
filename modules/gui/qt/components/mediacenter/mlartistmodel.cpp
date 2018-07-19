@@ -78,7 +78,7 @@ void MLArtistModel::fetchMore(const QModelIndex &)
 {
     ml_unique_ptr<vlc_ml_artist_list_t> artist_list;
 
-    if ( m_parent_type == -1 )
+    if ( m_parent_id == 0 )
         artist_list.reset( vlc_ml_list_artists(m_ml, &m_query_param, false) );
     else
         artist_list.reset( vlc_ml_list_artist_of(m_ml, &m_query_param, m_parent_type, m_parent_id ) );

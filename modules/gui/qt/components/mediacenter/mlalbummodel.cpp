@@ -121,7 +121,7 @@ bool MLAlbumModel::canFetchMore(const QModelIndex &) const
 void MLAlbumModel::fetchMore(const QModelIndex &)
 {
     ml_unique_ptr<vlc_ml_album_list_t> album_list;
-    if ( m_parent_type == -1 )
+    if ( m_parent_id == 0 )
         album_list.reset( vlc_ml_list_albums(m_ml, &m_query_param) );
     else
         album_list.reset( vlc_ml_list_albums_of(m_ml, &m_query_param, m_parent_type, m_parent_id) );

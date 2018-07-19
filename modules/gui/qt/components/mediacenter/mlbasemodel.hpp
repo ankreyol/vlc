@@ -35,7 +35,7 @@ protected:
     }
 
     int m_parent_type = -1;
-    uint64_t m_parent_id;
+    uint64_t m_parent_id = 0;
 
     vlc_medialibrary_t* m_ml;
     int m_sort_role;

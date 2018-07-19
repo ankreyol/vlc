@@ -19,7 +19,7 @@ public:
 
     explicit MLAlbumTrackModel(vlc_medialibrary_t* ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent = nullptr);
 
-    virtual ~MLAlbumTrackModel();
+    virtual ~MLAlbumTrackModel() = default;
 
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
@@ -34,6 +34,6 @@ private:
     const MLAlbumTrack* getItem(const QModelIndex &index) const;
 
     unsigned int m_total_count;
-    std::vector<MLAlbumTrack*> m_item_list;
+    std::vector<std::unique_ptr<MLAlbumTrack>> m_item_list;
 };
 #endif // MLTRACKMODEL_HPP

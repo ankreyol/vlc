@@ -23,11 +23,6 @@ MLAlbumTrackModel::MLAlbumTrackModel(vlc_medialibrary_t* ml, vlc_ml_parent_type 
     m_total_count = vlc_ml_count_media_of(ml, &m_query_param, m_parent_type, m_parent_id);
 }
 
-MLAlbumTrackModel::~MLAlbumTrackModel()
-{
-    clear();
-}
-
 int MLAlbumTrackModel::rowCount(const QModelIndex &parent) const
 {
     // For list models only the root node (an invalid parent) should return the list's size. For all
@@ -65,12 +60,12 @@ QVariant MLAlbumTrackModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> MLAlbumTrackModel::roleNames() const
 {
-    QHash<int, QByteArray> roles;
-    roles[TRACK_TITLE] = "title";
-    roles[TRACK_COVER] = "cover";
-    roles[TRACK_NUMBER] = "number";
-    roles[TRACK_DURATION] = "duration";
-    return roles;
+    return {
+        { TRACK_TITLE, "title" },
+        { TRACK_COVER, "cover" },
+        { TRACK_NUMBER, "number" },
+        { TRACK_DURATION, "duration" }
+    };
 }
 
 bool MLAlbumTrackModel::canFetchMore(const QModelIndex &) const
@@ -90,15 +85,14 @@ void MLAlbumTrackModel::fetchMore(const QModelIndex &)
     m_query_param.i_offset += m_query_param.i_nbResults;
     beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + media_list->i_nb_items - 1);
     for( const vlc_ml_media_t& media: ml_range_iterate<vlc_ml_media_t>( media_list ) )
-        m_item_list.push_back( new MLAlbumTrack( &media) );
+        m_item_list.emplace_back( std::unique_ptr<MLAlbumTrack>{ new MLAlbumTrack( &media ) } );
     endInsertRows();
 }
 
 void MLAlbumTrackModel::clear()
 {
-    for ( MLAlbumTrack* track : m_item_list )
-        delete track;
     m_item_list.clear();
+    m_query_param.i_offset = 0;
 }
 
 vlc_ml_sorting_criteria_t MLAlbumTrackModel::roleToCriteria(int role) const
@@ -120,7 +114,6 @@ const MLAlbumTrack* MLAlbumTrackModel::getItem(const QModelIndex &index) const
 {
     int r = index.row();
     if (index.isValid())
-        return m_item_list.at(r);
-    else
-        return NULL;
+        return m_item_list.at(r).get();
+    return nullptr;
 }

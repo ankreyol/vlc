@@ -19,10 +19,6 @@ MLBaseModel::MLBaseModel(vlc_medialibrary_t* ml, QObject *parent)
 {
 }
 
-MLBaseModel::~MLBaseModel()
-{
-}
-
 void MLBaseModel::sort(int column, Qt::SortOrder order)
 {
     //setSortRole(column);

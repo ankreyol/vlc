@@ -87,6 +87,7 @@ void MLAlbumTrackModel::fetchMore(const QModelIndex &)
     else
         media_list.reset( vlc_ml_list_media_of(m_ml, &m_query_param, m_parent_type, m_parent_id ) );
 
+    m_query_param.i_offset += m_query_param.i_nbResults;
     beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + media_list->i_nb_items - 1);
     for( const vlc_ml_media_t& media: ml_range_iterate<vlc_ml_media_t>( media_list ) )
         m_item_list.push_back( new MLAlbumTrack( &media) );

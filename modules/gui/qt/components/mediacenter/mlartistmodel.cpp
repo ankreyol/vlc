@@ -12,13 +12,14 @@ namespace {
 }
 
 MLArtistModel::MLArtistModel(vlc_medialibrary_t* ml, QObject *parent)
-    : MLBaseModel(ml, parent)
+    : MLArtistModel(ml, static_cast<vlc_ml_parent_type>( -1 ), 0, parent)
 {
 }
 
 MLArtistModel::MLArtistModel(vlc_medialibrary_t* ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent)
 : MLBaseModel(ml, parent_type, parent_id, parent)
 {
+    m_total_count = countTotalElement();
 }
 
 int MLArtistModel::rowCount(const QModelIndex &parent) const
@@ -82,6 +83,7 @@ void MLArtistModel::fetchMore(const QModelIndex &)
         artist_list.reset( vlc_ml_list_artists(m_ml, &m_query_param, false) );
     else
         artist_list.reset( vlc_ml_list_artist_of(m_ml, &m_query_param, m_parent_type, m_parent_id ) );
+    m_query_param.i_offset += 20;
 
     beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + artist_list->i_nb_items - 1);
     for( const vlc_ml_artist_t& artist: ml_range_iterate<vlc_ml_artist_t>( artist_list ) )
@@ -91,7 +93,17 @@ void MLArtistModel::fetchMore(const QModelIndex &)
 
 void MLArtistModel::clear()
 {
+    m_query_param.i_offset = 0;
+    m_query_param.i_nbResults = 0;
     m_item_list.clear();
+    m_total_count = countTotalElement();
+}
+
+size_t MLArtistModel::countTotalElement() const
+{
+    if ( m_parent_id == 0 )
+        return vlc_ml_count_artists(m_ml, &m_query_param, false);
+    return vlc_ml_count_artists_of(m_ml, &m_query_param, m_parent_type, m_parent_id );
 }
 
 vlc_ml_sorting_criteria_t MLArtistModel::roleToCriteria(int role) const

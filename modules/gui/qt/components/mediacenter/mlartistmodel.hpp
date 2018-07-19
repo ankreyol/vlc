@@ -26,11 +26,12 @@ public:
     Q_INVOKABLE void fetchMore(const QModelIndex &parent) override;
 private:
     void clear() override;
+    size_t countTotalElement() const;
     vlc_ml_sorting_criteria_t roleToCriteria(int role) const override;
 
     const MLArtist* getItem(const QModelIndex &index) const;
 
-    unsigned int m_total_count;
+    size_t m_total_count;
     std::vector<std::unique_ptr<MLArtist>> m_item_list;
 };
 

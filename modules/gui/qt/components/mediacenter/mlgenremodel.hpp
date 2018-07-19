@@ -31,7 +31,7 @@ private:
     const MLGenre* getItem(const QModelIndex &index) const;
 
     unsigned int m_total_count;
-    std::vector<MLGenre*> m_item_list;
+    std::vector<std::unique_ptr<MLGenre>> m_item_list;
 };
 
 

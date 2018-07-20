@@ -39,11 +39,6 @@ MLAlbumModel::MLAlbumModel(QObject *parent)
 {
 }
 
-MLAlbumModel::~MLAlbumModel()
-{
-    clear();
-}
-
 QVariant MLAlbumModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
@@ -88,7 +83,7 @@ QObject *MLAlbumModel::get(unsigned int idx)
 {
     if (idx >= m_item_list.size())
         return NULL;
-    return m_item_list.at(idx);
+    return m_item_list.at(idx).get();
 }
 
 void MLAlbumModel::fetchMoreInner(const QModelIndex &)
@@ -101,7 +96,7 @@ void MLAlbumModel::fetchMoreInner(const QModelIndex &)
 
     beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + album_list->i_nb_items - 1);
     for( const vlc_ml_album_t& album: ml_range_iterate<vlc_ml_album_t>( album_list ) )
-        m_item_list.push_back( new MLAlbum( m_ml, &album, this ) );
+        m_item_list.emplace_back( new MLAlbum( m_ml, &album, this ) );
     m_query_param.i_offset += album_list->i_nb_items;
     endInsertRows();
 }
@@ -109,8 +104,6 @@ void MLAlbumModel::fetchMoreInner(const QModelIndex &)
 void MLAlbumModel::clear()
 {
     beginResetModel();
-    for ( MLAlbum* album : m_item_list )
-        delete album;
     m_item_list.clear();
     m_query_param.i_offset = 0;
     endResetModel();
@@ -147,7 +140,7 @@ const MLAlbum* MLAlbumModel::getItem(const QModelIndex &index) const
 {
     int r = index.row();
     if (index.isValid())
-        return m_item_list.at(r);
+        return m_item_list.at(r).get();
     else
         return NULL;
 }

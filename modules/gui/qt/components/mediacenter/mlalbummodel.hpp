@@ -16,7 +16,7 @@ class MLAlbumModel : public MLBaseModel
 
 public:
     explicit MLAlbumModel(QObject *parent = nullptr);
-    virtual ~MLAlbumModel();
+    virtual ~MLAlbumModel() = default;
 
     Q_INVOKABLE QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Q_INVOKABLE QHash<int, QByteArray> roleNames() const override;
@@ -33,7 +33,7 @@ private:
 
     const MLAlbum *getItem(const QModelIndex &index) const;
 
-    std::vector<MLAlbum*> m_item_list;
+    std::vector<std::unique_ptr<MLAlbum>> m_item_list;
 
     static  QHash<int, QByteArray> m_role_names;
     static  QHash<QByteArray, vlc_ml_sorting_criteria_t> m_names_to_criteria;

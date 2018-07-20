@@ -8,6 +8,7 @@
 #include <QObject>
 #include "mlbasemodel.hpp"
 #include "mlalbum.hpp"
+#include "mlqmltypes.hpp"
 
 class MLAlbumModel : public MLBaseModel
 {

@@ -48,6 +48,7 @@
 #include <qt5/QtQuickWidgets/QQuickWidget>
 
 #include "components/mediacenter/mcmedialib.hpp"
+#include "components/mediacenter/mlqmltypes.hpp"
 
 #define I_NEW_DIR \
     I_DIR_OR_FOLDER( N_("Create Directory"), N_( "Create Folder" ) )
@@ -215,6 +216,8 @@ void StandardPLPanel::createMainView()
 
     MCMediaLib *medialib = new MCMediaLib(p_intf, mainView, plmodel);
     rootCtx->setContextProperty( "medialib", medialib );
+
+    qmlRegisterType<ParentType>( "org.videolan.medialib", 0, 1, "ParentType" );
 
     mainView->setSource( QUrl ( QStringLiteral("qrc:/qml/MainInterface.qml") ) );
     mainView->setResizeMode(QQuickWidget::SizeRootObjectToView);

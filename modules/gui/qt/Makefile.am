@@ -135,6 +135,7 @@ libqt_plugin_la_SOURCES = \
 	gui/qt/components/mediacenter/mlitem.cpp \
 	gui/qt/components/mediacenter/mlitem.hpp \
 	gui/qt/components/mediacenter/mlmovie.cpp \
+	gui/qt/components/mediacenter/mlqmltypes.hpp \
 	gui/qt/components/mediacenter/mlserie.cpp \
 	gui/qt/components/mediacenter/mlserie.hpp \
 	gui/qt/components/mediacenter/mlmovie.hpp \
@@ -263,6 +264,7 @@ nodist_libqt_plugin_la_SOURCES = \
 	gui/qt/components/mediacenter/mlgenremodel.moc.cpp \
 	gui/qt/components/mediacenter/mlitem.moc.cpp \
 	gui/qt/components/mediacenter/mlmovie.moc.cpp \
+	gui/qt/components/mediacenter/mlqmltypes.moc.cpp \
 	gui/qt/components/mediacenter/mlserie.moc.cpp \
 	gui/qt/components/playlist/views.moc.cpp \
 	gui/qt/components/playlist/vlc_model.moc.cpp \

@@ -9,6 +9,7 @@
 #include "mlbasemodel.hpp"
 #include "mlalbum.hpp"
 #include "mlqmltypes.hpp"
+#include "mcmedialib.hpp"
 
 class MLAlbumModel : public MLBaseModel
 {
@@ -27,6 +28,17 @@ public:
 
     Q_INVOKABLE bool canFetchMore(const QModelIndex &parent) const override;
     Q_INVOKABLE void fetchMore(const QModelIndex &parent) override;
+
+    Q_PROPERTY( ParentType::ParentTypes parentType READ parentType WRITE setParentType )
+    Q_PROPERTY( int64_t parentId READ parentId WRITE setParentId )
+    Q_PROPERTY( MCMediaLib* ml READ ml WRITE setMl )
+
+    ParentType::ParentTypes parentType() const;
+    void setParentType(ParentType::ParentTypes parentType);
+    int64_t parentId() const;
+    void setParentId(int64_t parentId);
+    MCMediaLib* ml() const;
+    void setMl(MCMediaLib* ml);
 
 private:
     void clear() override;

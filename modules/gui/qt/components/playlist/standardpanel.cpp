@@ -221,7 +221,7 @@ void StandardPLPanel::createMainView()
     MCMediaLib *medialib = new MCMediaLib(p_intf, mainView, plmodel);
     rootCtx->setContextProperty( "medialib", medialib );
 
-    qRegisterMetaType<MLId>();
+    qRegisterMetaType<MLParentId>();
     qmlRegisterType<ParentType>( "org.videolan.medialib", 0, 1, "ParentType" );
     qmlRegisterType<MLAlbumModel>( "org.videolan.medialib", 0, 1, "MLAlbumModel" );
     qmlRegisterType<MLArtistModel>( "org.videolan.medialib", 0, 1, "MLArtistModel" );

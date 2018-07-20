@@ -26,7 +26,7 @@
 MLAlbum::MLAlbum(vlc_medialibrary_t* _ml, const vlc_ml_album_t *_data, QObject *_parent)
     : QObject( _parent )
     , m_ml          ( _ml )
-    , m_id          ( _data->i_id )
+    , m_id          ( _data->i_id, VLC_ML_PARENT_ALBUM )
     , m_title       ( QString::fromUtf8( _data->psz_title ) )
     , m_releaseYear ( _data->i_year )
     , m_shortSummary( QString::fromUtf8( _data->psz_summary ) )
@@ -52,7 +52,7 @@ MLAlbum::MLAlbum(vlc_medialibrary_t* _ml, const vlc_ml_album_t *_data, QObject *
                 .arg(sec, 2, 10, QChar('0'));
 }
 
-MLId MLAlbum::getId() const
+MLParentId MLAlbum::getParentId() const
 {
     return m_id;
 }

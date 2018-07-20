@@ -4,8 +4,6 @@
 
 MLBaseModel::MLBaseModel(QObject *parent)
     : QAbstractListModel(parent)
-    , m_parent_type ( -1 )
-    , m_parent_id   (0)
     , m_ml(nullptr)
 {
     memset(&m_query_param, 0, sizeof(vlc_ml_query_params_t));
@@ -30,25 +28,15 @@ void MLBaseModel::sortByColumn(QByteArray name, Qt::SortOrder order)
     clear();
 }
 
-ParentType::ParentTypes MLBaseModel::parentType() const
+MLParentId MLBaseModel::parentId() const
 {
-    return static_cast<ParentType::ParentTypes>( m_parent_type );
+    return m_parent;
 }
 
-void MLBaseModel::setParentType( ParentType::ParentTypes parentType)
+void MLBaseModel::setParentId(MLParentId parentId)
 {
-    // FIXME: Store as the enum
-    m_parent_type = static_cast<int>( parentType );
-}
-
-MLId MLBaseModel::parentId() const
-{
-    return m_parent_id;
-}
-
-void MLBaseModel::setParentId(MLId parentId)
-{
-    m_parent_id = parentId;
+    fprintf(stderr, "Setting parent id: %d %d", parentId.id, parentId.type);
+    m_parent = parentId;
 }
 
 MCMediaLib* MLBaseModel::ml() const

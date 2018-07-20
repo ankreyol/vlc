@@ -54,7 +54,7 @@ QVariant MLAlbumModel::data(const QModelIndex &index, int role) const
     switch (role)
     {
     case ALBUM_ID :
-        return QVariant::fromValue( ml_item->getId() );
+        return QVariant::fromValue( ml_item->getParentId() );
     case ALBUM_TITLE :
         return QVariant::fromValue( ml_item->getTitle() );
     case ALBUM_RELEASE_YEAR :
@@ -89,10 +89,10 @@ QObject *MLAlbumModel::get(unsigned int idx)
 void MLAlbumModel::fetchMoreInner(const QModelIndex &)
 {
     ml_unique_ptr<vlc_ml_album_list_t> album_list;
-    if ( m_parent_id == 0 )
+    if ( m_parent.id == 0 )
         album_list.reset( vlc_ml_list_albums(m_ml, &m_query_param) );
     else
-        album_list.reset( vlc_ml_list_albums_of(m_ml, &m_query_param, m_parent_type, m_parent_id.value) );
+        album_list.reset( vlc_ml_list_albums_of(m_ml, &m_query_param, m_parent.type, m_parent.id ) );
 
     beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + album_list->i_nb_items - 1);
     for( const vlc_ml_album_t& album: ml_range_iterate<vlc_ml_album_t>( album_list ) )
@@ -147,7 +147,7 @@ const MLAlbum* MLAlbumModel::getItem(const QModelIndex &index) const
 
 size_t MLAlbumModel::countTotalElements() const
 {
-    if ( m_parent_id == 0 )
+    if ( m_parent.id == 0 )
         return vlc_ml_count_albums(m_ml, &m_query_param);
-    return vlc_ml_count_albums_of(m_ml, &m_query_param, m_parent_type, m_parent_id.value);
+    return vlc_ml_count_albums_of(m_ml, &m_query_param, m_parent.type, m_parent.id);
 }

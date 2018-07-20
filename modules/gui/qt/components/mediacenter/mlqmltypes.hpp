@@ -9,6 +9,7 @@
 #include <vlc_common.h>
 #include <vlc_media_library.h>
 
+//FIXME: most likely useless now.
 class ParentType : public QObject
 {
     Q_OBJECT
@@ -25,16 +26,16 @@ public:
     Q_ENUMS( ParentTypes )
 };
 
-class MLId
+class MLParentId
 {
     Q_GADGET
 public:
-    MLId() : value( 0 ) {}
-    MLId( int64_t i ) : value( i ) {}
-    bool operator==(int64_t v) const { return v == value; }
-    int64_t value;
+    MLParentId() : id(0), type( static_cast<vlc_ml_parent_type>( -1 ) ) {}
+    MLParentId( int64_t i, vlc_ml_parent_type t ) : id( i ), type( t ) {}
+    int64_t id;
+    vlc_ml_parent_type type;
 };
 
-Q_DECLARE_METATYPE(MLId)
+Q_DECLARE_METATYPE(MLParentId)
 
 #endif // MLQMLTYPES_HPP

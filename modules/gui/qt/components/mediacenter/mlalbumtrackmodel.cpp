@@ -58,19 +58,19 @@ size_t MLAlbumTrackModel::nbElementsInModel() const
 
 size_t MLAlbumTrackModel::countTotalElements() const
 {
-    if ( m_parent_id.value == 0 )
+    if ( m_parent.id == 0 )
         return vlc_ml_count_audio_media(m_ml, &m_query_param);
-    return vlc_ml_count_media_of(m_ml, &m_query_param, m_parent_type, m_parent_id.value);
+    return vlc_ml_count_media_of(m_ml, &m_query_param, m_parent.type, m_parent.id );
 }
 
 void MLAlbumTrackModel::fetchMoreInner(const QModelIndex &)
 {
     ml_unique_ptr<vlc_ml_media_list_t> media_list;
 
-    if ( m_parent_id == 0 )
+    if ( m_parent.id == 0 )
         media_list.reset( vlc_ml_list_audio_media(m_ml, &m_query_param) );
     else
-        media_list.reset( vlc_ml_list_media_of(m_ml, &m_query_param, m_parent_type, m_parent_id.value ) );
+        media_list.reset( vlc_ml_list_media_of(m_ml, &m_query_param, m_parent.type, m_parent.id ) );
 
     m_query_param.i_offset += m_query_param.i_nbResults;
     beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + media_list->i_nb_items - 1);

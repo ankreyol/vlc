@@ -26,6 +26,8 @@ import QtQuick 2.2
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 
+import org.videolan.medialib 0.1
+
 import "qrc:///utils/" as Utils
 import "qrc:///style/"
 
@@ -81,7 +83,10 @@ RowLayout {
             focus: true
             ScrollBar.vertical: ScrollBar { }
 
-            model: albumModel.tracks
+            model: MLAlbumTrackModel {
+                ml: medialib
+                parentId: model.id
+            }
 
             delegate: Rectangle {
                 height: txt_id.height

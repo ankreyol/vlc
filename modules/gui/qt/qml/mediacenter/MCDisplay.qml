@@ -186,7 +186,11 @@ Rectangle {
                 }
             }
             // Display some 'Artists' items
-            MusicArtistsDisplay { }
+            MusicArtistsDisplay {
+                model: MLArtistModel {
+                    ml: medialib
+                }
+            }
             // Display some 'Genres' items
             MusicGenresDisplay { }
             // Display some 'Tracks' items

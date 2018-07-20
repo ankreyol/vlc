@@ -14,8 +14,7 @@ class MLArtistModel : public MLBaseModel
     Q_OBJECT
 
 public:
-    explicit MLArtistModel(vlc_medialibrary_t* ml, QObject *parent = nullptr);
-    explicit MLArtistModel(vlc_medialibrary_t* ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent = nullptr);
+    explicit MLArtistModel(QObject *parent = nullptr);
     virtual ~MLArtistModel() = default;
 
     int rowCount(const QModelIndex &parent) const override;
@@ -24,6 +23,11 @@ public:
 
     Q_INVOKABLE bool canFetchMore(const QModelIndex &parent) const override;
     Q_INVOKABLE void fetchMore(const QModelIndex &parent) override;
+
+    Q_PROPERTY( ParentType::ParentTypes parentType READ parentType WRITE setParentType )
+    Q_PROPERTY( int64_t parentId READ parentId WRITE setParentId )
+    Q_PROPERTY( MCMediaLib* ml READ ml WRITE setMl )
+
 private:
     void clear() override;
     size_t countTotalElement() const;
@@ -32,6 +36,7 @@ private:
     const MLArtist* getItem(const QModelIndex &index) const;
 
     size_t m_total_count;
+    bool m_initialized;
     std::vector<std::unique_ptr<MLArtist>> m_item_list;
 };
 

@@ -42,7 +42,6 @@ MCMediaLib::MCMediaLib(
 {
     m_ml = vlc_ml_get(_intf);
     m_genreModel = new MLGenreModel(m_ml, this);
-    m_artistModel = new MLArtistModel(m_ml, this);
     m_trackModel = new MLAlbumTrackModel(m_ml, this);
 }
 
@@ -263,11 +262,6 @@ void MCMediaLib::selectSource( const QString & )
 vlc_medialibrary_t* MCMediaLib::vlcMl()
 {
     return vlc_ml_get( m_intf );
-}
-
-MLArtistModel* MCMediaLib::getArtists()
-{
-    return m_artistModel;
 }
 
 MLGenreModel* MCMediaLib::getGenres()

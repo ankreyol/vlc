@@ -7,7 +7,6 @@ MLBaseModel::MLBaseModel(vlc_medialibrary_t* ml, vlc_ml_parent_type parent_type,
     , m_parent_id   (parent_id)
     , m_ml(ml)
 {
-    assert(ml != nullptr);
     memset(&m_query_param, 0, sizeof(vlc_ml_query_params_t));
     m_query_param.b_desc = false;
     m_query_param.i_nbResults = 20; //FIXME: value for test
@@ -34,4 +33,3 @@ void MLBaseModel::sortByColumn(QByteArray name, Qt::SortOrder order)
     m_query_param.i_sort = nameToCriteria(name);
     clear();
 }
-

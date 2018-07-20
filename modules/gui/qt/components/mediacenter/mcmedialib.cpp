@@ -43,7 +43,6 @@ MCMediaLib::MCMediaLib(
     m_ml = vlc_ml_get(_intf);
     m_genreModel = new MLGenreModel(m_ml, this);
     m_artistModel = new MLArtistModel(m_ml, this);
-    m_albumModel = new MLAlbumModel(m_ml, this);
     m_trackModel = new MLAlbumTrackModel(m_ml, this);
 }
 
@@ -259,12 +258,6 @@ void MCMediaLib::selectSource( const QString & )
     //    invokeQML("reloadPresentation()");
     //    emit categoryChanged();
     //}
-}
-
-// Retriever to fetch items in medialib : Recalculate a specific list of root objects
-MLAlbumModel *MCMediaLib::getAlbums()
-{
-    return m_albumModel;
 }
 
 vlc_medialibrary_t* MCMediaLib::vlcMl()

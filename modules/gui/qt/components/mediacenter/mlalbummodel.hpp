@@ -16,8 +16,7 @@ class MLAlbumModel : public MLBaseModel
     Q_OBJECT
 
 public:
-    explicit MLAlbumModel(vlc_medialibrary_t* ml, QObject *parent = nullptr);
-    explicit MLAlbumModel(vlc_medialibrary_t* ml,  vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent = nullptr);
+    explicit MLAlbumModel(QObject *parent = nullptr);
     virtual ~MLAlbumModel();
 
     int rowCount(const QModelIndex &parent) const override;
@@ -48,6 +47,7 @@ private:
     const MLAlbum *getItem(const QModelIndex &index) const;
 
     unsigned int m_total_count;
+    bool m_initialized;
     std::vector<MLAlbum*> m_item_list;
 
     static  QHash<int, QByteArray> m_role_names;

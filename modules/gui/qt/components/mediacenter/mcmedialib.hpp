@@ -48,7 +48,6 @@
 #include "components/playlist/plmodel.hpp"
 
 #include "mlgenremodel.hpp"
-#include "mlalbummodel.hpp"
 #include "mlartistmodel.hpp"
 #include "mlalbumtrackmodel.hpp"
 
@@ -68,7 +67,6 @@ class MCMediaLib : public QObject
     Q_PROPERTY(bool gridView READ isGridView WRITE setGridView NOTIFY gridViewChanged)
     Q_PROPERTY(int category READ getCategory WRITE setCategory NOTIFY categoryChanged)
 
-    Q_PROPERTY(MLAlbumModel* albums READ getAlbums NOTIFY albumsChanged)
     Q_PROPERTY(MLArtistModel* artists READ getArtists NOTIFY artistsChanged)
     Q_PROPERTY(MLGenreModel* genres READ getGenres NOTIFY genreChanged)
     Q_PROPERTY(MLAlbumTrackModel* tracks READ getTracks NOTIFY tracksChanged)
@@ -91,7 +89,6 @@ public:
     void setGridView(bool);
     Q_INVOKABLE void toogleGridView();
 
-    MLAlbumModel* getAlbums();
     MLArtistModel* getArtists();
     MLGenreModel* getGenres();
     MLAlbumTrackModel* getTracks();
@@ -128,7 +125,6 @@ private:
 
     MLGenreModel*  m_genreModel;
     MLArtistModel* m_artistModel;
-    MLAlbumModel*  m_albumModel;
     MLAlbumTrackModel*  m_trackModel;
 
     /* Medialibrary */

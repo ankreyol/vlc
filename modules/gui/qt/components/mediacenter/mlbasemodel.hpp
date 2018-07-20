@@ -11,6 +11,8 @@
 #include <QAbstractListModel>
 #include "vlc_media_library.h"
 
+class MCMediaLib;
+
 class MLBaseModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -38,6 +40,7 @@ protected:
     uint64_t m_parent_id = 0;
 
     vlc_medialibrary_t* m_ml;
+    MCMediaLib* m_mcMediaLib;
     int m_sort_role;
     vlc_ml_query_params_t m_query_param;
 };

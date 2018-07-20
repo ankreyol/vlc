@@ -26,6 +26,8 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
 import "qrc:///style/"
 
+import org.videolan.medialib 0.1
+
 Rectangle {
     // Notify the view has beeen changed
     function changedView() {
@@ -177,11 +179,13 @@ Rectangle {
             //Layout.fillHeight: true
             currentIndex: bar.currentIndex
 
-            // Display some 'Artists' items
-            MusicAlbumsDisplay {
-                model: medialib.albums
-            }
             // Display some 'Albums' items
+            MusicAlbumsDisplay {
+                model: MLAlbumModel {
+                    ml: medialib
+                }
+            }
+            // Display some 'Artists' items
             MusicArtistsDisplay { }
             // Display some 'Genres' items
             MusicGenresDisplay { }

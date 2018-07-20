@@ -1,4 +1,5 @@
 #include "mlalbummodel.hpp"
+#include "mcmedialib.hpp"
 
 namespace {
     enum Roles
@@ -36,16 +37,10 @@ QHash<QByteArray, vlc_ml_sorting_criteria_t> MLAlbumModel::m_names_to_criteria =
     {"duration", VLC_ML_SORTING_DURATION}
 };
 
-MLAlbumModel::MLAlbumModel(vlc_medialibrary_t* ml, QObject *parent)
-    : MLBaseModel(ml, parent)
+MLAlbumModel::MLAlbumModel(QObject *parent)
+    : MLBaseModel(nullptr, static_cast<vlc_ml_parent_type>( -1 ), 0, parent)
+    , m_initialized( false )
 {
-    m_total_count = vlc_ml_count_albums(ml, &m_query_param);
-}
-
-MLAlbumModel::MLAlbumModel(vlc_medialibrary_t* ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent)
-    : MLBaseModel(ml, parent_type, parent_id, parent)
-{
-    m_total_count = vlc_ml_count_albums_of(ml, &m_query_param, m_parent_type, m_parent_id);
 }
 
 MLAlbumModel::~MLAlbumModel()
@@ -114,12 +109,22 @@ QObject *MLAlbumModel::get(unsigned int idx)
 
 bool MLAlbumModel::canFetchMore(const QModelIndex &) const
 {
-    printf("MLAlbumModel::canFetchMore?");
+    if ( m_initialized == false )
+        return true;
     return m_item_list.size() < m_total_count;
 }
 
 void MLAlbumModel::fetchMore(const QModelIndex &)
 {
+    if ( m_initialized == false )
+    {
+        if ( m_parent_id == 0 )
+            m_total_count = vlc_ml_count_albums(m_ml, &m_query_param);
+        else
+            m_total_count = vlc_ml_count_albums_of(m_ml, &m_query_param,
+                                                   m_parent_type, m_parent_id);
+        m_initialized = true;
+    }
     ml_unique_ptr<vlc_ml_album_list_t> album_list;
     if ( m_parent_id == 0 )
         album_list.reset( vlc_ml_list_albums(m_ml, &m_query_param) );

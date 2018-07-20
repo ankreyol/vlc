@@ -49,6 +49,7 @@
 
 #include "components/mediacenter/mcmedialib.hpp"
 #include "components/mediacenter/mlqmltypes.hpp"
+#include "components/mediacenter/mlalbummodel.hpp"
 
 #define I_NEW_DIR \
     I_DIR_OR_FOLDER( N_("Create Directory"), N_( "Create Folder" ) )
@@ -218,6 +219,7 @@ void StandardPLPanel::createMainView()
     rootCtx->setContextProperty( "medialib", medialib );
 
     qmlRegisterType<ParentType>( "org.videolan.medialib", 0, 1, "ParentType" );
+    qmlRegisterType<MLAlbumModel>( "org.videolan.medialib", 0, 1, "MLAlbumModel" );
 
     mainView->setSource( QUrl ( QStringLiteral("qrc:/qml/MainInterface.qml") ) );
     mainView->setResizeMode(QQuickWidget::SizeRootObjectToView);

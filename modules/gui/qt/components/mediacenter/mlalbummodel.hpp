@@ -27,10 +27,6 @@ public:
     Q_INVOKABLE bool canFetchMore(const QModelIndex &parent) const override;
     Q_INVOKABLE void fetchMore(const QModelIndex &parent) override;
 
-    Q_PROPERTY( ParentType::ParentTypes parentType READ parentType WRITE setParentType )
-    Q_PROPERTY( int64_t parentId READ parentId WRITE setParentId )
-    Q_PROPERTY( MCMediaLib* ml READ ml WRITE setMl )
-
 private:
     void clear() override;
     vlc_ml_sorting_criteria_t roleToCriteria(int role) const;

@@ -11,6 +11,7 @@
 #include <QAbstractListModel>
 #include "vlc_media_library.h"
 #include "mlqmltypes.hpp"
+#include "mcmedialib.hpp"
 
 class MCMediaLib;
 
@@ -25,6 +26,10 @@ public:
     virtual void sort(int column, Qt::SortOrder order) override;
 
     Q_INVOKABLE void sortByColumn(QByteArray name, Qt::SortOrder order);
+
+    Q_PROPERTY( ParentType::ParentTypes parentType READ parentType WRITE setParentType )
+    Q_PROPERTY( int64_t parentId READ parentId WRITE setParentId )
+    Q_PROPERTY( MCMediaLib* ml READ ml WRITE setMl )
 
 signals:
     void sortRoleChanged();

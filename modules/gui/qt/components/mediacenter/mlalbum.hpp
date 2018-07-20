@@ -34,6 +34,7 @@
 #include <memory>
 #include "vlc_media_library.h"
 #include "mlhelper.hpp"
+#include "mlqmltypes.hpp"
 
 #include "mlitem.hpp"
 
@@ -41,7 +42,7 @@ class MLAlbum : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int64_t id READ getId CONSTANT)
+    Q_PROPERTY(MLId id READ getId CONSTANT)
     Q_PROPERTY(QString title READ getTitle CONSTANT)
     Q_PROPERTY(unsigned int releaseyear READ getReleaseYear CONSTANT)
     Q_PROPERTY(QString shortsummary READ getShortSummary CONSTANT)
@@ -53,7 +54,7 @@ class MLAlbum : public QObject
 public:
     MLAlbum(vlc_medialibrary_t* _ml, const vlc_ml_album_t *_data, QObject *_parent = nullptr);
 
-    int64_t getId() const;
+    MLId getId() const;
     QString getTitle() const;
     unsigned int getReleaseYear() const;
     QString getShortSummary() const;
@@ -69,7 +70,7 @@ public:
 private:
     vlc_medialibrary_t* m_ml;
 
-    int64_t m_id;
+    MLId m_id;
     QString m_title;
     unsigned int m_releaseYear;
     QString m_shortSummary;

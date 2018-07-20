@@ -25,4 +25,16 @@ public:
     Q_ENUMS( ParentTypes )
 };
 
+class MLId
+{
+    Q_GADGET
+public:
+    MLId() : value( 0 ) {}
+    MLId( int64_t i ) : value( i ) {}
+    bool operator==(int64_t v) const { return v == value; }
+    int64_t value;
+};
+
+Q_DECLARE_METATYPE(MLId)
+
 #endif // MLQMLTYPES_HPP

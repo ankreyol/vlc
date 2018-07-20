@@ -28,7 +28,7 @@ public:
     Q_INVOKABLE void sortByColumn(QByteArray name, Qt::SortOrder order);
 
     Q_PROPERTY( ParentType::ParentTypes parentType READ parentType WRITE setParentType )
-    Q_PROPERTY( int64_t parentId READ parentId WRITE setParentId )
+    Q_PROPERTY( MLId parentId READ parentId WRITE setParentId )
     Q_PROPERTY( MCMediaLib* ml READ ml WRITE setMl )
 
     Q_INVOKABLE int rowCount(const QModelIndex &parent) const override;
@@ -52,13 +52,13 @@ protected:
 
     ParentType::ParentTypes parentType() const;
     void setParentType(ParentType::ParentTypes parentType);
-    int64_t parentId() const;
-    void setParentId(int64_t parentId);
+    MLId parentId() const;
+    void setParentId(MLId parentId);
     MCMediaLib* ml() const;
     void setMl(MCMediaLib* ml);
 
     int m_parent_type = -1;
-    uint64_t m_parent_id = 0;
+    MLId m_parent_id = 0;
 
     vlc_medialibrary_t* m_ml;
     MCMediaLib* m_mcMediaLib;

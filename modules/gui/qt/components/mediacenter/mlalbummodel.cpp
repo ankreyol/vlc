@@ -92,7 +92,7 @@ void MLAlbumModel::fetchMoreInner(const QModelIndex &)
     if ( m_parent_id == 0 )
         album_list.reset( vlc_ml_list_albums(m_ml, &m_query_param) );
     else
-        album_list.reset( vlc_ml_list_albums_of(m_ml, &m_query_param, m_parent_type, m_parent_id) );
+        album_list.reset( vlc_ml_list_albums_of(m_ml, &m_query_param, m_parent_type, m_parent_id.value) );
 
     beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + album_list->i_nb_items - 1);
     for( const vlc_ml_album_t& album: ml_range_iterate<vlc_ml_album_t>( album_list ) )
@@ -149,5 +149,5 @@ size_t MLAlbumModel::countTotalElements() const
 {
     if ( m_parent_id == 0 )
         return vlc_ml_count_albums(m_ml, &m_query_param);
-    return vlc_ml_count_albums_of(m_ml, &m_query_param, m_parent_type, m_parent_id);
+    return vlc_ml_count_albums_of(m_ml, &m_query_param, m_parent_type, m_parent_id.value);
 }

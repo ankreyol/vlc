@@ -52,7 +52,7 @@ MLAlbum::MLAlbum(vlc_medialibrary_t* _ml, const vlc_ml_album_t *_data, QObject *
                 .arg(sec, 2, 10, QChar('0'));
 }
 
-int64_t MLAlbum::getId() const
+MLId MLAlbum::getId() const
 {
     return m_id;
 }

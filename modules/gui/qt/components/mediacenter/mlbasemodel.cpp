@@ -41,12 +41,12 @@ void MLBaseModel::setParentType( ParentType::ParentTypes parentType)
     m_parent_type = static_cast<int>( parentType );
 }
 
-int64_t MLBaseModel::parentId() const
+MLId MLBaseModel::parentId() const
 {
     return m_parent_id;
 }
 
-void MLBaseModel::setParentId(int64_t parentId)
+void MLBaseModel::setParentId(MLId parentId)
 {
     m_parent_id = parentId;
 }

@@ -29,6 +29,7 @@ import "qrc:///style/"
 
 Loader {
     id: viewLoader
+    property var model: []
 
     // Force the data to be reloaded
     function reloadData() {
@@ -48,7 +49,7 @@ Loader {
             cellWidth: VLCStyle.cover_normal
             cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
 
-            model: medialib.tracks
+            model: viewLoader.model
             delegate : Utils.GridItem {
                 width: gridView_id.cellWidth
                 height: gridView_id.cellHeight
@@ -77,7 +78,7 @@ Loader {
         ListView {
             spacing: VLCStyle.margin_xxxsmall
 
-            model: medialib.getObjects()
+            model: viewLoader.model
             delegate : Utils.ListItem {
                 height: VLCStyle.heightBar_small
                 width: parent.width

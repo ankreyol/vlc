@@ -194,7 +194,11 @@ Rectangle {
             // Display some 'Genres' items
             MusicGenresDisplay { }
             // Display some 'Tracks' items
-            MusicTracksDisplay { }
+            MusicTracksDisplay {
+                model: MLAlbumTrackModel {
+                    ml: medialib
+                }
+            }
         }
     }
 }

@@ -42,7 +42,6 @@ MCMediaLib::MCMediaLib(
 {
     m_ml = vlc_ml_get(_intf);
     m_genreModel = new MLGenreModel(m_ml, this);
-    m_trackModel = new MLAlbumTrackModel(m_ml, this);
 }
 
 // Are we exploring a specific item or just browsing generic category
@@ -267,11 +266,6 @@ vlc_medialibrary_t* MCMediaLib::vlcMl()
 MLGenreModel* MCMediaLib::getGenres()
 {
     return m_genreModel;
-}
-
-MLAlbumTrackModel* MCMediaLib::getTracks()
-{
-    return m_trackModel;
 }
 
 void MCMediaLib::getMovies()

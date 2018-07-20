@@ -15,9 +15,7 @@ class MLAlbumTrackModel : public MLBaseModel
     Q_OBJECT
 
 public:
-    explicit MLAlbumTrackModel(vlc_medialibrary_t* ml, QObject *parent = nullptr);
-
-    explicit MLAlbumTrackModel(vlc_medialibrary_t* ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent = nullptr);
+    explicit MLAlbumTrackModel(QObject *parent = nullptr);
 
     virtual ~MLAlbumTrackModel() = default;
 
@@ -28,12 +26,17 @@ public:
     Q_INVOKABLE bool canFetchMore(const QModelIndex &parent) const override;
     Q_INVOKABLE void fetchMore(const QModelIndex &parent) override;
 
+    Q_PROPERTY( ParentType::ParentTypes parentType READ parentType WRITE setParentType )
+    Q_PROPERTY( int64_t parentId READ parentId WRITE setParentId )
+    Q_PROPERTY( MCMediaLib* ml READ ml WRITE setMl )
+
 private:
     void clear() override;
     vlc_ml_sorting_criteria_t roleToCriteria(int role) const override;
     const MLAlbumTrack* getItem(const QModelIndex &index) const;
 
     unsigned int m_total_count;
+    bool m_initialized;
     std::vector<std::unique_ptr<MLAlbumTrack>> m_item_list;
 };
 #endif // MLTRACKMODEL_HPP

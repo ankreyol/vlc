@@ -11,16 +11,10 @@ enum Role {
 
 }
 
-MLAlbumTrackModel::MLAlbumTrackModel(vlc_medialibrary_t* ml, QObject *parent)
-    : MLBaseModel( ml, parent )
+MLAlbumTrackModel::MLAlbumTrackModel(QObject *parent)
+    : MLBaseModel(nullptr, static_cast<vlc_ml_parent_type>( -1 ), 0, parent)
+    , m_initialized( false )
 {
-    m_total_count = vlc_ml_count_audio_media(ml, &m_query_param);
-}
-
-MLAlbumTrackModel::MLAlbumTrackModel(vlc_medialibrary_t* ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent)
-    : MLBaseModel( ml, parent_type, parent_id, parent )
-{
-    m_total_count = vlc_ml_count_media_of(ml, &m_query_param, m_parent_type, m_parent_id);
 }
 
 int MLAlbumTrackModel::rowCount(const QModelIndex &parent) const
@@ -70,11 +64,21 @@ QHash<int, QByteArray> MLAlbumTrackModel::roleNames() const
 
 bool MLAlbumTrackModel::canFetchMore(const QModelIndex &) const
 {
+    if (m_initialized == false )
+        return true;
     return m_item_list.size() < m_total_count;
 }
 
 void MLAlbumTrackModel::fetchMore(const QModelIndex &)
 {
+    if ( m_initialized == false )
+    {
+        if ( m_parent_id == 0 )
+            m_total_count = vlc_ml_count_audio_media(m_ml, &m_query_param );
+        else
+            m_total_count = vlc_ml_count_media_of(m_ml, &m_query_param, m_parent_type, m_parent_id);
+        m_initialized = true;
+    }
     ml_unique_ptr<vlc_ml_media_list_t> media_list;
 
     if ( m_parent_id == 0 )

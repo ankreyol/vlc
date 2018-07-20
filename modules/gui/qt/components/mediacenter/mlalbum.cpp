@@ -33,7 +33,6 @@ MLAlbum::MLAlbum(vlc_medialibrary_t* _ml, const vlc_ml_album_t *_data, QObject *
     , m_cover       ( QString::fromUtf8( _data->psz_artwork_mrl ) )
     , m_mainArtist  ( QString::fromUtf8( _data->psz_artist ) )
     , m_nbTracks    ( _data->i_nb_tracks )
-    , m_albumstracks(nullptr)
 {
     assert( _data );
     assert( _ml );
@@ -51,8 +50,6 @@ MLAlbum::MLAlbum(vlc_medialibrary_t* _ml, const vlc_ml_album_t *_data, QObject *
                 .arg(hour, 2, 10, QChar('0'))
                 .arg(min, 2, 10, QChar('0'))
                 .arg(sec, 2, 10, QChar('0'));
-
-    m_albumstracks = new MLAlbumTrackModel(m_ml, VLC_ML_PARENT_ALBUM, m_id, this);
 }
 
 int64_t MLAlbum::getId() const
@@ -94,11 +91,6 @@ unsigned int MLAlbum::getNbTracks() const
 QString MLAlbum::getDuration() const
 {
     return m_duration;
-}
-
-MLAlbumTrackModel *MLAlbum::getTracks() const
-{
-    return m_albumstracks;
 }
 
 QString MLAlbum::getPresName() const

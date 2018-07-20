@@ -8,7 +8,6 @@ namespace {
         ALBUM_RELEASE_YEAR,
         ALBUM_SHORT_SUMMARY,
         ALBUM_COVER,
-        ALBUM_TRACKS,
         ALBUM_MAIN_ARTIST,
         ALBUM_NB_TRACKS,
         ALBUM_DURATION
@@ -21,7 +20,6 @@ QHash<int, QByteArray> MLAlbumModel::m_role_names = {
     {ALBUM_RELEASE_YEAR, "release_year"},
     {ALBUM_SHORT_SUMMARY, "shortsummary"},
     {ALBUM_COVER, "cover"},
-    {ALBUM_TRACKS, "tracks"},
     {ALBUM_MAIN_ARTIST, "main_artist"},
     {ALBUM_NB_TRACKS, "nb_tracks"},
     {ALBUM_DURATION, "duration"}
@@ -84,8 +82,6 @@ QVariant MLAlbumModel::data(const QModelIndex &index, int role) const
         return QVariant::fromValue( ml_item->getArtist() );
     case ALBUM_NB_TRACKS :
         return QVariant::fromValue( ml_item->getNbTracks() );
-    case ALBUM_TRACKS :
-        return QVariant::fromValue( (QObject*)ml_item->getTracks());
     case ALBUM_DURATION:
         return QVariant::fromValue( ml_item->getDuration() );
     default:

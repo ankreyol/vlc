@@ -35,7 +35,6 @@
 #include "vlc_media_library.h"
 #include "mlhelper.hpp"
 
-#include "mlalbumtrackmodel.hpp"
 #include "mlitem.hpp"
 
 class MLAlbum : public QObject
@@ -50,7 +49,6 @@ class MLAlbum : public QObject
     Q_PROPERTY(QString artist READ getArtist CONSTANT)
     Q_PROPERTY(unsigned int nbtracks READ getNbTracks CONSTANT)
     Q_PROPERTY(QString duration READ getDuration CONSTANT)
-    Q_PROPERTY(MLAlbumTrackModel* tracks READ getTracks CONSTANT)
 
 public:
     MLAlbum(vlc_medialibrary_t* _ml, const vlc_ml_album_t *_data, QObject *_parent = nullptr);
@@ -63,8 +61,6 @@ public:
     QString getArtist() const;
     unsigned int getNbTracks() const;
     QString getDuration() const;
-
-    MLAlbumTrackModel *getTracks() const;
 
     Q_INVOKABLE QString getPresName() const;
     Q_INVOKABLE QString getPresImage() const;
@@ -82,6 +78,4 @@ private:
     QList<QString> m_otherArtists;
     unsigned int m_nbTracks;
     QString m_duration;
-
-    MLAlbumTrackModel* m_albumstracks;
 };

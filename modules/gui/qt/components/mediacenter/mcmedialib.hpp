@@ -48,7 +48,6 @@
 #include "components/playlist/plmodel.hpp"
 
 #include "mlgenremodel.hpp"
-#include "mlalbumtrackmodel.hpp"
 
 enum MCMediaLibCategory {
     CAT_MUSIC_ALBUM,
@@ -67,7 +66,6 @@ class MCMediaLib : public QObject
     Q_PROPERTY(int category READ getCategory WRITE setCategory NOTIFY categoryChanged)
 
     Q_PROPERTY(MLGenreModel* genres READ getGenres NOTIFY genreChanged)
-    Q_PROPERTY(MLAlbumTrackModel* tracks READ getTracks NOTIFY tracksChanged)
 
 public:
     MCMediaLib(
@@ -88,7 +86,6 @@ public:
     Q_INVOKABLE void toogleGridView();
 
     MLGenreModel* getGenres();
-    MLAlbumTrackModel* getTracks();
     Q_INVOKABLE void getMovies();
     Q_INVOKABLE void getSeries();
 
@@ -121,7 +118,6 @@ private:
     MCMediaLibCategory m_currentCat;
 
     MLGenreModel*  m_genreModel;
-    MLAlbumTrackModel*  m_trackModel;
 
     /* Medialibrary */
     vlc_medialibrary_t* m_ml;

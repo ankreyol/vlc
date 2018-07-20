@@ -51,6 +51,7 @@
 #include "components/mediacenter/mlqmltypes.hpp"
 #include "components/mediacenter/mlalbummodel.hpp"
 #include "components/mediacenter/mlartistmodel.hpp"
+#include "components/mediacenter/mlalbumtrackmodel.hpp"
 
 #define I_NEW_DIR \
     I_DIR_OR_FOLDER( N_("Create Directory"), N_( "Create Folder" ) )
@@ -222,6 +223,7 @@ void StandardPLPanel::createMainView()
     qmlRegisterType<ParentType>( "org.videolan.medialib", 0, 1, "ParentType" );
     qmlRegisterType<MLAlbumModel>( "org.videolan.medialib", 0, 1, "MLAlbumModel" );
     qmlRegisterType<MLArtistModel>( "org.videolan.medialib", 0, 1, "MLArtistModel" );
+    qmlRegisterType<MLAlbumTrackModel>( "org.videolan.medialib", 0, 1, "MLAlbumTrackModel" );
 
     mainView->setSource( QUrl ( QStringLiteral("qrc:/qml/MainInterface.qml") ) );
     mainView->setResizeMode(QQuickWidget::SizeRootObjectToView);

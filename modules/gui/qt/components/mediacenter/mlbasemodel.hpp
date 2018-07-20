@@ -19,8 +19,7 @@ class MLBaseModel : public QAbstractListModel
     Q_OBJECT
 
 public:
-    explicit MLBaseModel(vlc_medialibrary_t* ml, QObject *parent = nullptr);
-    explicit MLBaseModel(vlc_medialibrary_t* ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent = nullptr);
+    explicit MLBaseModel(QObject *parent = nullptr);
     virtual ~MLBaseModel() = default;
 
     virtual void sort(int column, Qt::SortOrder order) override;

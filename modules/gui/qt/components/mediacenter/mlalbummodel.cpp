@@ -35,7 +35,7 @@ QHash<QByteArray, vlc_ml_sorting_criteria_t> MLAlbumModel::m_names_to_criteria =
 };
 
 MLAlbumModel::MLAlbumModel(QObject *parent)
-    : MLBaseModel(nullptr, static_cast<vlc_ml_parent_type>( -1 ), 0, parent)
+    : MLBaseModel(parent)
     , m_initialized( false )
 {
 }

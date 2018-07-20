@@ -12,7 +12,7 @@ enum Role {
 }
 
 MLAlbumTrackModel::MLAlbumTrackModel(QObject *parent)
-    : MLBaseModel(nullptr, static_cast<vlc_ml_parent_type>( -1 ), 0, parent)
+    : MLBaseModel(parent)
     , m_initialized( false )
 {
 }

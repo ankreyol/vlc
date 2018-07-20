@@ -36,22 +36,12 @@ QHash<QByteArray, vlc_ml_sorting_criteria_t> MLAlbumModel::m_names_to_criteria =
 
 MLAlbumModel::MLAlbumModel(QObject *parent)
     : MLBaseModel(parent)
-    , m_initialized( false )
 {
 }
 
 MLAlbumModel::~MLAlbumModel()
 {
     clear();
-}
-
-int MLAlbumModel::rowCount(const QModelIndex &parent) const
-{
-    // For list models only the root node (an invalid parent) should return the list's size. For all
-    // other (valid) parents, rowCount() should return 0 so that it does not become a tree model.
-    if (parent.isValid())
-        return 0;
-    return m_item_list.size();
 }
 
 QVariant MLAlbumModel::data(const QModelIndex &index, int role) const
@@ -89,7 +79,6 @@ QVariant MLAlbumModel::data(const QModelIndex &index, int role) const
     }
 }
 
-
 QHash<int, QByteArray> MLAlbumModel::roleNames() const
 {
     return m_role_names;
@@ -102,24 +91,8 @@ QObject *MLAlbumModel::get(unsigned int idx)
     return m_item_list.at(idx);
 }
 
-bool MLAlbumModel::canFetchMore(const QModelIndex &) const
+void MLAlbumModel::fetchMoreInner(const QModelIndex &)
 {
-    if ( m_initialized == false )
-        return true;
-    return m_item_list.size() < m_total_count;
-}
-
-void MLAlbumModel::fetchMore(const QModelIndex &)
-{
-    if ( m_initialized == false )
-    {
-        if ( m_parent_id == 0 )
-            m_total_count = vlc_ml_count_albums(m_ml, &m_query_param);
-        else
-            m_total_count = vlc_ml_count_albums_of(m_ml, &m_query_param,
-                                                   m_parent_type, m_parent_id);
-        m_initialized = true;
-    }
     ml_unique_ptr<vlc_ml_album_list_t> album_list;
     if ( m_parent_id == 0 )
         album_list.reset( vlc_ml_list_albums(m_ml, &m_query_param) );
@@ -141,6 +114,11 @@ void MLAlbumModel::clear()
     m_item_list.clear();
     m_query_param.i_offset = 0;
     endResetModel();
+}
+
+size_t MLAlbumModel::nbElementsInModel() const
+{
+    return m_item_list.size();
 }
 
 vlc_ml_sorting_criteria_t MLAlbumModel::nameToCriteria(QByteArray name) const
@@ -172,4 +150,11 @@ const MLAlbum* MLAlbumModel::getItem(const QModelIndex &index) const
         return m_item_list.at(r);
     else
         return NULL;
+}
+
+size_t MLAlbumModel::countTotalElements() const
+{
+    if ( m_parent_id == 0 )
+        return vlc_ml_count_albums(m_ml, &m_query_param);
+    return vlc_ml_count_albums_of(m_ml, &m_query_param, m_parent_type, m_parent_id);
 }

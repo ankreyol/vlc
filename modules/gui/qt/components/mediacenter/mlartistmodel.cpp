@@ -13,19 +13,8 @@ namespace {
 
 MLArtistModel::MLArtistModel(QObject *parent)
     : MLBaseModel(parent)
-    , m_initialized(false)
 {
 }
-
-int MLArtistModel::rowCount(const QModelIndex &parent) const
-{
-    // For list models only the root node (an invalid parent) should return the list's size. For all
-    // other (valid) parents, rowCount() should return 0 so that it does not become a tree model.
-    if (parent.isValid())
-        return 0;
-    return m_item_list.size();
-}
-
 
 QVariant MLArtistModel::data(const QModelIndex &index, int role) const
 {
@@ -65,20 +54,8 @@ QHash<int, QByteArray> MLArtistModel::roleNames() const
     return roles;
 }
 
-bool MLArtistModel::canFetchMore(const QModelIndex &) const
+void MLArtistModel::fetchMoreInner(const QModelIndex &)
 {
-    if ( m_initialized == false )
-        return true;
-    return m_item_list.size() < m_total_count;
-}
-
-void MLArtistModel::fetchMore(const QModelIndex &)
-{
-    if ( m_initialized == false )
-    {
-        m_total_count = countTotalElement();
-        m_initialized = true;
-    }
     ml_unique_ptr<vlc_ml_artist_list_t> artist_list;
 
     if ( m_parent_id == 0 )
@@ -98,14 +75,19 @@ void MLArtistModel::clear()
     m_query_param.i_offset = 0;
     m_query_param.i_nbResults = 0;
     m_item_list.clear();
-    m_total_count = countTotalElement();
+    m_total_count = countTotalElements();
 }
 
-size_t MLArtistModel::countTotalElement() const
+size_t MLArtistModel::countTotalElements() const
 {
     if ( m_parent_id == 0 )
         return vlc_ml_count_artists(m_ml, &m_query_param, false);
     return vlc_ml_count_artists_of(m_ml, &m_query_param, m_parent_type, m_parent_id );
+}
+
+size_t MLArtistModel::nbElementsInModel() const
+{
+    return m_item_list.size();
 }
 
 vlc_ml_sorting_criteria_t MLArtistModel::roleToCriteria(int role) const

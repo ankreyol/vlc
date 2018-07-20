@@ -16,20 +16,8 @@ namespace {
 
 MLGenreModel::MLGenreModel(QObject *parent)
     : MLBaseModel(parent)
-    , m_initialized( false )
 {
 }
-
-int MLGenreModel::rowCount(const QModelIndex &parent) const
-{
-    // For list models only the root node (an invalid parent) should return the list's size. For all
-    // other (valid) parents, rowCount() should return 0 so that it does not become a tree model.
-    if (parent.isValid())
-        return 0;
-
-    return m_item_list.size();
-}
-
 
 QVariant MLGenreModel::data(const QModelIndex &index, int role) const
 {
@@ -66,20 +54,8 @@ QHash<int, QByteArray> MLGenreModel::roleNames() const
     };
 }
 
-bool MLGenreModel::canFetchMore(const QModelIndex &) const
+void MLGenreModel::fetchMoreInner(const QModelIndex &)
 {
-    if ( m_initialized == false )
-        return true;
-    return m_item_list.size() < m_total_count;
-}
-
-void MLGenreModel::fetchMore(const QModelIndex &)
-{
-    if ( m_initialized == false )
-    {
-        m_total_count = countTotalElement();
-        m_initialized = true;
-    }
     ml_unique_ptr<vlc_ml_genre_list_t> genre_list(
         vlc_ml_list_genres(m_ml, &m_query_param)
     );
@@ -96,7 +72,12 @@ void MLGenreModel::clear()
     m_item_list.clear();
 }
 
-size_t MLGenreModel::countTotalElement() const
+size_t MLGenreModel::nbElementsInModel() const
+{
+    return m_item_list.size();
+}
+
+size_t MLGenreModel::countTotalElements() const
 {
     return vlc_ml_count_genres( m_ml, &m_query_param );
 }

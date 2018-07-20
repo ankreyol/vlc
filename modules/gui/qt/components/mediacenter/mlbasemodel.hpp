@@ -31,8 +31,17 @@ public:
     Q_PROPERTY( int64_t parentId READ parentId WRITE setParentId )
     Q_PROPERTY( MCMediaLib* ml READ ml WRITE setMl )
 
+    Q_INVOKABLE int rowCount(const QModelIndex &parent) const override;
+    Q_INVOKABLE bool canFetchMore(const QModelIndex&) const override;
+    Q_INVOKABLE void fetchMore(const QModelIndex &parent) override;
+
 signals:
     void sortRoleChanged();
+
+private:
+    virtual size_t countTotalElements() const = 0;
+    virtual size_t nbElementsInModel() const = 0;
+    virtual void fetchMoreInner(const QModelIndex&) = 0;
 
 protected:
     virtual void clear() = 0;
@@ -55,6 +64,9 @@ protected:
     MCMediaLib* m_mcMediaLib;
     int m_sort_role;
     vlc_ml_query_params_t m_query_param;
+
+    bool m_initialized;
+    size_t m_total_count;
 };
 
 #endif // MLBASEMODEL_HPP

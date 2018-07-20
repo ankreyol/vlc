@@ -18,24 +18,21 @@ public:
     explicit MLAlbumModel(QObject *parent = nullptr);
     virtual ~MLAlbumModel();
 
-    int rowCount(const QModelIndex &parent) const override;
     Q_INVOKABLE QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Q_INVOKABLE QHash<int, QByteArray> roleNames() const override;
 
     Q_INVOKABLE QObject *get(unsigned int idx);
 
-    Q_INVOKABLE bool canFetchMore(const QModelIndex &parent) const override;
-    Q_INVOKABLE void fetchMore(const QModelIndex &parent) override;
-
 private:
+    void fetchMoreInner(const QModelIndex &parent) override;
     void clear() override;
+    size_t nbElementsInModel() const override;
+    size_t countTotalElements() const override;
     vlc_ml_sorting_criteria_t roleToCriteria(int role) const;
     vlc_ml_sorting_criteria_t nameToCriteria(QByteArray name) const override;
 
     const MLAlbum *getItem(const QModelIndex &index) const;
 
-    unsigned int m_total_count;
-    bool m_initialized;
     std::vector<MLAlbum*> m_item_list;
 
     static  QHash<int, QByteArray> m_role_names;

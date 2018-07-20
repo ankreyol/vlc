@@ -105,6 +105,8 @@ public:
     Q_INVOKABLE void addAndPlay(const int &item_id, const int &subitem_id);
     Q_INVOKABLE void selectSource(const QString &name );
 
+    vlc_medialibrary_t* vlcMl();
+
 signals:
     void gridViewChanged();
     void categoryChanged();

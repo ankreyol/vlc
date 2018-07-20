@@ -267,6 +267,11 @@ MLAlbumModel *MCMediaLib::getAlbums()
     return m_albumModel;
 }
 
+vlc_medialibrary_t* MCMediaLib::vlcMl()
+{
+    return vlc_ml_get( m_intf );
+}
+
 MLArtistModel* MCMediaLib::getArtists()
 {
     return m_artistModel;

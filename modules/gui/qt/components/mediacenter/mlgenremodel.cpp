@@ -14,10 +14,10 @@ namespace {
     };
 }
 
-MLGenreModel::MLGenreModel(vlc_medialibrary_t* ml, QObject *parent)
-    : MLBaseModel(ml, parent)
+MLGenreModel::MLGenreModel(QObject *parent)
+    : MLBaseModel(nullptr, static_cast<vlc_ml_parent_type>( -1 ), 0, parent )
+    , m_initialized( false )
 {
-    m_total_count = countTotalElement();
 }
 
 int MLGenreModel::rowCount(const QModelIndex &parent) const
@@ -68,11 +68,18 @@ QHash<int, QByteArray> MLGenreModel::roleNames() const
 
 bool MLGenreModel::canFetchMore(const QModelIndex &) const
 {
+    if ( m_initialized == false )
+        return true;
     return m_item_list.size() < m_total_count;
 }
 
 void MLGenreModel::fetchMore(const QModelIndex &)
 {
+    if ( m_initialized == false )
+    {
+        m_total_count = countTotalElement();
+        m_initialized = true;
+    }
     ml_unique_ptr<vlc_ml_genre_list_t> genre_list(
         vlc_ml_list_genres(m_ml, &m_query_param)
     );

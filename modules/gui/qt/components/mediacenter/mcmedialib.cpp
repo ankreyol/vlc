@@ -41,7 +41,6 @@ MCMediaLib::MCMediaLib(
     , m_currentCat ( CAT_MUSIC_ALBUM )
 {
     m_ml = vlc_ml_get(_intf);
-    m_genreModel = new MLGenreModel(m_ml, this);
 }
 
 // Are we exploring a specific item or just browsing generic category
@@ -261,11 +260,6 @@ void MCMediaLib::selectSource( const QString & )
 vlc_medialibrary_t* MCMediaLib::vlcMl()
 {
     return vlc_ml_get( m_intf );
-}
-
-MLGenreModel* MCMediaLib::getGenres()
-{
-    return m_genreModel;
 }
 
 void MCMediaLib::getMovies()

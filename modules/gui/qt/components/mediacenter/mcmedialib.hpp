@@ -47,8 +47,6 @@
 #include "components/playlist/plitem.hpp"
 #include "components/playlist/plmodel.hpp"
 
-#include "mlgenremodel.hpp"
-
 enum MCMediaLibCategory {
     CAT_MUSIC_ALBUM,
     CAT_MUSIC_ARTIST,
@@ -64,8 +62,6 @@ class MCMediaLib : public QObject
 
     Q_PROPERTY(bool gridView READ isGridView WRITE setGridView NOTIFY gridViewChanged)
     Q_PROPERTY(int category READ getCategory WRITE setCategory NOTIFY categoryChanged)
-
-    Q_PROPERTY(MLGenreModel* genres READ getGenres NOTIFY genreChanged)
 
 public:
     MCMediaLib(
@@ -85,7 +81,6 @@ public:
     void setGridView(bool);
     Q_INVOKABLE void toogleGridView();
 
-    MLGenreModel* getGenres();
     Q_INVOKABLE void getMovies();
     Q_INVOKABLE void getSeries();
 
@@ -116,8 +111,6 @@ private:
 
     MCMediaLibCategory m_oldCat;
     MCMediaLibCategory m_currentCat;
-
-    MLGenreModel*  m_genreModel;
 
     /* Medialibrary */
     vlc_medialibrary_t* m_ml;

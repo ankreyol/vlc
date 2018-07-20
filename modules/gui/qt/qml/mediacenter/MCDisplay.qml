@@ -192,7 +192,11 @@ Rectangle {
                 }
             }
             // Display some 'Genres' items
-            MusicGenresDisplay { }
+            MusicGenresDisplay {
+                model: MLGenreModel {
+                    ml: medialib
+                }
+            }
             // Display some 'Tracks' items
             MusicTracksDisplay {
                 model: MLAlbumTrackModel {

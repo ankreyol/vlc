@@ -1,5 +1,6 @@
 #include <cassert>
 #include "mlbasemodel.hpp"
+#include "mcmedialib.hpp"
 
 MLBaseModel::MLBaseModel(vlc_medialibrary_t* ml, vlc_ml_parent_type parent_type, uint64_t parent_id, QObject *parent)
     : QAbstractListModel(parent)
@@ -32,4 +33,36 @@ void MLBaseModel::sortByColumn(QByteArray name, Qt::SortOrder order)
     m_query_param.b_desc = (order == Qt::SortOrder::DescendingOrder);
     m_query_param.i_sort = nameToCriteria(name);
     clear();
+}
+
+ParentType::ParentTypes MLBaseModel::parentType() const
+{
+    return static_cast<ParentType::ParentTypes>( m_parent_type );
+}
+
+void MLBaseModel::setParentType( ParentType::ParentTypes parentType)
+{
+    // FIXME: Store as the enum
+    m_parent_type = static_cast<int>( parentType );
+}
+
+int64_t MLBaseModel::parentId() const
+{
+    return m_parent_id;
+}
+
+void MLBaseModel::setParentId(int64_t parentId)
+{
+    m_parent_id = parentId;
+}
+
+MCMediaLib* MLBaseModel::ml() const
+{
+    return m_mcMediaLib;
+}
+
+void MLBaseModel::setMl(MCMediaLib* mcMl)
+{
+    m_ml = mcMl->vlcMl();
+    m_mcMediaLib = mcMl;
 }

@@ -1,5 +1,4 @@
 #include "mlalbummodel.hpp"
-#include "mcmedialib.hpp"
 
 namespace {
     enum Roles
@@ -136,38 +135,6 @@ void MLAlbumModel::fetchMore(const QModelIndex &)
         m_item_list.push_back( new MLAlbum( m_ml, &album, this ) );
     m_query_param.i_offset += album_list->i_nb_items;
     endInsertRows();
-}
-
-ParentType::ParentTypes MLAlbumModel::parentType() const
-{
-    return static_cast<ParentType::ParentTypes>( m_parent_type );
-}
-
-void MLAlbumModel::setParentType( ParentType::ParentTypes parentType)
-{
-    // FIXME: Store as the enum
-    m_parent_type = static_cast<int>( parentType );
-}
-
-int64_t MLAlbumModel::parentId() const
-{
-    return m_parent_id;
-}
-
-void MLAlbumModel::setParentId(int64_t parentId)
-{
-    m_parent_id = parentId;
-}
-
-MCMediaLib* MLAlbumModel::ml() const
-{
-    return m_mcMediaLib;
-}
-
-void MLAlbumModel::setMl(MCMediaLib* mcMl)
-{
-    m_ml = mcMl->vlcMl();
-    m_mcMediaLib = mcMl;
 }
 
 void MLAlbumModel::clear()

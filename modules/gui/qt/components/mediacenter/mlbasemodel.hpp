@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QAbstractListModel>
 #include "vlc_media_library.h"
+#include "mlqmltypes.hpp"
 
 class MCMediaLib;
 
@@ -35,6 +36,13 @@ protected:
     virtual vlc_ml_sorting_criteria_t nameToCriteria(QByteArray) const {
         return VLC_ML_SORTING_DEFAULT;
     }
+
+    ParentType::ParentTypes parentType() const;
+    void setParentType(ParentType::ParentTypes parentType);
+    int64_t parentId() const;
+    void setParentId(int64_t parentId);
+    MCMediaLib* ml() const;
+    void setMl(MCMediaLib* ml);
 
     int m_parent_type = -1;
     uint64_t m_parent_id = 0;

@@ -35,24 +35,25 @@
 #include <QList>
 #include <vlc_media_library.h>
 #include "mlhelper.hpp"
+#include "mlqmltypes.hpp"
 
 class MLGenre : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(uint64_t id READ getId CONSTANT)
+    Q_PROPERTY(MLParentId id READ getId CONSTANT)
     Q_PROPERTY(QString name READ getName CONSTANT)
     Q_PROPERTY(unsigned int nbtracks READ getNbTracks CONSTANT)
 
 public:
     MLGenre( const vlc_ml_genre_t *_data, QObject *_parent = nullptr);
 
-    uint64_t getId() const;
+    MLParentId getId() const;
     QString getName() const;
     unsigned int getNbTracks() const;
 
 private:
-    uint64_t m_id;
+    MLParentId m_id;
     QString m_name;
     unsigned int m_nbTracks;
 };

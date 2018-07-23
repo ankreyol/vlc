@@ -64,6 +64,7 @@ Loader {
                         albums: MLAlbumModel {
                             parentId: model.id
                             ml: medialib
+                            maxItems: 4
                         }
                     }
                     name: model.name || "Unknown genre"

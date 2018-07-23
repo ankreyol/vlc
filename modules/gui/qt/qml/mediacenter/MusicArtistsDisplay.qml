@@ -65,6 +65,7 @@ Loader {
                         albums: MLAlbumModel {
                             ml: medialib
                             parentId: model.id
+                            maxItems: 4
                         }
                         nb_albums: model.nb_albums
                     }

@@ -3,7 +3,7 @@
 namespace {
     enum Roles
     {
-        ARTIST_ID  =Qt::UserRole + 1,
+        ARTIST_ID = Qt::UserRole + 1,
         ARTIST_NAME,
         ARTIST_SHORT_BIO,
         ARTIST_COVER,
@@ -44,14 +44,13 @@ QVariant MLArtistModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> MLArtistModel::roleNames() const
 {
-    QHash<int, QByteArray> roles;
-    // Artists
-    roles[ARTIST_ID] = "id";
-    roles[ARTIST_NAME] = "name";
-    roles[ARTIST_SHORT_BIO] = "short_bio";
-    roles[ARTIST_COVER] = "cover";
-    roles[ARTIST_NB_ALBUMS] = "nb_albums";
-    return roles;
+    return {
+        { ARTIST_ID, "id" },
+        { ARTIST_NAME, "name" },
+        { ARTIST_SHORT_BIO, "short_bio" },
+        { ARTIST_COVER, "cover" },
+        { ARTIST_NB_ALBUMS, "nb_albums" },
+    };
 }
 
 void MLArtistModel::fetchMoreInner(const QModelIndex &)

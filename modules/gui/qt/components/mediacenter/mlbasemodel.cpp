@@ -5,6 +5,7 @@
 MLBaseModel::MLBaseModel(QObject *parent)
     : QAbstractListModel(parent)
     , m_ml(nullptr)
+    , m_initialized(false)
 {
     memset(&m_query_param, 0, sizeof(vlc_ml_query_params_t));
     m_query_param.b_desc = false;

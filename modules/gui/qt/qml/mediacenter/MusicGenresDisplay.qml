@@ -48,32 +48,32 @@ Loader {
             contentHeight: gridView_id.height
             clip: true
             Utils.ExpandGridView {
-            id: gridView_id
+                id: gridView_id
 
-            cellWidth: VLCStyle.cover_normal
-            cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
+                cellWidth: VLCStyle.cover_normal
+                cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
 
-            model: viewLoader.model
-            delegate : Utils.GridItem {
-                width: gridView_id.cellWidth
-                height: gridView_id.cellHeight
+                model: viewLoader.model
+                delegate : Utils.GridItem {
+                    width: gridView_id.cellWidth
+                    height: gridView_id.cellHeight
 
-                cover: Utils.GenreCover { albums: model.albums }
-                name: model.name || "Unknown genre"
+                    cover: Utils.GenreCover { albums: model.albums }
+                    name: model.name || "Unknown genre"
 
-                onItemClicked: {
-                    console.log('Clicked on details : '+model.name);
-                    medialib.select( index );
+                    onItemClicked: {
+                        console.log('Clicked on details : '+model.name);
+                        medialib.select( index );
+                    }
+                    onPlayClicked: {
+                        console.log('Clicked on play : '+model.name);
+                        medialib.addAndPlay(index)
+                    }
+                    onAddToPlaylistClicked: {
+                        console.log('Clicked on addToPlaylist : '+model.name);
+                        medialib.addToPlaylist(index);
+                    }
                 }
-                onPlayClicked: {
-                    console.log('Clicked on play : '+model.name);
-                    medialib.addAndPlay(index)
-                }
-                onAddToPlaylistClicked: {
-                    console.log('Clicked on addToPlaylist : '+model.name);
-                    medialib.addToPlaylist(index);
-                }
-            }
             }
         }
     }

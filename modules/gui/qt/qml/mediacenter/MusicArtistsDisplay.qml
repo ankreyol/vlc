@@ -24,6 +24,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
 
+import org.videolan.medialib 0.1
+
 import "qrc:///utils/" as Utils
 import "qrc:///style/"
 
@@ -60,7 +62,10 @@ Loader {
                     height: gridView_id.cellHeight
 
                     cover: Utils.ArtistCover {
-                        albums: model.albums
+                        albums: MLAlbumModel {
+                            ml: medialib
+                            parentId: model.id
+                        }
                         nb_albums: model.nb_albums
                     }
                     name: model.name || "Unknown Artist"

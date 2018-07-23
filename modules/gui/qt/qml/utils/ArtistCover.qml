@@ -112,7 +112,7 @@ Item {
                 Layout.preferredHeight: calc_height(index)
                 Layout.preferredWidth: calc_width(index)
 
-                source: model.album_cover || VLCStyle.noArtCover
+                source: model.cover || VLCStyle.noArtCover
                 fillMode: Image.PreserveAspectCrop
                 visible: index < 4
 

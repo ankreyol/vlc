@@ -24,6 +24,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
 
+import org.videolan.medialib 0.1
+
 import "qrc:///utils/" as Utils
 import "qrc:///style/"
 
@@ -58,7 +60,12 @@ Loader {
                     width: gridView_id.cellWidth
                     height: gridView_id.cellHeight
 
-                    cover: Utils.GenreCover { albums: model.albums }
+                    cover: Utils.GenreCover {
+                        albums: MLAlbumModel {
+                            parentId: model.id
+                            ml: medialib
+                        }
+                    }
                     name: model.name || "Unknown genre"
 
                     onItemClicked: {

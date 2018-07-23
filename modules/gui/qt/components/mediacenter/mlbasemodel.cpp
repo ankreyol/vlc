@@ -36,7 +36,6 @@ MLParentId MLBaseModel::parentId() const
 
 void MLBaseModel::setParentId(MLParentId parentId)
 {
-    fprintf(stderr, "Setting parent id: %d %d", parentId.id, parentId.type);
     m_parent = parentId;
 }
 

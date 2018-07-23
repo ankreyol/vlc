@@ -49,29 +49,29 @@ Loader {
             contentHeight: gridView_id.height
             clip: true
             Utils.ExpandGridView {
-            id: gridView_id
+                id: gridView_id
 
-            cellWidth: VLCStyle.cover_normal
-            cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
+                cellWidth: VLCStyle.cover_normal
+                cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
 
-            model: viewLoader.model
-            delegate : Utils.GridItem {
-                width: gridView_id.cellWidth
-                height: gridView_id.cellHeight
+                model: viewLoader.model
+                delegate : Utils.GridItem {
+                    width: gridView_id.cellWidth
+                    height: gridView_id.cellHeight
 
-                cover: Image { source: model.cover || VLCStyle.noArtCover }
-                name: model.title || "Unknown track"
+                    cover: Image { source: model.cover || VLCStyle.noArtCover }
+                    name: model.title || "Unknown track"
 
-                onItemClicked: console.log('Clicked on details : '+model.title)
-                onPlayClicked: {
-                    console.log('Clicked on play : '+model.title);
-                    medialib.addAndPlay(index)
+                    onItemClicked: console.log('Clicked on details : '+model.title)
+                    onPlayClicked: {
+                        console.log('Clicked on play : '+model.title);
+                        medialib.addAndPlay(index)
+                    }
+                    onAddToPlaylistClicked: {
+                        console.log('Clicked on addToPlaylist : '+model.title);
+                        medialib.addToPlaylist(index);
+                    }
                 }
-                onAddToPlaylistClicked: {
-                    console.log('Clicked on addToPlaylist : '+model.title);
-                    medialib.addToPlaylist(index);
-                }
-            }
             }
         }
     }

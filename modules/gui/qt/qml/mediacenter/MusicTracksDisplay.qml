@@ -43,7 +43,12 @@ Loader {
     Component {
         id: gridViewComponent_id
 
-        GridView {
+        Flickable {
+            ScrollBar.vertical: ScrollBar { }
+            anchors.fill: parent
+            contentHeight: gridView_id.height
+            clip: true
+            Utils.ExpandGridView {
             id: gridView_id
 
             cellWidth: VLCStyle.cover_normal
@@ -67,8 +72,7 @@ Loader {
                     medialib.addToPlaylist(index);
                 }
             }
-
-            ScrollBar.vertical: ScrollBar { }
+            }
         }
     }
 

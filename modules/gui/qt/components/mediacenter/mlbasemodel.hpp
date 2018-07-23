@@ -29,6 +29,7 @@ public:
 
     Q_PROPERTY( MLParentId parentId READ parentId WRITE setParentId )
     Q_PROPERTY( MCMediaLib* ml READ ml WRITE setMl )
+    Q_PROPERTY( unsigned int maxItems MEMBER m_nb_max_items )
 
     Q_INVOKABLE int rowCount(const QModelIndex &parent) const override;
     Q_INVOKABLE bool canFetchMore(const QModelIndex&) const override;
@@ -63,6 +64,7 @@ protected:
 
     bool m_initialized;
     size_t m_total_count;
+    unsigned int m_nb_max_items;
 };
 
 #endif // MLBASEMODEL_HPP

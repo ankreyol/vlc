@@ -6,6 +6,7 @@ MLBaseModel::MLBaseModel(QObject *parent)
     : QAbstractListModel(parent)
     , m_ml(nullptr)
     , m_initialized(false)
+    , m_nb_max_items( 0 )
 {
     memset(&m_query_param, 0, sizeof(vlc_ml_query_params_t));
     m_query_param.b_desc = false;
@@ -63,7 +64,10 @@ bool MLBaseModel::canFetchMore(const QModelIndex&) const
 {
     if ( m_initialized == false )
         return true;
-    return nbElementsInModel() < m_total_count;
+    auto inModel = nbElementsInModel();
+    if ( m_nb_max_items != 0 && inModel >= m_nb_max_items )
+        return false;
+    return inModel < m_total_count;
 }
 
 void MLBaseModel::fetchMore(const QModelIndex& parent)

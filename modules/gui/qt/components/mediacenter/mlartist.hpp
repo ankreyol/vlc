@@ -38,12 +38,13 @@
 #include "mlalbum.hpp"
 #include "mlitem.hpp"
 #include "mlhelper.hpp"
+#include "mlqmltypes.hpp"
 
 class MLArtist : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(uint64_t id READ getId CONSTANT)
+    Q_PROPERTY(MLParentId id READ getId CONSTANT)
     Q_PROPERTY(QString name READ getName CONSTANT)
     Q_PROPERTY(QString shortbio READ getShortBio CONSTANT)
     Q_PROPERTY(QString cover READ getCover CONSTANT)
@@ -53,7 +54,7 @@ class MLArtist : public QObject
 public:
     MLArtist(const vlc_ml_artist_t *_data, QObject *_parent = nullptr);
 
-    uint64_t getId() const;
+    MLParentId getId() const;
     QString getName() const;
     QString getShortBio() const;
     QString getCover() const;
@@ -66,7 +67,7 @@ public:
     //Q_INVOKABLE QList<MLAlbumTrack *> getPLTracks() const;
 
 private:
-    uint64_t m_id;
+    MLParentId m_id;
     QString m_name;
     QString m_shortBio;
     QString m_cover;

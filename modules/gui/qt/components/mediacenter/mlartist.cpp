@@ -26,7 +26,7 @@
 
 MLArtist::MLArtist(const vlc_ml_artist_t* _data, QObject *_parent)
     : QObject(_parent)
-    , m_id      ( _data->i_id )
+    , m_id      ( _data->i_id, VLC_ML_PARENT_ARTIST )
     , m_name    ( QString::fromUtf8( _data->psz_name ) )
     , m_shortBio( QString::fromUtf8( _data->psz_shortbio ) )
     , m_cover   ( QString::fromUtf8( _data->psz_artwork_mrl ) )
@@ -35,7 +35,7 @@ MLArtist::MLArtist(const vlc_ml_artist_t* _data, QObject *_parent)
     assert( _data );
 }
 
-uint64_t MLArtist::getId() const
+MLParentId MLArtist::getId() const
 {
     return m_id;
 }

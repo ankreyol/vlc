@@ -12,16 +12,16 @@ enum Role {
 }
 
 MLAlbumTrackModel::MLAlbumTrackModel(QObject *parent)
-    : MLBaseModel(parent)
+    : MLSlidingWindowModel<MLAlbumTrack>(parent)
 {
 }
 
 QVariant MLAlbumTrackModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid())
+    if (!index.isValid() || index.row() < 0)
         return QVariant();
 
-    const MLAlbumTrack* ml_track = getItem(index);
+    const MLAlbumTrack* ml_track = item(static_cast<unsigned int>(index.row()));
     if ( !ml_track )
         return QVariant();
 
@@ -51,11 +51,6 @@ QHash<int, QByteArray> MLAlbumTrackModel::roleNames() const
     };
 }
 
-size_t MLAlbumTrackModel::nbElementsInModel() const
-{
-    return m_item_list.size();
-}
-
 size_t MLAlbumTrackModel::countTotalElements() const
 {
     if ( m_parent.id == 0 )
@@ -63,26 +58,22 @@ size_t MLAlbumTrackModel::countTotalElements() const
     return vlc_ml_count_media_of(m_ml, &m_query_param, m_parent.type, m_parent.id );
 }
 
-void MLAlbumTrackModel::fetchMoreInner(const QModelIndex &)
+std::vector<std::unique_ptr<MLAlbumTrack>> MLAlbumTrackModel::fetch(int offset, int nbItems)
 {
     ml_unique_ptr<vlc_ml_media_list_t> media_list;
+    auto queryParams = m_query_param;
+    queryParams.i_offset = offset;
+    queryParams.i_nbResults = nbItems;
 
     if ( m_parent.id == 0 )
-        media_list.reset( vlc_ml_list_audio_media(m_ml, &m_query_param) );
+        media_list.reset( vlc_ml_list_audio_media(m_ml, &queryParams) );
     else
-        media_list.reset( vlc_ml_list_media_of(m_ml, &m_query_param, m_parent.type, m_parent.id ) );
+        media_list.reset( vlc_ml_list_media_of(m_ml, &queryParams, m_parent.type, m_parent.id ) );
 
-    m_query_param.i_offset += m_query_param.i_nbResults;
-    beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + media_list->i_nb_items - 1);
+    std::vector<std::unique_ptr<MLAlbumTrack>> res;
     for( const vlc_ml_media_t& media: ml_range_iterate<vlc_ml_media_t>( media_list ) )
-        m_item_list.emplace_back( std::unique_ptr<MLAlbumTrack>{ new MLAlbumTrack( &media ) } );
-    endInsertRows();
-}
-
-void MLAlbumTrackModel::clear()
-{
-    m_item_list.clear();
-    m_query_param.i_offset = 0;
+        res.emplace_back( std::unique_ptr<MLAlbumTrack>{ new MLAlbumTrack( &media ) } );
+    return res;
 }
 
 vlc_ml_sorting_criteria_t MLAlbumTrackModel::roleToCriteria(int role) const
@@ -97,13 +88,4 @@ vlc_ml_sorting_criteria_t MLAlbumTrackModel::roleToCriteria(int role) const
     default:
         return VLC_ML_SORTING_DEFAULT;
     }
-}
-
-
-const MLAlbumTrack* MLAlbumTrackModel::getItem(const QModelIndex &index) const
-{
-    int r = index.row();
-    if (index.isValid())
-        return m_item_list.at(r).get();
-    return nullptr;
 }

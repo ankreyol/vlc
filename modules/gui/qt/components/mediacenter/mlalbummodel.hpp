@@ -10,7 +10,7 @@
 #include "mlalbum.hpp"
 #include "mcmedialib.hpp"
 
-class MLAlbumModel : public MLBaseModel
+class MLAlbumModel : public MLSlidingWindowModel<MLAlbum>
 {
     Q_OBJECT
 
@@ -21,19 +21,11 @@ public:
     Q_INVOKABLE QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Q_INVOKABLE QHash<int, QByteArray> roleNames() const override;
 
-    Q_INVOKABLE QObject *get(unsigned int idx);
-
 private:
-    void fetchMoreInner(const QModelIndex &parent) override;
-    void clear() override;
-    size_t nbElementsInModel() const override;
+    std::vector<std::unique_ptr<MLAlbum>> fetch( int offset, int nbElems );
     size_t countTotalElements() const override;
-    vlc_ml_sorting_criteria_t roleToCriteria(int role) const;
+    vlc_ml_sorting_criteria_t roleToCriteria(int role) const override;
     vlc_ml_sorting_criteria_t nameToCriteria(QByteArray name) const override;
-
-    const MLAlbum *getItem(const QModelIndex &index) const;
-
-    std::vector<std::unique_ptr<MLAlbum>> m_item_list;
 
     static  QHash<QByteArray, vlc_ml_sorting_criteria_t> m_names_to_criteria;
 };

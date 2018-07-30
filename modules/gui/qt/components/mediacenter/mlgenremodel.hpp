@@ -10,7 +10,7 @@
 #include "mlbasemodel.hpp"
 #include "mlgenre.hpp"
 
-class MLGenreModel : public MLBaseModel
+class MLGenreModel : public MLSlidingWindowModel<MLGenre>
 {
     Q_OBJECT
 
@@ -22,16 +22,10 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
 
 private:
-    void fetchMoreInner(const QModelIndex&) override;
-    void clear() override;
+    std::vector<std::unique_ptr<MLGenre>> fetch(int offset, int nbItems) override;
     size_t countTotalElements() const override;
-    size_t nbElementsInModel() const override;
 
     vlc_ml_sorting_criteria_t roleToCriteria(int role) const override;
-
-    const MLGenre* getItem(const QModelIndex &index) const;
-
-    std::vector<std::unique_ptr<MLGenre>> m_item_list;
 };
 
 

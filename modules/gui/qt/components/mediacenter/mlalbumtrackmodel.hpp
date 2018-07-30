@@ -10,7 +10,7 @@
 #include "mlalbumtrack.hpp"
 
 
-class MLAlbumTrackModel : public MLBaseModel
+class MLAlbumTrackModel : public MLSlidingWindowModel<MLAlbumTrack>
 {
     Q_OBJECT
 
@@ -23,13 +23,8 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
 private:
-    void fetchMoreInner(const QModelIndex &parent) override;
-    size_t nbElementsInModel() const override;
+    std::vector<std::unique_ptr<MLAlbumTrack>> fetch(int offset, int nbItems) override;
     size_t countTotalElements() const override;
-    void clear() override;
     vlc_ml_sorting_criteria_t roleToCriteria(int role) const override;
-    const MLAlbumTrack* getItem(const QModelIndex &index) const;
-
-    std::vector<std::unique_ptr<MLAlbumTrack>> m_item_list;
 };
 #endif // MLTRACKMODEL_HPP

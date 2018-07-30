@@ -24,19 +24,16 @@ QHash<QByteArray, vlc_ml_sorting_criteria_t> MLAlbumModel::m_names_to_criteria =
 };
 
 MLAlbumModel::MLAlbumModel(QObject *parent)
-    : MLBaseModel(parent)
+    : MLSlidingWindowModel<MLAlbum>(parent)
 {
 }
 
 QVariant MLAlbumModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid())
+    if (!index.isValid() || index.row() < 0)
         return QVariant();
 
-    if (index.row() >= m_item_list.size() || index.row() < 0)
-            return QVariant();
-
-    const MLAlbum* ml_item = getItem(index);
+    const MLAlbum* ml_item = item(static_cast<unsigned int>(index.row()));
     if ( ml_item == NULL )
         return QVariant();
 
@@ -77,39 +74,21 @@ QHash<int, QByteArray> MLAlbumModel::roleNames() const
     };
 }
 
-QObject *MLAlbumModel::get(unsigned int idx)
+std::vector<std::unique_ptr<MLAlbum>> MLAlbumModel::fetch( int offset, int nbElems )
 {
-    if (idx >= m_item_list.size())
-        return NULL;
-    return m_item_list.at(idx).get();
-}
-
-void MLAlbumModel::fetchMoreInner(const QModelIndex &)
-{
+    auto queryParams = m_query_param;
+    queryParams.i_offset = offset;
+    queryParams.i_nbResults = nbElems;
     ml_unique_ptr<vlc_ml_album_list_t> album_list;
     if ( m_parent.id == 0 )
-        album_list.reset( vlc_ml_list_albums(m_ml, &m_query_param) );
+        album_list.reset( vlc_ml_list_albums(m_ml, &queryParams ) );
     else
-        album_list.reset( vlc_ml_list_albums_of(m_ml, &m_query_param, m_parent.type, m_parent.id ) );
+        album_list.reset( vlc_ml_list_albums_of(m_ml, &queryParams, m_parent.type, m_parent.id ) );
 
-    beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + album_list->i_nb_items - 1);
+    std::vector<std::unique_ptr<MLAlbum>> res;
     for( const vlc_ml_album_t& album: ml_range_iterate<vlc_ml_album_t>( album_list ) )
-        m_item_list.emplace_back( new MLAlbum( m_ml, &album, this ) );
-    m_query_param.i_offset += album_list->i_nb_items;
-    endInsertRows();
-}
-
-void MLAlbumModel::clear()
-{
-    beginResetModel();
-    m_item_list.clear();
-    m_query_param.i_offset = 0;
-    endResetModel();
-}
-
-size_t MLAlbumModel::nbElementsInModel() const
-{
-    return m_item_list.size();
+        res.emplace_back( new MLAlbum( m_ml, &album, this ) );
+    return res;
 }
 
 vlc_ml_sorting_criteria_t MLAlbumModel::nameToCriteria(QByteArray name) const
@@ -132,15 +111,6 @@ vlc_ml_sorting_criteria_t MLAlbumModel::roleToCriteria(int role) const
     default:
         return VLC_ML_SORTING_DEFAULT;
     }
-}
-
-const MLAlbum* MLAlbumModel::getItem(const QModelIndex &index) const
-{
-    int r = index.row();
-    if (index.isValid())
-        return m_item_list.at(r).get();
-    else
-        return NULL;
 }
 
 size_t MLAlbumModel::countTotalElements() const

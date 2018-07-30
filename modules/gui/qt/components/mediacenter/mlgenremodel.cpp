@@ -15,16 +15,16 @@ namespace {
 }
 
 MLGenreModel::MLGenreModel(QObject *parent)
-    : MLBaseModel(parent)
+    : MLSlidingWindowModel<MLGenre>(parent)
 {
 }
 
 QVariant MLGenreModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid())
+    if (!index.isValid() || index.row() < 0)
         return QVariant();
 
-    const MLGenre* ml_genre = getItem(index);
+    const MLGenre* ml_genre = item(static_cast<unsigned int>(index.row()));
     if (!ml_genre)
         return QVariant();
 
@@ -54,27 +54,19 @@ QHash<int, QByteArray> MLGenreModel::roleNames() const
     };
 }
 
-void MLGenreModel::fetchMoreInner(const QModelIndex &)
+std::vector<std::unique_ptr<MLGenre>> MLGenreModel::fetch(int offset, int nbItems)
 {
+    auto queryParams = m_query_param;
+    queryParams.i_offset = offset;
+    queryParams.i_nbResults = nbItems;
     ml_unique_ptr<vlc_ml_genre_list_t> genre_list(
-        vlc_ml_list_genres(m_ml, &m_query_param)
+        vlc_ml_list_genres(m_ml, &queryParams)
     );
-    m_query_param.i_offset += m_query_param.i_nbResults;
 
-    beginInsertRows(QModelIndex(), m_item_list.size(), m_item_list.size() + genre_list->i_nb_items - 1);
+    std::vector<std::unique_ptr<MLGenre>> res;
     for( const vlc_ml_genre_t& genre: ml_range_iterate<vlc_ml_genre_t>( genre_list ) )
-        m_item_list.emplace_back( std::unique_ptr<MLGenre>{ new MLGenre( &genre ) } );
-    endInsertRows();
-}
-
-void MLGenreModel::clear()
-{
-    m_item_list.clear();
-}
-
-size_t MLGenreModel::nbElementsInModel() const
-{
-    return m_item_list.size();
+        res.emplace_back( std::unique_ptr<MLGenre>{ new MLGenre( &genre ) } );
+    return res;
 }
 
 size_t MLGenreModel::countTotalElements() const
@@ -91,12 +83,4 @@ vlc_ml_sorting_criteria_t MLGenreModel::roleToCriteria(int role) const
     default :
         return VLC_ML_SORTING_DEFAULT;
     }
-}
-
-const MLGenre* MLGenreModel::getItem(const QModelIndex &index) const
-{
-    int r = index.row();
-    if (index.isValid())
-        return m_item_list.at(r).get();
-    return nullptr;
 }

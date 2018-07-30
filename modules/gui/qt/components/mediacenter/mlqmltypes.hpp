@@ -32,6 +32,10 @@ class MLParentId
 public:
     MLParentId() : id(0), type( static_cast<vlc_ml_parent_type>( -1 ) ) {}
     MLParentId( int64_t i, vlc_ml_parent_type t ) : id( i ), type( t ) {}
+    bool operator!=( const MLParentId& lhs )
+    {
+        return id != lhs.id || type != lhs.type;
+    }
     int64_t id;
     vlc_ml_parent_type type;
 };

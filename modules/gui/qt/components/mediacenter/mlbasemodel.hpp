@@ -27,7 +27,7 @@ public:
 
     Q_INVOKABLE void sortByColumn(QByteArray name, Qt::SortOrder order);
 
-    Q_PROPERTY( MLParentId parentId READ parentId WRITE setParentId )
+    Q_PROPERTY( MLParentId parentId MEMBER m_parent )
     Q_PROPERTY( MCMediaLib* ml READ ml WRITE setMl )
     Q_PROPERTY( unsigned int maxItems MEMBER m_nb_max_items )
 
@@ -50,8 +50,6 @@ protected:
         return VLC_ML_SORTING_DEFAULT;
     }
 
-    MLParentId parentId() const;
-    void setParentId(MLParentId parentId);
     MCMediaLib* ml() const;
     void setMl(MCMediaLib* ml);
 

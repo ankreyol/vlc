@@ -14,17 +14,6 @@ namespace {
     };
 }
 
-QHash<int, QByteArray> MLAlbumModel::m_role_names = {
-    {ALBUM_ID,"id"},
-    {ALBUM_TITLE, "title"},
-    {ALBUM_RELEASE_YEAR, "release_year"},
-    {ALBUM_SHORT_SUMMARY, "shortsummary"},
-    {ALBUM_COVER, "cover"},
-    {ALBUM_MAIN_ARTIST, "main_artist"},
-    {ALBUM_NB_TRACKS, "nb_tracks"},
-    {ALBUM_DURATION, "duration"}
-};
-
 QHash<QByteArray, vlc_ml_sorting_criteria_t> MLAlbumModel::m_names_to_criteria = {
     {"id", VLC_ML_SORTING_DEFAULT},
     {"title", VLC_ML_SORTING_ALBUM},
@@ -76,7 +65,16 @@ QVariant MLAlbumModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> MLAlbumModel::roleNames() const
 {
-    return m_role_names;
+    return {
+        {ALBUM_ID,"id"},
+        {ALBUM_TITLE, "title"},
+        {ALBUM_RELEASE_YEAR, "release_year"},
+        {ALBUM_SHORT_SUMMARY, "shortsummary"},
+        {ALBUM_COVER, "cover"},
+        {ALBUM_MAIN_ARTIST, "main_artist"},
+        {ALBUM_NB_TRACKS, "nb_tracks"},
+        {ALBUM_DURATION, "duration"}
+    };
 }
 
 QObject *MLAlbumModel::get(unsigned int idx)

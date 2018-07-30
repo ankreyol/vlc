@@ -35,7 +35,6 @@ private:
 
     std::vector<std::unique_ptr<MLAlbum>> m_item_list;
 
-    static  QHash<int, QByteArray> m_role_names;
     static  QHash<QByteArray, vlc_ml_sorting_criteria_t> m_names_to_criteria;
 };
 

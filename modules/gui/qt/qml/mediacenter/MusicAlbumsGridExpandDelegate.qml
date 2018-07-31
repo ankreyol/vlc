@@ -36,12 +36,6 @@ Rectangle {
     property var model: []
     color: VLCStyle.bgColorAlt
 
-    //the purpose of this MouseArea is to avoid mouse event to be forwarded to the components below
-    MouseArea {
-        anchors.fill: parent
-        propagateComposedEvents: false
-    }
-
     RowLayout {
         spacing: VLCStyle.margin_xsmall
         anchors.fill: parent

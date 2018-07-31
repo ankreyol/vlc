@@ -38,6 +38,21 @@ public:
     }
     int64_t id;
     vlc_ml_parent_type type;
+
+    Q_INVOKABLE inline QString toString() const {
+
+#define ML_PARENT_TYPE_CASE(type) case type: return QString("%1 - %2").arg(#type).arg(id)
+        switch (type) {
+            ML_PARENT_TYPE_CASE(VLC_ML_PARENT_ALBUM);
+            ML_PARENT_TYPE_CASE(VLC_ML_PARENT_ARTIST);
+            ML_PARENT_TYPE_CASE(VLC_ML_PARENT_SHOW);
+            ML_PARENT_TYPE_CASE(VLC_ML_PARENT_GENRE);
+            ML_PARENT_TYPE_CASE(VLC_ML_PARENT_PLAYLIST);
+        default:
+            return QString("UNKNONW - %2").arg(id);
+        }
+#undef ML_PARENT_TYPE_CASE
+    }
 };
 
 Q_DECLARE_METATYPE(MLParentId)

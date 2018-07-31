@@ -38,29 +38,24 @@ Loader {
     Component {
         id: gridViewComponent_id
 
-        Flickable {
-            ScrollBar.vertical: ScrollBar { }
-            anchors.fill: parent
-            contentHeight: gridView_id.height
-            clip: true
-            Utils.ExpandGridView {
+            GridView {
+                property int currentId: -1;
+                onCurrentIdChanged: {
+                    footer_overlay.model = gridView_id.model.get(gridView_id.currentId)
+                }
 
-                id: gridView_id
+                ScrollBar.vertical: ScrollBar { }
+                anchors.fill: parent
+                clip: true
 
                 model: viewLoader.model
+                id: gridView_id
 
                 cellWidth: VLCStyle.cover_normal
                 cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
-                expandHeight: VLCStyle.heightBar_xxlarge
 
-                rowSpacing: VLCStyle.margin_xxxsmall
-                columnSpacing: VLCStyle.margin_xxxsmall
-                expandSpacing: VLCStyle.margin_xxxsmall
-                expandCompact: true
 
-                expandDuration: VLCStyle.timingGridExpandOpen
-
-                delegate : Utils.GridItem {
+                delegate: Utils.GridItem {
                     width: gridView_id.cellWidth
                     height: gridView_id.cellHeight
 
@@ -69,7 +64,10 @@ Loader {
                     date : model.release_year !== "0" ? model.release_year : ""
                     infos : model.duration + " - " + model.nb_tracks + " tracks"
 
-                    onItemClicked : console.log('Clicked on details : '+ model.title)
+                    onItemClicked : {
+                        currentId =  (currentId === index) ? -1 : index
+                        console.log('Clicked on details : '+ model.title + " " + currentId)
+                    }
                     onPlayClicked: {
                         console.log('Clicked on play : '+model.title);
                         medialib.addAndPlay(currentIndex)
@@ -80,15 +78,54 @@ Loader {
                     }
                 }
 
-                expandDelegate: MusicAlbumsGridExpandDelegate {
-                    height: gridView_id.expandHeight
-                    width: gridView_id.width
+                footer:  Rectangle {
+                    visible: currentId == null
+                    height: currentId == null ? 0 : footer_overlay.height
                 }
 
+                MusicAlbumsGridExpandDelegate {
+                    id: footer_overlay
+                    height: VLCStyle.heightBar_xxlarge
+                    width: gridView_id.width
+                    anchors.bottom: parent.bottom
+                    visible: false
+                }
+
+                states: [
+                    State {
+                        name: "DETAILS_HIDDEN"
+                        PropertyChanges { target: footer_overlay; height: 0; visible: false }
+                        when: gridView_id.currentId < 0
+                    },
+                    State {
+                        name: "DETAILS_VISIBLE"
+                        PropertyChanges { target: footer_overlay; height: VLCStyle.heightBar_xxlarge; visible: true}
+                        when: gridView_id.currentId >= 0
+                    }
+                ]
+
+                transitions: [
+                    Transition {
+                        from: "DETAILS_HIDDEN"
+                        to: "DETAILS_VISIBLE"
+                        SequentialAnimation {
+                            PropertyAnimation { properties: "visible" }
+                            NumberAnimation { properties: "height"; easing.type: Easing.InOutQuad }
+                        }
+                    },
+                    Transition {
+                        from: "DETAILS_VISIBLE"
+                        to: "DETAILS_HIDDEN"
+                        SequentialAnimation {
+                            NumberAnimation { properties: "height"; easing.type: Easing.InOutQuad }
+                            PropertyAnimation { properties: "visible" }
+                        }
+                    }
+                ]
             }
-        }
     }
 
+    /* ListView */
     Component {
         id: listViewComponent_id
 
@@ -185,43 +222,6 @@ Loader {
                     }
                 }
             }
-
-            //delegate: Utils.ListExpandItem {
-            //       height: VLCStyle.icon_normal
-            //       width: parent.width
-            //
-            //       cover: Image {
-            //           id: cover_obj
-            //
-            //           width: VLCStyle.icon_normal
-            //           height: VLCStyle.icon_normal
-            //
-            //           source: model.cover || VLCStyle.noArtCover
-            //
-            //           states: State {
-            //               name: "expanded"
-            //               PropertyChanges {target: cover_obj; width: VLCStyle.icon_xlarge; height: VLCStyle.icon_xlarge}
-            //           }
-            //           Behavior on height { PropertyAnimation { duration: VLCStyle.timingListExpandOpen } }
-            //           Behavior on width { PropertyAnimation { duration: VLCStyle.timingListExpandOpen } }
-            //       }
-            //       line1: Text{
-            //           text: (title || "Unknown title")+" ["+duration+"]"
-            //           font.bold: true
-            //           elide: Text.ElideRight
-            //           color: VLCStyle.textColor
-            //           font.pixelSize: VLCStyle.fontSize_normal
-            //       }
-            //       line2: Text{
-            //           text: model.main_artist || "Unknown artist"
-            //           elide: Text.ElideRight
-            //           color: VLCStyle.textColor
-            //           font.pixelSize: VLCStyle.fontSize_xsmall
-            //       }
-            //       expand: MusicAlbumsGridExpandDelegate {
-            //           height: VLCStyle.heightBar_xxlarge
-            //       }
-            //   }
         }
     }
 }

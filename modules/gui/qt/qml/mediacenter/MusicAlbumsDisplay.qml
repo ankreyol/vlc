@@ -24,13 +24,16 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.1
+import org.videolan.medialib 0.1
 
 import "qrc:///utils/" as Utils
 import "qrc:///style/"
 
 Loader {
     id: viewLoader
-    property var model: []
+    property var model: MLAlbumModel {
+            ml: medialib
+    }
 
     sourceComponent: medialib.gridView ? gridViewComponent_id : listViewComponent_id
 

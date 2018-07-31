@@ -31,7 +31,9 @@ import "qrc:///style/"
 
 Loader {
     id: viewLoader
-    property var model: []
+    property var model:  MLGenreModel {
+        ml: medialib
+    }
 
     // Force the data to be reloaded
     function reloadData() {

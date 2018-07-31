@@ -23,13 +23,16 @@
 
 import QtQuick 2.0
 import QtQuick.Controls 2.0
+import org.videolan.medialib 0.1
 
 import "qrc:///utils/" as Utils
 import "qrc:///style/"
 
 Loader {
     id: viewLoader
-    property var model: []
+    property var model:  MLAlbumTrackModel {
+        ml: medialib
+    }
 
     // Force the data to be reloaded
     function reloadData() {

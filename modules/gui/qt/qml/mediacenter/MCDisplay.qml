@@ -181,27 +181,23 @@ Rectangle {
 
             // Display some 'Albums' items
             MusicAlbumsDisplay {
-                model: MLAlbumModel {
-                    ml: medialib
-                }
+                //enabled: viewLoader.currentIndex == 0
+                active: viewLoader.currentIndex == 0
             }
             // Display some 'Artists' items
             MusicArtistsDisplay {
-                model: MLArtistModel {
-                    ml: medialib
-                }
+                //enabled: viewLoader.currentIndex == 1
+                active: viewLoader.currentIndex == 1
             }
             // Display some 'Genres' items
             MusicGenresDisplay {
-                model: MLGenreModel {
-                    ml: medialib
-                }
+                //enabled: viewLoader.currentIndex == 2
+                active: viewLoader.currentIndex == 2
             }
             // Display some 'Tracks' items
             MusicTracksDisplay {
-                model: MLAlbumTrackModel {
-                    ml: medialib
-                }
+                //enabled: viewLoader.currentIndex == 3
+                active: viewLoader.currentIndex == 3
             }
         }
     }

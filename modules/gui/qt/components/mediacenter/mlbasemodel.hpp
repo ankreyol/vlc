@@ -26,7 +26,7 @@ public:
     virtual void sort(int column, Qt::SortOrder order) override;
 
     Q_INVOKABLE void sortByColumn(QByteArray name, Qt::SortOrder order);
-    Q_INVOKABLE virtual const QObject *get(unsigned int idx) const = 0;
+    Q_INVOKABLE virtual QObject *get(unsigned int idx) const = 0;
 
     Q_PROPERTY( MLParentId parentId READ parentId WRITE setParentId NOTIFY parentIdChanged )
     Q_PROPERTY( MCMediaLib* ml READ ml WRITE setMl )
@@ -91,7 +91,7 @@ public:
         return m_total_count;
     }
 
-    const QObject* get(unsigned int idx) const override
+    QObject* get(unsigned int idx) const override
     {
         return item( idx );
     }
@@ -105,7 +105,7 @@ public:
     }
 
 protected:
-    const T* item(unsigned int idx) const
+    T* item(unsigned int idx) const
     {
         if ( m_initialized == false )
         {

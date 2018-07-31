@@ -22,7 +22,7 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
 
 private:
-    std::vector<std::unique_ptr<MLGenre>> fetch(int offset, int nbItems) override;
+    std::vector<std::unique_ptr<MLGenre>> fetch() override;
     size_t countTotalElements() const override;
 
     vlc_ml_sorting_criteria_t roleToCriteria(int role) const override;

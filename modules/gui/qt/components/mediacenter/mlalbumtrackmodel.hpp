@@ -23,7 +23,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
 private:
-    std::vector<std::unique_ptr<MLAlbumTrack>> fetch(int offset, int nbItems) override;
+    std::vector<std::unique_ptr<MLAlbumTrack>> fetch() override;
     size_t countTotalElements() const override;
     vlc_ml_sorting_criteria_t roleToCriteria(int role) const override;
 };

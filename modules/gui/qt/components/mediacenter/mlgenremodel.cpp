@@ -54,13 +54,10 @@ QHash<int, QByteArray> MLGenreModel::roleNames() const
     };
 }
 
-std::vector<std::unique_ptr<MLGenre>> MLGenreModel::fetch(int offset, int nbItems)
+std::vector<std::unique_ptr<MLGenre>> MLGenreModel::fetch()
 {
-    auto queryParams = m_query_param;
-    queryParams.i_offset = offset;
-    queryParams.i_nbResults = nbItems;
     ml_unique_ptr<vlc_ml_genre_list_t> genre_list(
-        vlc_ml_list_genres(m_ml, &queryParams)
+        vlc_ml_list_genres(m_ml, &m_query_param)
     );
 
     std::vector<std::unique_ptr<MLGenre>> res;
@@ -71,7 +68,10 @@ std::vector<std::unique_ptr<MLGenre>> MLGenreModel::fetch(int offset, int nbItem
 
 size_t MLGenreModel::countTotalElements() const
 {
-    return vlc_ml_count_genres( m_ml, &m_query_param );
+    auto queryParams = m_query_param;
+    queryParams.i_offset = 0;
+    queryParams.i_nbResults = 0;
+    return vlc_ml_count_genres( m_ml, nullptr );
 }
 
 vlc_ml_sorting_criteria_t MLGenreModel::roleToCriteria(int role) const

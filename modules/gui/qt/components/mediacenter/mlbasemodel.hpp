@@ -53,7 +53,7 @@ protected:
     vlc_medialibrary_t* m_ml;
     MCMediaLib* m_mcMediaLib;
     int m_sort_role;
-    vlc_ml_query_params_t m_query_param;
+    mutable vlc_ml_query_params_t m_query_param;
 
     unsigned int m_nb_max_items;
 };
@@ -73,9 +73,9 @@ public:
 
     MLSlidingWindowModel(QObject* parent = nullptr)
         : MLBaseModel(parent)
-        , m_offset(0)
         , m_initialized(false)
     {
+        m_query_param.i_nbResults = BatchSize;
     }
 
     int rowCount(const QModelIndex &parent) const override
@@ -86,7 +86,7 @@ public:
         {
             m_total_count = countTotalElements();
             m_initialized = true;
-            m_item_list = const_cast<MLSlidingWindowModel<T>*>(this)->fetch( m_offset, BatchSize );
+            m_item_list = const_cast<MLSlidingWindowModel<T>*>(this)->fetch();
         }
         return m_total_count;
     }
@@ -98,8 +98,9 @@ public:
 
     void clear() override
     {
-        m_offset = 0;
+        m_query_param.i_offset = 0;
         m_initialized = false;
+        m_total_count = 0;
         m_item_list.clear();
     }
 
@@ -110,48 +111,36 @@ protected:
         {
             m_total_count = countTotalElements();
             if ( m_total_count > 0 )
-                m_item_list = const_cast<MLSlidingWindowModel<T>*>(this)->fetch( m_offset, BatchSize );
+                m_item_list = const_cast<MLSlidingWindowModel<T>*>(this)->fetch();
             m_initialized = true;
         }
 
         if ( m_total_count == 0 || idx >= m_total_count || idx < 0 )
             return nullptr;
 
-        if ( idx < m_offset )
+        if ( idx < m_query_param.i_offset ||  idx >= m_query_param.i_offset + m_item_list.size() )
         {
-            // Backward scroll, we need to reload previous elements
-            // Special case if we are reading from the beginning again (for instance
-            // after switching views or display type)
-            if ( idx == 0 )
-                m_offset = 0;
+            if (m_query_param.i_nbResults == 0)
+                m_query_param.i_offset = 0;
             else
-            {
-                // Otherwise read a new batch which ends with the new index
-                if ( idx > BatchSize )
-                    m_offset = idx - BatchSize + 1; // Add 1 to include the queried item
-                else
-                    m_offset = 0;
-            }
-            m_item_list = const_cast<MLSlidingWindowModel<T>*>(this)->fetch( m_offset, BatchSize );
+                m_query_param.i_offset = idx - idx % m_query_param.i_nbResults;
+            m_item_list = const_cast<MLSlidingWindowModel<T>*>(this)->fetch();
         }
-        else if ( idx >= m_offset + m_item_list.size() )
-        {
-            // Forward scroll, fetch a new complete window of items
-            m_offset += BatchSize;
-            m_item_list = const_cast<MLSlidingWindowModel<T>*>(this)->fetch( m_offset, BatchSize );
-        }
-        return m_item_list[idx - m_offset].get();
+
+        //db as changed
+        if ( idx - m_query_param.i_offset >= m_item_list.size() || idx - m_query_param.i_offset < 0 )
+            return nullptr;
+        return m_item_list[idx - m_query_param.i_offset].get();
     }
 
 private:
     virtual size_t countTotalElements() const = 0;
-    virtual std::vector<std::unique_ptr<T>> fetch(int offset, int nbElems) = 0;
+    virtual std::vector<std::unique_ptr<T>> fetch() = 0;
 
 protected:
     mutable std::vector<std::unique_ptr<T>> m_item_list;
 
 private:
-    mutable unsigned int m_offset;
     mutable bool m_initialized;
     mutable size_t m_total_count;
 };

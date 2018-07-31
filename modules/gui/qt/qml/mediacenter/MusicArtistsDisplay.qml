@@ -23,6 +23,8 @@
 
 import QtQuick 2.0
 import QtQuick.Controls 2.0
+import QtQuick.Controls 1.4
+import QtQuick.Layouts 1.0
 
 import org.videolan.medialib 0.1
 
@@ -31,9 +33,7 @@ import "qrc:///style/"
 
 Loader {
     id: viewLoader
-    property var model: MLArtistModel {
-        ml: medialib
-    }
+    sourceComponent: artistView
 
     // Force the data to be reloaded
     function reloadData() {
@@ -41,28 +41,37 @@ Loader {
         console.log( "Data reloaded" );
     }
 
-    sourceComponent: medialib.gridView ? gridViewComponent_id : listViewComponent_id
-
-    /* Grid View */
     Component {
-        id: gridViewComponent_id
-
-        Flickable {
-            ScrollBar.vertical: ScrollBar { }
+        id: artistView
+        SplitView {
             anchors.fill: parent
-            contentHeight: gridView_id.height
-            clip: true
-            ArtistGridView {
-                id: gridView_id
-                model: viewLoader.model
+
+            ArtistListView  {
+                id: artistList
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                Layout.minimumWidth: 250
+                model: MLArtistModel {
+                    ml: medialib
+                }
             }
-        }
-    }
-    /* List View */
-    Component {
-        id: listViewComponent_id
-        ArtistListView{
-            model: viewLoader.model
+            Flickable {
+                Layout.fillWidth: true
+                ScrollBar.vertical: ScrollBar { }
+                clip: true
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.right: parent.right
+                anchors.left: artistList.right
+                contentHeight: gridView_id.height
+                ArtistGridView {
+                    id: gridView_id
+                    anchors.fill: parent
+                    model: MLArtistModel {
+                        ml: medialib
+                    }
+                }
+            }
         }
     }
 }

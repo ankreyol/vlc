@@ -61,43 +61,8 @@ Loader {
     /* List View */
     Component {
         id: listViewComponent_id
-
-        ListView {
-            spacing: 2
-
+        ArtistListView{
             model: viewLoader.model
-            delegate : Utils.ListItem {
-                height: VLCStyle.icon_normal
-                width: parent.width
-
-                cover: Image {
-                    height: VLCStyle.icon_normal
-                    width: VLCStyle.icon_normal
-
-                    source: model.cover || VLCStyle.noArtCover
-                }
-                line1: Text{
-                    text: model.name || "Unknown artist"
-                    font.bold: true
-                    elide: Text.ElideRight
-                    color: VLCStyle.textColor
-                }
-
-                onItemClicked: {
-                    console.log("Clicked on : "+model.name);
-                    medialib.select( index );
-                }
-                onPlayClicked: {
-                    console.log('Clicked on play : '+model.name);
-                    medialib.addAndPlay( index )
-                }
-                onAddToPlaylistClicked: {
-                    console.log('Clicked on addToPlaylist : '+model.name);
-                    medialib.addToPlaylist( index );
-                }
-            }
-
-            ScrollBar.vertical: ScrollBar { }
         }
     }
 }

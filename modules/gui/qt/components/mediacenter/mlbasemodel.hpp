@@ -28,7 +28,7 @@ public:
     Q_INVOKABLE void sortByColumn(QByteArray name, Qt::SortOrder order);
     Q_INVOKABLE virtual const QObject *get(unsigned int idx) const = 0;
 
-    Q_PROPERTY( MLParentId parentId MEMBER m_parent )
+    Q_PROPERTY( MLParentId parentId READ parentId WRITE setParentId )
     Q_PROPERTY( MCMediaLib* ml READ ml WRITE setMl )
     Q_PROPERTY( unsigned int maxItems MEMBER m_nb_max_items )
 
@@ -42,6 +42,8 @@ protected:
         return VLC_ML_SORTING_DEFAULT;
     }
 
+    MLParentId parentId() const;
+    void setParentId(MLParentId parentId);
     MCMediaLib* ml() const;
     void setMl(MCMediaLib* ml);
 

@@ -29,6 +29,16 @@ void MLBaseModel::sortByColumn(QByteArray name, Qt::SortOrder order)
     clear();
 }
 
+MLParentId MLBaseModel::parentId() const
+{
+    return m_parent;
+}
+
+void MLBaseModel::setParentId(MLParentId parentId)
+{
+    m_parent = parentId;
+}
+
 MCMediaLib* MLBaseModel::ml() const
 {
     return m_mcMediaLib;

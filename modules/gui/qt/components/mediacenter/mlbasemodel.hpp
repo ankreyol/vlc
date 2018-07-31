@@ -28,12 +28,13 @@ public:
     Q_INVOKABLE void sortByColumn(QByteArray name, Qt::SortOrder order);
     Q_INVOKABLE virtual const QObject *get(unsigned int idx) const = 0;
 
-    Q_PROPERTY( MLParentId parentId READ parentId WRITE setParentId )
+    Q_PROPERTY( MLParentId parentId READ parentId WRITE setParentId NOTIFY parentIdChanged )
     Q_PROPERTY( MCMediaLib* ml READ ml WRITE setMl )
     Q_PROPERTY( unsigned int maxItems MEMBER m_nb_max_items )
 
 signals:
     void sortRoleChanged();
+    void parentIdChanged();
 
 protected:
     virtual void clear() = 0;

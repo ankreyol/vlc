@@ -37,6 +37,10 @@ MLParentId MLBaseModel::parentId() const
 void MLBaseModel::setParentId(MLParentId parentId)
 {
     m_parent = parentId;
+    beginResetModel();
+    clear();
+    endResetModel();
+    emit parentIdChanged();
 }
 
 MCMediaLib* MLBaseModel::ml() const

@@ -503,6 +503,7 @@ libqt_plugin_la_RES = \
 	gui/qt/qml/MainInterface.qml \
 	gui/qt/qml/SubBannerSources.qml \
 	gui/qt/qml/BannerSources.qml \
+	gui/qt/qml/mediacenter/ArtistGridView.qml \
 	gui/qt/qml/mediacenter/MCDisplay.qml \
 	gui/qt/qml/mediacenter/MusicAlbumsDisplay.qml \
 	gui/qt/qml/mediacenter/MusicAlbumsGridExpandDelegate.qml \

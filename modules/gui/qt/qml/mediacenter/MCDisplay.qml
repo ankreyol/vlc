@@ -114,90 +114,87 @@ Rectangle {
                 width: VLCStyle.widthSortBox
                 height: parent.height
                 textRole: "text"
-                model: ListModel {
-                    id: sortModel
-                    ListElement { text: "Alphabetic asc";  criteria: "title"; desc: Qt.AscendingOrder}
-                    ListElement { text: "Alphabetic desc"; criteria: "title"; desc: Qt.DescendingOrder }
-                    ListElement { text: "Duration asc";    criteria: "duration"; desc: Qt.AscendingOrder}
-                    ListElement { text: "Duration desc";   criteria: "duration"; desc: Qt.DescendingOrder }
-                    ListElement { text: "Date asc";        criteria: "release_year"; desc: Qt.AscendingOrder }
-                    ListElement { text: "Date desc";       criteria: "release_year"; desc: Qt.DescendingOrder}
-                    ListElement { text: "Artist asc";      criteria: "main_artist"; desc: Qt.AscendingOrder }
-                    ListElement { text: "Artist desc";     criteria: "main_artist"; desc: Qt.DescendingOrder }
-                }
-                onActivated: {
-                    var sorting = sortModel.get(index);
-                    medialib.albums.sortByColumn(sorting.criteria, sorting.desc)
+                model: viewLoader.children[viewLoader.currentIndex].sortModel
+                onCurrentIndexChanged: {
+                    var sorting = model.get(currentIndex);
+                    viewLoader.children[viewLoader.currentIndex].model.sortByColumn(sorting.criteria, sorting.desc)
                 }
             }
         }
 
-        /* The Presentation Bar */
-        //Loader {
-        //    id: presentationLoader_id
-        //
-        //    z:10
-        //    Layout.fillWidth: true
-        //    height: item.height
-        //    Layout.preferredHeight: height
-        //    Layout.minimumHeight: height
-        //    Layout.maximumHeight: height
-        //
-        //    sourceComponent: medialib.hasPresentation() ? presentationComponent_id : noPresentationComponent_id
-        //
-        //    // If the presentation bar should be displayed
-        //    Component {
-        //        id: presentationComponent_id
-        //
-        //        Presentation {
-        //            height: VLCStyle.heightBar_xlarge
-        //            Layout.preferredHeight: height
-        //            Layout.minimumHeight: height
-        //            Layout.maximumHeight: height
-        //
-        //            obj: medialib.getPresObject();
-        //        }
-        //    }
-        //    // If the presentation bar should be hidden
-        //    Component {
-        //        id: noPresentationComponent_id
-        //
-        //        Item {
-        //            height: 0
-        //            Layout.preferredHeight: height
-        //            Layout.minimumHeight: height
-        //            Layout.maximumHeight: height
-        //        }
-        //    }
-        //}
 
         /* The data elements */
         StackLayout  {
             id: viewLoader
-
             Layout.fillWidth: true
             //Layout.fillHeight: true
             currentIndex: bar.currentIndex
 
             // Display some 'Albums' items
             MusicAlbumsDisplay {
-                //enabled: viewLoader.currentIndex == 0
                 active: viewLoader.currentIndex == 0
+
+                model: MLAlbumModel {
+                    ml: medialib
+                }
+
+                property var sortModel: ListModel {
+                    ListElement { text: qsTr("Alphabetic asc");  criteria: "title"; desc: Qt.AscendingOrder}
+                    ListElement { text: qsTr("Alphabetic desc"); criteria: "title"; desc: Qt.DescendingOrder }
+                    ListElement { text: qsTr("Duration asc");    criteria: "duration"; desc: Qt.AscendingOrder}
+                    ListElement { text: qsTr("Duration desc");   criteria: "duration"; desc: Qt.DescendingOrder }
+                    ListElement { text: qsTr("Date asc");        criteria: "release_year"; desc: Qt.AscendingOrder }
+                    ListElement { text: qsTr("Date desc");       criteria: "release_year"; desc: Qt.DescendingOrder}
+                    ListElement { text: qsTr("Artist asc");      criteria: "main_artist"; desc: Qt.AscendingOrder }
+                    ListElement { text: qsTr("Artist desc");     criteria: "main_artist"; desc: Qt.DescendingOrder }
+                }
             }
+
             // Display some 'Artists' items
             MusicArtistsDisplay {
-                //enabled: viewLoader.currentIndex == 1
                 active: viewLoader.currentIndex == 1
+                model: MLArtistModel {
+                    ml: medialib
+                }
+
+                property var sortModel: ListModel {
+                    ListElement { text: qsTr("Alphabetic asc");  criteria: "title"; desc: Qt.AscendingOrder}
+                    ListElement { text: qsTr("Alphabetic desc"); criteria: "title"; desc: Qt.DescendingOrder }
+                }
             }
             // Display some 'Genres' items
             MusicGenresDisplay {
-                //enabled: viewLoader.currentIndex == 2
                 active: viewLoader.currentIndex == 2
+
+                model: MLGenreModel {
+                    ml: medialib
+                }
+
+                property var sortModel: ListModel {
+                    ListElement { text: qsTr("Alphabetic asc");  criteria: "title"; desc: Qt.AscendingOrder}
+                    ListElement { text: qsTr("Alphabetic desc"); criteria: "title"; desc: Qt.DescendingOrder }
+                }
             }
             // Display some 'Tracks' items
             MusicTracksDisplay {
-                //enabled: viewLoader.currentIndex == 3
                 active: viewLoader.currentIndex == 3
+
+                model:  MLAlbumTrackModel {
+                    ml: medialib
+                }
+
+                property var sortModel: ListModel {
+                    ListElement { text: qsTr("Alphabetic asc");  criteria: "title"; desc: Qt.AscendingOrder}
+                    ListElement { text: qsTr("Alphabetic desc"); criteria: "title"; desc: Qt.DescendingOrder }
+                    ListElement { text: qsTr("Track number asc");  criteria: "track_number"; desc: Qt.AscendingOrder}
+                    ListElement { text: qsTr("Track number desc"); criteria: "track_number"; desc: Qt.DescendingOrder }
+                    ListElement { text: qsTr("Duration asc");    criteria: "duration"; desc: Qt.AscendingOrder}
+                    ListElement { text: qsTr("Duration desc");   criteria: "duration"; desc: Qt.DescendingOrder }
+                    ListElement { text: qsTr("Date asc");        criteria: "release_year"; desc: Qt.AscendingOrder }
+                    ListElement { text: qsTr("Date desc");       criteria: "release_year"; desc: Qt.DescendingOrder}
+                    ListElement { text: qsTr("Artist asc");      criteria: "main_artist"; desc: Qt.AscendingOrder }
+                    ListElement { text: qsTr("Artist desc");     criteria: "main_artist"; desc: Qt.DescendingOrder }
+                }
             }
         }
     }

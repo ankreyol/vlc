@@ -35,6 +35,9 @@ Loader {
     id: artistViewLoader
     sourceComponent: artistView
     property var selectedArtistParentId
+    property var model: MLArtistModel {
+        ml: medialib
+    }
 
     Component {
         id: artistView
@@ -46,9 +49,7 @@ Loader {
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 Layout.minimumWidth: 250
-                model: MLArtistModel {
-                    ml: medialib
-                }
+                model: artistViewLoader.model
                 onItemClicked: function(model) {
                     artistViewLoader.selectedArtistParentId = model.id;
                 }

@@ -11,6 +11,15 @@ enum Role {
 
 }
 
+QHash<QByteArray, vlc_ml_sorting_criteria_t> MLAlbumTrackModel::M_names_to_criteria = {
+    {"id", VLC_ML_SORTING_DEFAULT},
+    {"title", VLC_ML_SORTING_ALPHA},
+    {"track_number", VLC_ML_SORTING_TRACKNUMBER},
+    {"release_year", VLC_ML_SORTING_RELEASEDATE},
+    {"main_artist", VLC_ML_SORTING_ARTIST},
+    {"duration", VLC_ML_SORTING_DURATION}
+};
+
 MLAlbumTrackModel::MLAlbumTrackModel(QObject *parent)
     : MLSlidingWindowModel<MLAlbumTrack>(parent)
 {
@@ -88,4 +97,9 @@ vlc_ml_sorting_criteria_t MLAlbumTrackModel::roleToCriteria(int role) const
     default:
         return VLC_ML_SORTING_DEFAULT;
     }
+}
+
+vlc_ml_sorting_criteria_t MLAlbumTrackModel::nameToCriteria(QByteArray name) const
+{
+    return M_names_to_criteria.value(name, VLC_ML_SORTING_DEFAULT);
 }

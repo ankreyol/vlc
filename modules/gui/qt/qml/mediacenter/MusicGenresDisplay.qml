@@ -31,15 +31,7 @@ import "qrc:///style/"
 
 Loader {
     id: viewLoader
-    property var model:  MLGenreModel {
-        ml: medialib
-    }
-
-    // Force the data to be reloaded
-    function reloadData() {
-        viewLoader.item.model = medialib.getGenres();
-        console.log( "Data reloaded" );
-    }
+    property var model: null
 
     sourceComponent: medialib.gridView ? gridViewComponent_id : listViewComponent_id
 

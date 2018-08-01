@@ -31,9 +31,7 @@ import "qrc:///style/"
 
 Item {
     id: viewLoader
-    property var model: MLAlbumModel {
-        ml: medialib
-    }
+    property var model: null
 
     property int currentId: -1;
     onCurrentIdChanged: {

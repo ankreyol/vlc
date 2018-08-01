@@ -11,6 +11,10 @@ namespace {
     };
 }
 
+QHash<QByteArray, vlc_ml_sorting_criteria_t> MLArtistModel::M_names_to_criteria = {
+    {"title", VLC_ML_SORTING_ALPHA},
+};
+
 MLArtistModel::MLArtistModel(QObject *parent)
     : MLSlidingWindowModel(parent)
 {
@@ -87,4 +91,9 @@ vlc_ml_sorting_criteria_t MLArtistModel::roleToCriteria(int role) const
     default :
         return VLC_ML_SORTING_DEFAULT;
     }
+}
+
+vlc_ml_sorting_criteria_t MLArtistModel::nameToCriteria(QByteArray name) const
+{
+    return M_names_to_criteria.value(name, VLC_ML_SORTING_DEFAULT);
 }

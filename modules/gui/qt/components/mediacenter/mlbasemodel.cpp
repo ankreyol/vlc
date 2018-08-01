@@ -26,7 +26,9 @@ void MLBaseModel::sortByColumn(QByteArray name, Qt::SortOrder order)
 {
     m_query_param.b_desc = (order == Qt::SortOrder::DescendingOrder);
     m_query_param.i_sort = nameToCriteria(name);
+    beginResetModel();
     clear();
+    endResetModel();
 }
 
 MLParentId MLBaseModel::parentId() const

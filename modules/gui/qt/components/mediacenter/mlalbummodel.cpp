@@ -14,7 +14,7 @@ namespace {
     };
 }
 
-QHash<QByteArray, vlc_ml_sorting_criteria_t> MLAlbumModel::m_names_to_criteria = {
+QHash<QByteArray, vlc_ml_sorting_criteria_t> MLAlbumModel::M_names_to_criteria = {
     {"id", VLC_ML_SORTING_DEFAULT},
     {"title", VLC_ML_SORTING_ALBUM},
     {"release_year", VLC_ML_SORTING_RELEASEDATE},
@@ -90,7 +90,7 @@ std::vector<std::unique_ptr<MLAlbum>> MLAlbumModel::fetch( )
 
 vlc_ml_sorting_criteria_t MLAlbumModel::nameToCriteria(QByteArray name) const
 {
-    return m_names_to_criteria.value(name, VLC_ML_SORTING_DEFAULT);
+    return M_names_to_criteria.value(name, VLC_ML_SORTING_DEFAULT);
 }
 
 vlc_ml_sorting_criteria_t MLAlbumModel::roleToCriteria(int role) const

@@ -72,7 +72,7 @@ Rectangle {
             }
 
             /* The list of the tracks available */
-            ListView {
+            MusicTrackListDisplay {
                 id: expand_track_id
 
                 Layout.leftMargin: VLCStyle.margin_large
@@ -82,42 +82,10 @@ Rectangle {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
-                spacing: VLCStyle.margin_xxxsmall
-                clip: true
-                focus: true
-                ScrollBar.vertical: ScrollBar { }
-
                 model: MLAlbumTrackModel {
                     ml: medialib
                     parentId: root.model.id
                 }
-
-                delegate: Rectangle {
-                    height: txt_id.height
-                    width: parent.width
-                    color: {
-                        if ( mouse.containsMouse)
-                            VLCStyle.hoverBgColor
-                        else if (index % 2)
-                            VLCStyle.bgColor
-                        else VLCStyle.bgColorAlt
-                    }
-
-                    MouseArea {
-                        id: mouse
-                        anchors.fill: parent
-                        hoverEnabled: true
-                    }
-
-                    Text {
-                        id: txt_id
-                        text: (model.title || "Unknown track")+" - "+model.duration
-                        elide: Text.ElideRight
-                        font.pixelSize: VLCStyle.fontSize_normal
-                        color: VLCStyle.textColor
-                    }
-                }
-
             }
         }
     }

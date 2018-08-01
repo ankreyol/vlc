@@ -186,14 +186,16 @@ Rectangle {
                 property var sortModel: ListModel {
                     ListElement { text: qsTr("Alphabetic asc");  criteria: "title"; desc: Qt.AscendingOrder}
                     ListElement { text: qsTr("Alphabetic desc"); criteria: "title"; desc: Qt.DescendingOrder }
-                    ListElement { text: qsTr("Track number asc");  criteria: "track_number"; desc: Qt.AscendingOrder}
-                    ListElement { text: qsTr("Track number desc"); criteria: "track_number"; desc: Qt.DescendingOrder }
-                    ListElement { text: qsTr("Duration asc");    criteria: "duration"; desc: Qt.AscendingOrder}
-                    ListElement { text: qsTr("Duration desc");   criteria: "duration"; desc: Qt.DescendingOrder }
-                    ListElement { text: qsTr("Date asc");        criteria: "release_year"; desc: Qt.AscendingOrder }
-                    ListElement { text: qsTr("Date desc");       criteria: "release_year"; desc: Qt.DescendingOrder}
+                    ListElement { text: qsTr("Album asc");      criteria: "album_title"; desc: Qt.AscendingOrder }
+                    ListElement { text: qsTr("Album desc");     criteria: "album_title"; desc: Qt.DescendingOrder }
                     ListElement { text: qsTr("Artist asc");      criteria: "main_artist"; desc: Qt.AscendingOrder }
                     ListElement { text: qsTr("Artist desc");     criteria: "main_artist"; desc: Qt.DescendingOrder }
+                    ListElement { text: qsTr("Date asc");        criteria: "release_year"; desc: Qt.AscendingOrder }
+                    ListElement { text: qsTr("Date desc");       criteria: "release_year"; desc: Qt.DescendingOrder}
+                    ListElement { text: qsTr("Duration asc");    criteria: "duration"; desc: Qt.AscendingOrder}
+                    ListElement { text: qsTr("Duration desc");   criteria: "duration"; desc: Qt.DescendingOrder }
+                    ListElement { text: qsTr("Track number asc");  criteria: "track_number"; desc: Qt.AscendingOrder}
+                    ListElement { text: qsTr("Track number desc"); criteria: "track_number"; desc: Qt.DescendingOrder }
                 }
             }
         }

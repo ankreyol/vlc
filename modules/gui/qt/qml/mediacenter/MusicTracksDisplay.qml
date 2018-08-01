@@ -32,75 +32,14 @@ Loader {
     id: viewLoader
     property var model: null
 
-    sourceComponent: medialib.gridView ? gridViewComponent_id : listViewComponent_id
-
-    /* Grid View */
-    Component {
-        id: gridViewComponent_id
-
-        Flickable {
-            ScrollBar.vertical: ScrollBar { }
-            anchors.fill: parent
-            contentHeight: gridView_id.height
-            clip: true
-            Utils.ExpandGridView {
-                id: gridView_id
-
-                cellWidth: VLCStyle.cover_normal
-                cellHeight: VLCStyle.cover_normal + VLCStyle.fontSize_small + VLCStyle.margin_xsmall
-
-                model: viewLoader.model
-                delegate : Utils.GridItem {
-                    width: gridView_id.cellWidth
-                    height: gridView_id.cellHeight
-
-                    cover: Image { source: model.cover || VLCStyle.noArtCover }
-                    name: model.title || "Unknown track"
-
-                    onItemClicked: console.log('Clicked on details : '+model.title)
-                    onPlayClicked: {
-                        console.log('Clicked on play : '+model.title);
-                        medialib.addAndPlay(index)
-                    }
-                    onAddToPlaylistClicked: {
-                        console.log('Clicked on addToPlaylist : '+model.title);
-                        medialib.addToPlaylist(index);
-                    }
-                }
-            }
-        }
-    }
+    sourceComponent: listViewComponent_id
 
     /* List View */
     Component {
         id: listViewComponent_id
-        ListView {
-            spacing: VLCStyle.margin_xxxsmall
-
+        MusicTrackListDisplay {
+            id: tracklistdisplay_id
             model: viewLoader.model
-            delegate : Utils.ListItem {
-                height: VLCStyle.heightBar_small
-                width: parent.width
-
-                line1: Text{
-                    text: (model.title || "Unknown track")+" - "+model.duration
-                    font.bold: true
-                    elide: Text.ElideRight
-                    color: VLCStyle.textColor
-                }
-
-                onItemClicked: console.log("Clicked on : "+model.title)
-                onPlayClicked: {
-                    console.log('Clicked on play : '+model.title);
-                    medialib.addAndPlay(index)
-                }
-                onAddToPlaylistClicked: {
-                    console.log('Clicked on addToPlaylist : '+model.title);
-                    medialib.addToPlaylist(index);
-                }
-            }
-
-            ScrollBar.vertical: ScrollBar { }
         }
     }
 }

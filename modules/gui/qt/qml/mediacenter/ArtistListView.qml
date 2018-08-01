@@ -5,6 +5,9 @@ import "qrc:///utils/" as Utils
 import "qrc:///style/"
 
 ListView {
+    id: artistListView
+    property var onItemClicked
+
     spacing: 2
     delegate : Utils.ListItem {
         height: VLCStyle.icon_normal
@@ -24,9 +27,9 @@ ListView {
         }
 
         onItemClicked: {
-            console.log("Clicked on : "+model.name);
-            medialib.select( index );
+            artistListView.onItemClicked(model)
         }
+
         onPlayClicked: {
             console.log('Clicked on play : '+model.name);
             medialib.addAndPlay( index )

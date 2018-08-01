@@ -6,7 +6,9 @@ enum Role {
     TRACK_TITLE = Qt::UserRole + 1,
     TRACK_COVER,
     TRACK_NUMBER,
-    TRACK_DURATION
+    TRACK_DURATION,
+    TRACK_ALBUM,
+    TRACK_ARTIST,
 };
 
 }
@@ -14,6 +16,7 @@ enum Role {
 QHash<QByteArray, vlc_ml_sorting_criteria_t> MLAlbumTrackModel::M_names_to_criteria = {
     {"id", VLC_ML_SORTING_DEFAULT},
     {"title", VLC_ML_SORTING_ALPHA},
+    {"album_title", VLC_ML_SORTING_ALBUM},
     {"track_number", VLC_ML_SORTING_TRACKNUMBER},
     {"release_year", VLC_ML_SORTING_RELEASEDATE},
     {"main_artist", VLC_ML_SORTING_ARTIST},
@@ -45,6 +48,10 @@ QVariant MLAlbumTrackModel::data(const QModelIndex &index, int role) const
         return QVariant::fromValue( ml_track->getTrackNumber() );
     case TRACK_DURATION :
         return QVariant::fromValue( ml_track->getDuration() );
+    case TRACK_ALBUM:
+        return QVariant::fromValue( ml_track->getAlbumTitle() );
+    case TRACK_ARTIST:
+        return QVariant::fromValue( ml_track->getArtist() );
     default :
         return QVariant();
     }
@@ -56,7 +63,9 @@ QHash<int, QByteArray> MLAlbumTrackModel::roleNames() const
         { TRACK_TITLE, "title" },
         { TRACK_COVER, "cover" },
         { TRACK_NUMBER, "number" },
-        { TRACK_DURATION, "duration" }
+        { TRACK_DURATION, "duration" },
+        { TRACK_ALBUM, "album_title"},
+        { TRACK_ARTIST, "main_artist"},
     };
 }
 
@@ -81,7 +90,7 @@ std::vector<std::unique_ptr<MLAlbumTrack>> MLAlbumTrackModel::fetch()
 
     std::vector<std::unique_ptr<MLAlbumTrack>> res;
     for( const vlc_ml_media_t& media: ml_range_iterate<vlc_ml_media_t>( media_list ) )
-        res.emplace_back( std::unique_ptr<MLAlbumTrack>{ new MLAlbumTrack( &media ) } );
+        res.emplace_back( std::unique_ptr<MLAlbumTrack>{ new MLAlbumTrack( m_ml, &media ) } );
     return res;
 }
 

@@ -25,7 +25,7 @@
 #include "mlalbumtrack.hpp"
 #include "mlhelper.hpp"
 
-MLAlbumTrack::MLAlbumTrack(const vlc_ml_media_t *_data, QObject *_parent )
+MLAlbumTrack::MLAlbumTrack(vlc_medialibrary_t* _ml, const vlc_ml_media_t *_data, QObject *_parent )
     : QObject( _parent )
     , m_id         ( _data->i_id)
     , m_title      ( QString::fromUtf8( _data->psz_title ) )
@@ -55,6 +55,20 @@ MLAlbumTrack::MLAlbumTrack(const vlc_ml_media_t *_data, QObject *_parent )
             m_mrl = QString::fromUtf8(file.psz_mrl);
             break;
         }
+
+    if ( _data->album_track.i_album_id != 0 )
+    {
+        ml_unique_ptr<vlc_ml_album_t> album(vlc_ml_get_album(_ml, _data->album_track.i_album_id));
+        if (album)
+             m_albumTitle =  album->psz_title;
+    }
+
+    if ( _data->album_track.i_artist_id != 0 )
+    {
+        ml_unique_ptr<vlc_ml_artist_t> artist(vlc_ml_get_artist(_ml, _data->album_track.i_artist_id));
+        if (artist)
+             m_artist =  artist->psz_name;
+    }
 }
 
 uint64_t MLAlbumTrack::getId() const
@@ -70,6 +84,11 @@ QString MLAlbumTrack::getTitle() const
 QString MLAlbumTrack::getAlbumTitle() const
 {
     return m_albumTitle;
+}
+
+QString MLAlbumTrack::getArtist() const
+{
+    return m_artist;
 }
 
 QString MLAlbumTrack::getCover() const
@@ -90,19 +109,4 @@ QString MLAlbumTrack::getDuration() const
 QString MLAlbumTrack::getMRL() const
 {
     return m_mrl;
-}
-
-QString MLAlbumTrack::getPresName() const
-{
-    return m_title;
-}
-
-QString MLAlbumTrack::getPresImage() const
-{
-    return "qrc:///noart.png";
-}
-
-QString MLAlbumTrack::getPresInfo() const
-{
-    return "";
 }

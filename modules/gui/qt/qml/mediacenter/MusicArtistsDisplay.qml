@@ -24,7 +24,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
 import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.0
+import QtQuick.Layouts 1.3
 
 import org.videolan.medialib 0.1
 
@@ -32,14 +32,9 @@ import "qrc:///utils/" as Utils
 import "qrc:///style/"
 
 Loader {
-    id: viewLoader
+    id: artistViewLoader
     sourceComponent: artistView
-
-    // Force the data to be reloaded
-    function reloadData() {
-        viewLoader.item.model = medialib.getArtists();
-        console.log( "Data reloaded" );
-    }
+    property var selectedArtistParentId
 
     Component {
         id: artistView
@@ -54,21 +49,36 @@ Loader {
                 model: MLArtistModel {
                     ml: medialib
                 }
+                onItemClicked: function(model) {
+                    artistViewLoader.selectedArtistParentId = model.id;
+                }
             }
-            Flickable {
-                Layout.fillWidth: true
-                ScrollBar.vertical: ScrollBar { }
-                clip: true
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.right: parent.right
-                anchors.left: artistList.right
-                contentHeight: gridView_id.height
-                ArtistGridView {
-                    id: gridView_id
+
+            StackLayout {
+                currentIndex: artistViewLoader.selectedArtistParentId ? 1 : 0
+                // Display all artists when none is selected from the side menu
+                Flickable {
+                    Layout.fillWidth: true
+                    ScrollBar.vertical: ScrollBar { }
+                    clip: true
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    anchors.right: parent.right
+                    contentHeight: artistGridView.height
+                    ArtistGridView {
+                        id: artistGridView
+                        anchors.fill: parent
+                        model: MLArtistModel {
+                            ml: medialib
+                        }
+                    }
+                }
+                // Display selected artist albums
+                MusicAlbumsDisplay {
                     anchors.fill: parent
-                    model: MLArtistModel {
+                    model: MLAlbumModel {
                         ml: medialib
+                        parentId: artistViewLoader.selectedArtistParentId
                     }
                 }
             }

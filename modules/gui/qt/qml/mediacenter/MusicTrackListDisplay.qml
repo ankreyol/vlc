@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4 as QC14
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.1
 import org.videolan.medialib 0.1
 import "qrc:///utils/" as Utils
@@ -8,6 +8,7 @@ import "qrc:///style/"
 
 QC14.TableView
 {
+    id: root
     sortIndicatorVisible: true
     selectionMode: QC14.SelectionMode.ExtendedSelection
 
@@ -21,12 +22,13 @@ QC14.TableView
     property alias parentId: albumModel.parentId
 
     property var columnModel: ListModel {
-        ListElement{ role: "title"; title: qsTr("TITLE") }
-        ListElement{ role: "main_artist"; title: qsTr("ARTIST") }
-        ListElement{ role: "album_title"; title: qsTr("ALBUM") }
-        ListElement{ role: "duration"; title: qsTr("DURATION") }
+        ListElement{ role: "track_number"; visible: true;  title: qsTr("TRACK NB"); showSection: "" }
+        ListElement{ role: "disc_number";  visible: false;  title:qsTr("DISC NB");  showSection: "" }
+        ListElement{ role: "title";        visible: true;  title: qsTr("TITLE");    showSection: "title" }
+        ListElement{ role: "main_artist";  visible: true;  title: qsTr("ARTIST");   showSection: "main_artist" }
+        ListElement{ role: "album_title";  visible: false; title: qsTr("ALBUM");    showSection: "album_title" }
+        ListElement{ role: "duration";     visible: true;  title: qsTr("DURATION"); showSection: "" }
     }
-
     Component {
         id: tablecolumn_model
         QC14.TableViewColumn {
@@ -36,11 +38,48 @@ QC14.TableView
     Component.onCompleted: {
         for( var i=0; i < columnModel.count; i++ )
         {
-            var col = addColumn(tablecolumn_model)
-            col.role = columnModel.get(i).role
-            col.title = columnModel.get(i).title
+            if (columnModel.get(i).visible) {
+                var col = addColumn(tablecolumn_model)
+                col.role = columnModel.get(i).role
+                col.title = columnModel.get(i).title
+            }
         }
     }
+
+
+    Menu {
+        id: headerMenu
+        onActiveFocusChanged: {
+            if (!activeFocus)
+                close()
+        }
+
+        Repeater {
+            model: columnModel
+            MenuItem {
+                text: model.title
+                checkable: true
+                checked: model.visible
+
+                onTriggered: {
+                    model.visible = checked
+                    if (checked)  {
+                        var col = addColumn(tablecolumn_model)
+                        col.role = model.role
+                        col.title = model.title
+                    } else {
+                        for (var i= 0; i <  columnCount; i++ ) {
+                            if ( getColumn(i).role === model.role ) {
+                                removeColumn(i)
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     itemDelegate: Text {
         text: styleData.value
@@ -49,9 +88,22 @@ QC14.TableView
         color: VLCStyle.textColor
     }
 
+
     headerDelegate: Rectangle {
         height: textItem.implicitHeight * 1.2
         color: VLCStyle.buttonColor
+
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.RightButton | Qt.LeftButton | Qt.MiddleButton
+            onClicked: {
+                //FIXME Qt 5.10 introduce popup
+                headerMenu.open(mouse.x, mouse.y)
+                var pos  = mapToItem(root, mouse.x, mouse.y)
+                headerMenu.x = pos.x
+                headerMenu.y = pos.y
+            }
+        }
 
         Text {
             id: textItem
@@ -107,13 +159,13 @@ QC14.TableView
         model.sortByColumn(getColumn(sortIndicatorColumn).role, sortIndicatorOrder)
     }
 
-    //section.property : "title"
-    //section.criteria: ViewSection.FirstCharacter
-    //section.delegate: Text {
-    //    text: section
-    //    elide: Text.ElideRight
-    //    font.pixelSize: VLCStyle.fontSize_xlarge
-    //    color: VLCStyle.textColor
-    //}
+    section.property : columnModel.get(sortIndicatorColumn).showSection
+    section.criteria: ViewSection.FirstCharacter
+    section.delegate: Text {
+        text: section
+        elide: Text.ElideRight
+        font.pixelSize: VLCStyle.fontSize_xlarge
+        color: VLCStyle.textColor
+    }
 }
 

@@ -85,8 +85,8 @@ Rectangle {
                 parentId : root.model.id
 
                 columnModel: ListModel {
-                    ListElement{ role: "title"; title: qsTr("TITLE") }
-                    ListElement{ role: "duration"; title: qsTr("DURATION") }
+                    ListElement{ role: "title";    visible: true; title: qsTr("TITLE"); showSection: "" }
+                    ListElement{ role: "duration"; visible: true; title: qsTr("DURATION"); showSection: "" }
                 }
             }
         }

@@ -49,6 +49,57 @@ QC14.TableView
         color: VLCStyle.textColor
     }
 
+    headerDelegate: Rectangle {
+        height: textItem.implicitHeight * 1.2
+        color: VLCStyle.buttonColor
+
+        Text {
+            id: textItem
+            text: styleData.value
+            elide: Text.ElideRight
+            font {
+                bold: true
+                pixelSize: VLCStyle.fontSize_normal
+            }
+
+            anchors {
+                fill: parent
+                leftMargin: VLCStyle.margin_xxsmall
+                rightMargin: VLCStyle.margin_xxsmall
+            }
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignLeft
+
+            color: VLCStyle.buttonTextColor
+        }
+
+        Text {
+            anchors {
+                right: parent.right
+                leftMargin: VLCStyle.margin_xxsmall
+                rightMargin: VLCStyle.margin_xxsmall
+            }
+            visible: styleData.column === sortIndicatorColumn
+            text: sortIndicatorOrder === Qt.AscendingOrder ? "⯆" : "⯅"
+            color: VLCStyle.vlc_orange
+        }
+        //right handle
+        Rectangle {
+            color: VLCStyle.buttonBorderColor
+            height: parent.height * 0.8
+            width: 1
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        //line below
+        Rectangle {
+            color: VLCStyle.buttonBorderColor
+            height: 1
+            width: parent.width
+            anchors.bottom: parent.bottom
+        }
+    }
+
     onSortIndicatorColumnChanged: {
         model.sortByColumn(getColumn(sortIndicatorColumn).role, sortIndicatorOrder)
     }

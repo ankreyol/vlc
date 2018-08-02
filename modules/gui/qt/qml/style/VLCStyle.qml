@@ -15,6 +15,14 @@ Item {
             state = "day"
     }
 
+
+    function blendColors( a, b, blend ) {
+        return Qt.rgba( a.r * blend + b.r * (1. - blend),
+                        a.g * blend + b.g * (1. - blend),
+                        a.b * blend + b.b * (1. - blend),
+                        a.a * blend + b.a * (1. - blend))
+    }
+
     state: "system"
     states: [
         State {
@@ -24,6 +32,10 @@ Item {
 
                 bgColor: "white";
                 textColor: "black";
+
+                buttonColor: bgColor;
+                buttonTextColor: textColor;
+                buttonBorderColor: blendColors(buttonColor, buttonTextColor, 0.8)
 
                 bgColor_removeFromPlaylist: "#CC0000";
                 textColor_removeFromPlaylist: "white";
@@ -42,6 +54,10 @@ Item {
                 bgColor: "black";
                 textColor: "white";
 
+                buttonColor: bgColor;
+                buttonTextColor: textColor;
+                buttonBorderColor: blendColors(buttonColor, buttonTextColor, 0.8)
+
                 bgColor_removeFromPlaylist: "#CC0000";
                 textColor_removeFromPlaylist: "white";
 
@@ -59,6 +75,10 @@ Item {
                 bgColor: myPalette.base;
                 bgColorAlt: myPalette.alternateBase;
                 textColor: myPalette.text;
+
+                buttonColor: myPalette.button;
+                buttonTextColor: myPalette.buttonText;
+                buttonBorderColor: blendColors(buttonColor, buttonTextColor, 0.8)
 
                 bgColor_removeFromPlaylist: "#CC0000";
                 textColor_removeFromPlaylist: "#FFFFFF";
@@ -122,6 +142,10 @@ Item {
     property color bgColor: myPalette.base;
     property color textColor: myPalette.text;
     property color bgColorAlt: myPalette.alternateBase;
+
+    property color buttonColor: myPalette.button;
+    property color buttonTextColor: myPalette.buttonText;
+    property color buttonBorderColor: blendColors(myPalette.button, myPalette.buttonText, 0);
 
     property color bgColor_removeFromPlaylist: "#CC0000";
     property color textColor_removeFromPlaylist: "white";

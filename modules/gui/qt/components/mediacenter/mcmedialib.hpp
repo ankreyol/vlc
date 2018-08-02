@@ -70,6 +70,7 @@ public:
         std::shared_ptr<PLModel> _pl_model,
         QObject* _parent = nullptr
     );
+    virtual ~MCMediaLib();
 
     Q_INVOKABLE QVariant hasPresentation();
     Q_INVOKABLE void backPresentation();
@@ -93,6 +94,8 @@ public:
 
     vlc_medialibrary_t* vlcMl();
 
+    static void onMediaLibraryEvent( void* data, const vlc_ml_event_t* event );
+
 signals:
     void gridViewChanged();
     void categoryChanged();
@@ -101,6 +104,11 @@ signals:
     void artistsChanged();
     void genreChanged();
     void tracksChanged();
+
+    void discoveryStarted( QString entryPoint );
+    void discoveryCompleted( QString entryPoint );
+    void discoveryProgress( QString entryPoint );
+    void progressUpdated( quint32 percent );
 
 private:
     intf_thread_t* m_intf;
@@ -114,6 +122,7 @@ private:
 
     /* Medialibrary */
     vlc_medialibrary_t* m_ml;
+    void* m_event_handle;
 
     void invokeQML(const char *func );
 };

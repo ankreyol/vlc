@@ -25,6 +25,8 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
+import QtQuick.Controls 2.3
+
 import "qrc:///style/"
 
 import "qrc:///mediacenter/" as MC
@@ -37,6 +39,12 @@ Item {
     function changedCategory() { mcDisplay.changedCategory(); }
     function changedView() { mcDisplay.changedView(); }
     function reloadPresentation() { mcDisplay.reloadPresentation(); }
+
+    Connections {
+        target: medialib
+        onProgressUpdated: progressBar_id.value = percent
+        onDiscoveryProgress: progressText_id.text = entryPoint
+    }
 
     SplitView {
         anchors.fill: parent
@@ -91,7 +99,22 @@ Item {
             default_width: VLCStyle.defaultWidthPlaylist
         }
     }
-
+    ProgressBar {
+        id: progressBar_id
+        from: 0
+        to: 100
+        visible: value < 100
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        height: progressText_id.height
+        anchors.topMargin: 10
+        anchors.bottomMargin: 10
+        Text {
+            id: progressText_id
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+    }
 
 
 

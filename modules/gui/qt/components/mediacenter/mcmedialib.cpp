@@ -41,6 +41,12 @@ MCMediaLib::MCMediaLib(
     , m_currentCat ( CAT_MUSIC_ALBUM )
 {
     m_ml = vlc_ml_get(_intf);
+    m_event_handle = vlc_ml_event_register_callback( m_ml, MCMediaLib::onMediaLibraryEvent, this );
+}
+
+MCMediaLib::~MCMediaLib()
+{
+    vlc_ml_event_unregister_callback( m_ml, m_event_handle );
 }
 
 // Are we exploring a specific item or just browsing generic category
@@ -260,6 +266,28 @@ void MCMediaLib::selectSource( const QString & )
 vlc_medialibrary_t* MCMediaLib::vlcMl()
 {
     return vlc_ml_get( m_intf );
+}
+
+void MCMediaLib::onMediaLibraryEvent( void* data, const vlc_ml_event_t* event )
+{
+    MCMediaLib* self = static_cast<MCMediaLib*>( data );
+    switch ( event->i_type )
+    {
+        case VLC_ML_EVENT_PROGRESS_UPDATED:
+            self->emit progressUpdated( event->i_progress );
+            break;
+        case VLC_ML_EVENT_DISCOVERY_STARTED:
+            self->emit discoveryStarted( event->psz_entry_point );
+            break;
+        case VLC_ML_EVENT_DISCOVERY_PROGRESS:
+            self->emit discoveryProgress( event->psz_entry_point );
+            break;
+        case VLC_ML_EVENT_DISCOVERY_COMPLETED:
+            self->emit discoveryCompleted( event->psz_entry_point );
+            break;
+        default:
+            break;
+    }
 }
 
 void MCMediaLib::getMovies()

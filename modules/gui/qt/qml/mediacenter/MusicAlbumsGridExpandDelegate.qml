@@ -86,6 +86,11 @@ Rectangle {
                     ml: medialib
                     parentId: root.model.id
                 }
+
+                columnModel: ListModel {
+                    ListElement{ role: "title"; title: qsTr("TITLE") }
+                    ListElement{ role: "duration"; title: qsTr("DURATION") }
+                }
             }
         }
     }

@@ -129,7 +129,7 @@ void MediaLibrary::onDiscoveryStarted( const std::string& entryPoint )
         .i_type = VLC_ML_EVENT_DISCOVERY_STARTED,
         .psz_entry_point = entryPoint.c_str()
     };
-    vlc_ml_event_send( m_vlc_ml, &evt );
+    m_pf_send( m_vlc_ml, &evt );
 }
 
 void MediaLibrary::onDiscoveryProgress( const std::string& entryPoint )
@@ -138,7 +138,7 @@ void MediaLibrary::onDiscoveryProgress( const std::string& entryPoint )
         .i_type = VLC_ML_EVENT_DISCOVERY_PROGRESS,
         .psz_entry_point = entryPoint.c_str()
     };
-    vlc_ml_event_send( m_vlc_ml, &evt );
+    m_pf_send( m_vlc_ml, &evt );
 }
 
 void MediaLibrary::onDiscoveryCompleted( const std::string& entryPoint )
@@ -147,7 +147,7 @@ void MediaLibrary::onDiscoveryCompleted( const std::string& entryPoint )
         .i_type = VLC_ML_EVENT_DISCOVERY_COMPLETED,
         .psz_entry_point = entryPoint.c_str()
     };
-    vlc_ml_event_send( m_vlc_ml, &evt );
+    m_pf_send( m_vlc_ml, &evt );
 }
 
 void MediaLibrary::onReloadStarted( const std::string& )
@@ -176,7 +176,7 @@ void MediaLibrary::onParsingStatsUpdated( uint32_t percent )
         .i_type = VLC_ML_EVENT_PROGRESS_UPDATED,
         .i_progress = percent
     };
-    vlc_ml_event_send( m_vlc_ml, &evt );
+    m_pf_send( m_vlc_ml, &evt );
 }
 
 void MediaLibrary::onBackgroundTasksIdleChanged( bool )
@@ -187,8 +187,9 @@ void MediaLibrary::onMediaThumbnailReady( medialibrary::MediaPtr, bool )
 {
 }
 
-MediaLibrary::MediaLibrary( vlc_medialibrary_t* ml )
+MediaLibrary::MediaLibrary( vlc_medialibrary_t* ml, vlc_ml_pf_send_event pf_send )
     : m_vlc_ml( ml )
+    , m_pf_send( pf_send )
 {
 }
 
@@ -1191,13 +1192,13 @@ static int Control( vlc_medialibrary_t* module, int query, ... )
     return res;
 }
 
-static int Open( vlc_object_t* obj )
+static int Open( vlc_object_t* obj, vlc_ml_pf_send_event pf_send )
 {
     vlc_medialibrary_t* p_ml = reinterpret_cast<vlc_medialibrary_t*>( obj );
 
     try
     {
-        p_ml->p_sys = new MediaLibrary( p_ml );
+        p_ml->p_sys = new MediaLibrary( p_ml, pf_send );
     }
     catch ( const std::exception& ex )
     {

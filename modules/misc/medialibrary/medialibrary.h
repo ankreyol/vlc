@@ -103,7 +103,7 @@ private:
 class MediaLibrary : public medialibrary::IMediaLibraryCb
 {
 public:
-    MediaLibrary( vlc_medialibrary_t* ml );
+    MediaLibrary( vlc_medialibrary_t* ml, vlc_ml_pf_send_event m_pf_send );
     bool Start();
     int Control( int query, va_list args );
     int List( int query, const vlc_ml_query_params_t* params, va_list args );
@@ -130,6 +130,7 @@ private:
     vlc_medialibrary_t* m_vlc_ml;
     std::unique_ptr<Logger> m_logger;
     std::unique_ptr<medialibrary::IMediaLibrary> m_ml;
+    vlc_ml_pf_send_event m_pf_send;
 
     // IMediaLibraryCb interface
 public:

@@ -25,9 +25,30 @@
 #include <vlc_common.h>
 #include <vlc_media_library.h>
 #include <vlc_modules.h>
+#include <vlc_list.h>
+#include <vlc_threads.h>
 #include <libvlc.h>
 
 #include <assert.h>
+
+struct ml_callback_t
+{
+    vlc_ml_callback_t pf_cb;
+    void* p_data;
+    struct vlc_list node;
+};
+
+struct ml_priv_t
+{
+    vlc_medialibrary_t ml;
+    vlc_mutex_t lock;
+    struct vlc_list cbs;
+};
+
+static inline struct ml_priv_t *ml_priv( vlc_medialibrary_t* p_ml )
+{
+    return container_of( p_ml, struct ml_priv_t, ml );
+}
 
 void vlc_ml_entrypoints_release( vlc_ml_entrypoint_t* p_list, size_t i_nb_items )
 {
@@ -40,10 +61,13 @@ void vlc_ml_entrypoints_release( vlc_ml_entrypoint_t* p_list, size_t i_nb_items 
 
 vlc_medialibrary_t* libvlc_MlCreate( libvlc_int_t* p_libvlc  )
 {
-    vlc_medialibrary_t *p_ml = vlc_custom_create( VLC_OBJECT( p_libvlc ),
-                                                  sizeof( *p_ml ), "medialibrary" );
-    if ( unlikely( p_ml == NULL ) )
+    struct ml_priv_t *p_priv = vlc_custom_create( VLC_OBJECT( p_libvlc ),
+                                                  sizeof( *p_priv ), "medialibrary" );
+    if ( unlikely( p_priv == NULL ) )
         return NULL;
+    vlc_mutex_init( &p_priv->lock );
+    vlc_list_init( &p_priv->cbs );
+    vlc_medialibrary_t* p_ml = &p_priv->ml;
     p_ml->p_module = module_need( p_ml, "medialibrary", NULL, false );
     if ( p_ml->p_module == NULL )
     {
@@ -57,6 +81,9 @@ void libvlc_MlRelease( vlc_medialibrary_t* p_ml )
 {
     assert( p_ml != NULL );
     module_unneed( p_ml, p_ml->p_module );
+    struct ml_priv_t* p_priv = ml_priv( p_ml );
+    assert( vlc_list_is_empty( &p_priv->cbs ) );
+    vlc_mutex_destroy( &p_priv->lock );
     vlc_object_release( p_ml );
 }
 
@@ -65,6 +92,42 @@ vlc_medialibrary_t* vlc_ml_get( vlc_object_t* p_obj )
 {
     libvlc_priv_t* p_priv = libvlc_priv( p_obj->obj.libvlc );
     return p_priv->p_media_library;
+}
+
+void* vlc_ml_event_register_callback( vlc_medialibrary_t* p_ml, vlc_ml_callback_t cb, void* p_data )
+{
+    struct ml_callback_t* p_cb = malloc( sizeof( *p_cb ) );
+    if ( unlikely( p_cb == NULL ) )
+        return NULL;
+    p_cb->pf_cb = cb;
+    p_cb->p_data = p_data;
+    struct ml_priv_t* p_priv = ml_priv( p_ml );
+    vlc_mutex_lock( &p_priv->lock );
+    vlc_list_append( &p_cb->node, &p_priv->cbs );
+    vlc_mutex_unlock( &p_priv->lock );
+    return &p_cb->node;
+}
+
+void vlc_ml_event_unregister_callback( vlc_medialibrary_t* p_ml, void* p_handle )
+{
+    struct ml_priv_t* p_priv = ml_priv( p_ml );
+    struct ml_callback_t* p_cb = container_of( p_handle, struct ml_callback_t, node );
+    vlc_mutex_lock( &p_priv->lock );
+    vlc_list_remove( (struct vlc_list*)p_handle );
+    vlc_mutex_unlock( &p_priv->lock );
+    free( p_cb );
+}
+
+void vlc_ml_event_send( vlc_medialibrary_t* p_ml, const vlc_ml_event_t* p_event )
+{
+    struct ml_priv_t* p_priv = ml_priv( p_ml );
+    vlc_mutex_lock( &p_priv->lock );
+    struct ml_callback_t* p_cb;
+    vlc_list_foreach( p_cb, &p_priv->cbs, node )
+    {
+        p_cb->pf_cb( p_cb->p_data, p_event );
+    }
+    vlc_mutex_unlock( &p_priv->lock );
 }
 
 static void vlc_ml_show_release_inner( vlc_ml_show_t* p_show )

@@ -28,6 +28,8 @@
 #ifndef VLC_MEDIA_LIBRARY_H
 # define VLC_MEDIA_LIBRARY_H
 
+#include <vlc_common.h>
+
 #include <assert.h>
 
 # ifdef __cplusplus
@@ -342,6 +344,38 @@ static inline vlc_ml_query_params_t vlc_ml_query_params_create()
         .b_desc = false
     };
 }
+
+enum vlc_ml_event_type
+{
+    VLC_ML_EVENT_DISCOVERY_STARTED,
+    VLC_ML_EVENT_DISCOVERY_PROGRESS,
+    VLC_ML_EVENT_DISCOVERY_COMPLETED,
+    VLC_ML_EVENT_PROGRESS_UPDATED,
+};
+
+typedef struct vlc_ml_event_t
+{
+    int i_type;
+    union
+    {
+        const char* psz_entry_point;
+        unsigned int i_progress;
+    };
+} vlc_ml_event_t;
+
+typedef void (*vlc_ml_callback_t)( void* p_data, const vlc_ml_event_t* p_event );
+/**
+ * \brief Registers a medialibrary callback.
+ * \returns A handle to the callback, to be passed to vlc_ml_unregister_callback
+ */
+VLC_API void* vlc_ml_event_register_callback( vlc_medialibrary_t* p_ml, vlc_ml_callback_t cb, void* p_data );
+
+/**
+ * \brief Unregisters a medialibrary callback
+ * \param p_handle The handled returned by vlc_ml_register_callback
+ */
+VLC_API void vlc_ml_event_unregister_callback( vlc_medialibrary_t* p_ml, void* p_handle );
+VLC_API void vlc_ml_event_send( vlc_medialibrary_t* p_ml, const vlc_ml_event_t* p_event );
 
 struct vlc_medialibrary_t
 {

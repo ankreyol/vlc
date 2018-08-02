@@ -59,6 +59,17 @@ void vlc_ml_entrypoints_release( vlc_ml_entrypoint_t* p_list, size_t i_nb_items 
     free( p_list );
 }
 
+static int ml_module_start(void* func, va_list ap)
+{
+    vlc_object_t *obj = va_arg(ap, vlc_object_t *);
+    vlc_ml_pf_send_event pf_event = va_arg(ap, vlc_ml_pf_send_event);
+    int (*activate)(vlc_object_t *, vlc_ml_pf_send_event) = func;
+
+    return activate(obj, pf_event);
+}
+
+static void vlc_ml_event_send( vlc_medialibrary_t* p_ml, const vlc_ml_event_t* p_event );
+
 vlc_medialibrary_t* libvlc_MlCreate( libvlc_int_t* p_libvlc  )
 {
     struct ml_priv_t *p_priv = vlc_custom_create( VLC_OBJECT( p_libvlc ),
@@ -68,23 +79,14 @@ vlc_medialibrary_t* libvlc_MlCreate( libvlc_int_t* p_libvlc  )
     vlc_mutex_init( &p_priv->lock );
     vlc_list_init( &p_priv->cbs );
     vlc_medialibrary_t* p_ml = &p_priv->ml;
-    p_ml->p_module = module_need( p_ml, "medialibrary", NULL, false );
+    p_ml->p_module = vlc_module_load( p_ml, "medialibrary", NULL, false,
+                                      ml_module_start, p_ml, vlc_ml_event_send );
     if ( p_ml->p_module == NULL )
     {
         vlc_object_release( p_ml );
         return NULL;
     }
     return p_ml;
-}
-
-void libvlc_MlRelease( vlc_medialibrary_t* p_ml )
-{
-    assert( p_ml != NULL );
-    module_unneed( p_ml, p_ml->p_module );
-    struct ml_priv_t* p_priv = ml_priv( p_ml );
-    assert( vlc_list_is_empty( &p_priv->cbs ) );
-    vlc_mutex_destroy( &p_priv->lock );
-    vlc_object_release( p_ml );
 }
 
 #undef vlc_ml_get
@@ -118,7 +120,7 @@ void vlc_ml_event_unregister_callback( vlc_medialibrary_t* p_ml, void* p_handle 
     free( p_cb );
 }
 
-void vlc_ml_event_send( vlc_medialibrary_t* p_ml, const vlc_ml_event_t* p_event )
+static void vlc_ml_event_send( vlc_medialibrary_t* p_ml, const vlc_ml_event_t* p_event )
 {
     struct ml_priv_t* p_priv = ml_priv( p_ml );
     vlc_mutex_lock( &p_priv->lock );
@@ -319,3 +321,14 @@ void vlc_ml_playlist_list_release( vlc_ml_playlist_list_t* p_list )
         vlc_ml_playlist_release_inner( &p_list->p_items[i] );
     free( p_list );
 }
+
+void libvlc_MlRelease( vlc_medialibrary_t* p_ml )
+{
+    assert( p_ml != NULL );
+    module_unneed( p_ml, p_ml->p_module );
+    struct ml_priv_t* p_priv = ml_priv( p_ml );
+    assert( vlc_list_is_empty( &p_priv->cbs ) );
+    vlc_mutex_destroy( &p_priv->lock );
+    vlc_object_release( p_ml );
+}
+

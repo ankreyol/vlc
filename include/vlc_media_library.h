@@ -364,6 +364,8 @@ typedef struct vlc_ml_event_t
 } vlc_ml_event_t;
 
 typedef void (*vlc_ml_callback_t)( void* p_data, const vlc_ml_event_t* p_event );
+typedef void (*vlc_ml_pf_send_event)( vlc_medialibrary_t* p_ml, const vlc_ml_event_t* p_event );
+
 /**
  * \brief Registers a medialibrary callback.
  * \returns A handle to the callback, to be passed to vlc_ml_unregister_callback
@@ -375,7 +377,6 @@ VLC_API void* vlc_ml_event_register_callback( vlc_medialibrary_t* p_ml, vlc_ml_c
  * \param p_handle The handled returned by vlc_ml_register_callback
  */
 VLC_API void vlc_ml_event_unregister_callback( vlc_medialibrary_t* p_ml, void* p_handle );
-VLC_API void vlc_ml_event_send( vlc_medialibrary_t* p_ml, const vlc_ml_event_t* p_event );
 
 struct vlc_medialibrary_t
 {

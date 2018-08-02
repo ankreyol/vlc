@@ -11,7 +11,14 @@ QC14.TableView
     sortIndicatorVisible: true
     selectionMode: QC14.SelectionMode.ExtendedSelection
 
-    model: null
+    model: MLAlbumTrackModel {
+        id: albumModel
+        ml: medialib
+        onParentIdChanged: {
+            selection.clear()
+        }
+    }
+    property alias parentId: albumModel.parentId
 
     property var columnModel: ListModel {
         ListElement{ role: "title"; title: qsTr("TITLE") }

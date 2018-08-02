@@ -231,18 +231,18 @@ Item {
         anchors.bottom: parent.bottom
         z: 0
         property alias model: albumview.model
-
-        MusicAlbumsGridExpandDelegate {
-            id: albumview
-            anchors.fill: parent
-            visible: true
-        }
         //this mouse area intecepts mouse events
         MouseArea {
             anchors.fill: parent
             propagateComposedEvents: false
             onClicked: {}
             onDoubleClicked: {}
+
+            MusicAlbumsGridExpandDelegate {
+                id: albumview
+                anchors.fill: parent
+                visible: true
+            }
         }
     }
 }

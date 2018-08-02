@@ -82,10 +82,7 @@ Rectangle {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
-                model: MLAlbumTrackModel {
-                    ml: medialib
-                    parentId: root.model.id
-                }
+                parentId : root.model.id
 
                 columnModel: ListModel {
                     ListElement{ role: "title"; title: qsTr("TITLE") }

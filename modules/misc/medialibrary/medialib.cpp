@@ -123,16 +123,31 @@ void MediaLibrary::onPlaylistsDeleted( std::vector<int64_t> )
 {
 }
 
-void MediaLibrary::onDiscoveryStarted( const std::string& )
+void MediaLibrary::onDiscoveryStarted( const std::string& entryPoint )
 {
+    const vlc_ml_event_t evt {
+        .i_type = VLC_ML_EVENT_DISCOVERY_STARTED,
+        .psz_entry_point = entryPoint.c_str()
+    };
+    vlc_ml_event_send( m_vlc_ml, &evt );
 }
 
-void MediaLibrary::onDiscoveryProgress( const std::string& )
+void MediaLibrary::onDiscoveryProgress( const std::string& entryPoint )
 {
+    const vlc_ml_event_t evt {
+        .i_type = VLC_ML_EVENT_DISCOVERY_PROGRESS,
+        .psz_entry_point = entryPoint.c_str()
+    };
+    vlc_ml_event_send( m_vlc_ml, &evt );
 }
 
-void MediaLibrary::onDiscoveryCompleted( const std::string& )
+void MediaLibrary::onDiscoveryCompleted( const std::string& entryPoint )
 {
+    const vlc_ml_event_t evt {
+        .i_type = VLC_ML_EVENT_DISCOVERY_COMPLETED,
+        .psz_entry_point = entryPoint.c_str()
+    };
+    vlc_ml_event_send( m_vlc_ml, &evt );
 }
 
 void MediaLibrary::onReloadStarted( const std::string& )
@@ -155,8 +170,13 @@ void MediaLibrary::onEntryPointUnbanned( const std::string&, bool )
 {
 }
 
-void MediaLibrary::onParsingStatsUpdated( uint32_t )
+void MediaLibrary::onParsingStatsUpdated( uint32_t percent )
 {
+    const vlc_ml_event_t evt {
+        .i_type = VLC_ML_EVENT_PROGRESS_UPDATED,
+        .i_progress = percent
+    };
+    vlc_ml_event_send( m_vlc_ml, &evt );
 }
 
 void MediaLibrary::onBackgroundTasksIdleChanged( bool )

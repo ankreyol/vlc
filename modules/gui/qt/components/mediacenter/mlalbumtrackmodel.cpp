@@ -6,6 +6,7 @@ enum Role {
     TRACK_TITLE = Qt::UserRole + 1,
     TRACK_COVER,
     TRACK_NUMBER,
+    TRACK_DISC_NUMBER,
     TRACK_DURATION,
     TRACK_ALBUM,
     TRACK_ARTIST,
@@ -46,6 +47,8 @@ QVariant MLAlbumTrackModel::data(const QModelIndex &index, int role) const
         return QVariant::fromValue( ml_track->getCover() );
     case TRACK_NUMBER :
         return QVariant::fromValue( ml_track->getTrackNumber() );
+    case TRACK_DISC_NUMBER:
+        return QVariant::fromValue( ml_track->getDiscNumber() );
     case TRACK_DURATION :
         return QVariant::fromValue( ml_track->getDuration() );
     case TRACK_ALBUM:
@@ -62,7 +65,8 @@ QHash<int, QByteArray> MLAlbumTrackModel::roleNames() const
     return {
         { TRACK_TITLE, "title" },
         { TRACK_COVER, "cover" },
-        { TRACK_NUMBER, "number" },
+        { TRACK_NUMBER, "track_number" },
+        { TRACK_DISC_NUMBER, "disc_number" },
         { TRACK_DURATION, "duration" },
         { TRACK_ALBUM, "album_title"},
         { TRACK_ARTIST, "main_artist"},

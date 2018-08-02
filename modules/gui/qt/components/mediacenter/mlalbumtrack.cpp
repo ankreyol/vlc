@@ -30,6 +30,7 @@ MLAlbumTrack::MLAlbumTrack(vlc_medialibrary_t* _ml, const vlc_ml_media_t *_data,
     , m_id         ( _data->i_id)
     , m_title      ( QString::fromUtf8( _data->psz_title ) )
     , m_trackNumber( _data->album_track.i_track_nb )
+    , m_discNumber( _data->album_track.i_disc_nb )
 {
     assert( _data );
     assert( _data->i_type == VLC_ML_MEDIA_TYPE_AUDIO );
@@ -99,6 +100,11 @@ QString MLAlbumTrack::getCover() const
 unsigned int MLAlbumTrack::getTrackNumber() const
 {
     return m_trackNumber;
+}
+
+unsigned int MLAlbumTrack::getDiscNumber() const
+{
+    return m_discNumber;
 }
 
 QString MLAlbumTrack::getDuration() const

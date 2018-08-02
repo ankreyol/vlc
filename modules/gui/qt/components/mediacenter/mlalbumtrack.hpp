@@ -41,10 +41,11 @@ class MLAlbumTrack : public QObject
 
     Q_PROPERTY(uint64_t id READ getId CONSTANT)
     Q_PROPERTY(QString title READ getTitle CONSTANT)
-    Q_PROPERTY(QString albumtitle READ getAlbumTitle CONSTANT)
-    Q_PROPERTY(QString artist READ getArtist CONSTANT)
+    Q_PROPERTY(QString album_title READ getAlbumTitle CONSTANT)
+    Q_PROPERTY(QString main_artist READ getArtist CONSTANT)
     Q_PROPERTY(QString cover READ getCover CONSTANT)
-    Q_PROPERTY(unsigned int tracknumber READ getTrackNumber CONSTANT)
+    Q_PROPERTY(unsigned int track_number READ getTrackNumber CONSTANT)
+    Q_PROPERTY(unsigned int disc_number READ getDiscNumber CONSTANT)
     Q_PROPERTY(QString duration READ getDuration CONSTANT)
     Q_PROPERTY(QString mrl READ getMRL CONSTANT)
 
@@ -57,6 +58,7 @@ public:
     QString getArtist() const;
     QString getCover() const;
     unsigned int getTrackNumber() const;
+    unsigned int getDiscNumber() const;
     QString getDuration() const;
     QString getMRL() const;
 
@@ -67,6 +69,7 @@ private:
     QString m_artist;
     QString m_cover;
     unsigned int m_trackNumber;
+    unsigned int m_discNumber;
     QString m_duration;
     QString m_mrl;
 

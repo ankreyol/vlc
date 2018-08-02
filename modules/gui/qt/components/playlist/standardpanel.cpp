@@ -207,7 +207,7 @@ bool StandardPLPanel::eventFilter ( QObject *, QEvent *  )
 
 void StandardPLPanel::createMainView()
 {
-    mainView = new QQuickWidget();
+    mainView = new QQuickWidget(this);
 
     /*************************************************************
      * PROPERTIES
@@ -218,7 +218,7 @@ void StandardPLPanel::createMainView()
     std::shared_ptr<PLModel> plmodel = std::make_shared<PLModel>(p_intf);
     rootCtx->setContextProperty( "playlist", plmodel.get());
 
-    MCMediaLib *medialib = new MCMediaLib(p_intf, mainView, plmodel);
+    MCMediaLib *medialib = new MCMediaLib(p_intf, mainView, plmodel, mainView);
     rootCtx->setContextProperty( "medialib", medialib );
 
     qRegisterMetaType<MLParentId>();

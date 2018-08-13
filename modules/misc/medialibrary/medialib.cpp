@@ -67,92 +67,160 @@ private:
     vlc_object_t* m_obj;
 };
 
-void MediaLibrary::onMediaAdded( std::vector<medialibrary::MediaPtr> )
+void MediaLibrary::wrapEntityDeletedEventCallback( const std::vector<int64_t>& ids, vlc_ml_event_type evType )
 {
+    vlc_ml_event_t ev;
+    ev.i_type = evType;
+    for ( const auto& id : ids )
+    {
+        ev.i_entity_id = id;
+        m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
+    }
 }
 
-void MediaLibrary::onMediaUpdated( std::vector<medialibrary::MediaPtr> )
+void MediaLibrary::onMediaAdded( std::vector<medialibrary::MediaPtr> media )
 {
+    wrapEntityEventCallback( media, VLC_ML_EVENT_MEDIA_ADDED );
 }
 
-void MediaLibrary::onMediaDeleted( std::vector<int64_t> )
+void MediaLibrary::onMediaUpdated( std::vector<medialibrary::MediaPtr> media )
 {
+    wrapEntityEventCallback( media, VLC_ML_EVENT_MEDIA_UPDATED );
 }
 
-void MediaLibrary::onArtistsAdded( std::vector<medialibrary::ArtistPtr> )
+void MediaLibrary::onMediaDeleted( std::vector<int64_t> mediaIds )
 {
+    wrapEntityDeletedEventCallback( mediaIds, VLC_ML_EVENT_MEDIA_DELETED );
 }
 
-void MediaLibrary::onArtistsModified( std::vector<medialibrary::ArtistPtr> )
+void MediaLibrary::onArtistsAdded( std::vector<medialibrary::ArtistPtr> artists )
 {
+    wrapEntityEventCallback( artists, VLC_ML_EVENT_ARTIST_ADDED );
 }
 
-void MediaLibrary::onArtistsDeleted( std::vector<int64_t> )
+void MediaLibrary::onArtistsModified( std::vector<medialibrary::ArtistPtr> artists )
 {
+    wrapEntityEventCallback( artists, VLC_ML_EVENT_ARTIST_UPDATED );
 }
 
-void MediaLibrary::onAlbumsAdded( std::vector<medialibrary::AlbumPtr> )
+void MediaLibrary::onArtistsDeleted( std::vector<int64_t> artistIds )
 {
+    wrapEntityDeletedEventCallback( artistIds, VLC_ML_EVENT_ARTIST_DELETED );
 }
 
-void MediaLibrary::onAlbumsModified( std::vector<medialibrary::AlbumPtr> )
+void MediaLibrary::onAlbumsAdded( std::vector<medialibrary::AlbumPtr> albums )
 {
+    wrapEntityEventCallback( albums, VLC_ML_EVENT_ALBUM_ADDED );
 }
 
-void MediaLibrary::onAlbumsDeleted( std::vector<int64_t> )
+void MediaLibrary::onAlbumsModified( std::vector<medialibrary::AlbumPtr> albums )
 {
+    wrapEntityEventCallback( albums, VLC_ML_EVENT_ALBUM_UPDATED );
 }
 
-void MediaLibrary::onPlaylistsAdded( std::vector<medialibrary::PlaylistPtr> )
+void MediaLibrary::onAlbumsDeleted( std::vector<int64_t> albumIds )
 {
+    wrapEntityDeletedEventCallback( albumIds, VLC_ML_EVENT_ALBUM_DELETED );
 }
 
-void MediaLibrary::onPlaylistsModified( std::vector<medialibrary::PlaylistPtr> )
+void MediaLibrary::onPlaylistsAdded( std::vector<medialibrary::PlaylistPtr> playlists )
 {
+    wrapEntityEventCallback( playlists, VLC_ML_EVENT_PLAYLIST_ADDED );
 }
 
-void MediaLibrary::onPlaylistsDeleted( std::vector<int64_t> )
+void MediaLibrary::onPlaylistsModified( std::vector<medialibrary::PlaylistPtr> playlists )
 {
+    wrapEntityEventCallback( playlists, VLC_ML_EVENT_PLAYLIST_UPDATED );
 }
 
-void MediaLibrary::onDiscoveryStarted( const std::string& )
+void MediaLibrary::onPlaylistsDeleted( std::vector<int64_t> playlistIds )
 {
+    wrapEntityDeletedEventCallback( playlistIds, VLC_ML_EVENT_PLAYLIST_DELETED );
 }
 
-void MediaLibrary::onDiscoveryProgress( const std::string& )
+void MediaLibrary::onDiscoveryStarted( const std::string& entryPoint )
 {
+    vlc_ml_event_t ev;
+    ev.i_type = VLC_ML_EVENT_DISCOVERY_STARTED;
+    ev.psz_entry_point = entryPoint.c_str();
+    m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
-void MediaLibrary::onDiscoveryCompleted( const std::string&, bool )
+void MediaLibrary::onDiscoveryProgress( const std::string& entryPoint )
 {
+    vlc_ml_event_t ev;
+    ev.i_type = VLC_ML_EVENT_DISCOVERY_PROGRESS;
+    ev.psz_entry_point = entryPoint.c_str();
+    m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
-void MediaLibrary::onReloadStarted( const std::string& )
+void MediaLibrary::onDiscoveryCompleted( const std::string& entryPoint, bool success )
 {
+    vlc_ml_event_t ev;
+    ev.i_type = VLC_ML_EVENT_DISCOVERY_COMPLETED;
+    ev.psz_entry_point = entryPoint.c_str();
+    ev.b_success = success;
+    m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
-void MediaLibrary::onReloadCompleted(const std::string&, bool )
+void MediaLibrary::onReloadStarted( const std::string& entryPoint )
 {
+    vlc_ml_event_t ev;
+    ev.i_type = VLC_ML_EVENT_RELOAD_STARTED;
+    ev.psz_entry_point = entryPoint.c_str();
+    m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
-void MediaLibrary::onEntryPointRemoved( const std::string&, bool )
+void MediaLibrary::onReloadCompleted( const std::string& entryPoint, bool success )
 {
+    vlc_ml_event_t ev;
+    ev.i_type = VLC_ML_EVENT_RELOAD_COMPLETED;
+    ev.psz_entry_point = entryPoint.c_str();
+    ev.b_success = success;
+    m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
-void MediaLibrary::onEntryPointBanned( const std::string&, bool )
+void MediaLibrary::onEntryPointRemoved( const std::string& entryPoint, bool success )
 {
+    vlc_ml_event_t ev;
+    ev.i_type = VLC_ML_EVENT_ENTRY_POINT_REMOVED;
+    ev.psz_entry_point = entryPoint.c_str();
+    ev.b_success = success;
+    m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
-void MediaLibrary::onEntryPointUnbanned( const std::string&, bool )
+void MediaLibrary::onEntryPointBanned( const std::string& entryPoint, bool success )
 {
+    vlc_ml_event_t ev;
+    ev.i_type = VLC_ML_EVENT_ENTRY_POINT_BANNED;
+    ev.psz_entry_point = entryPoint.c_str();
+    ev.b_success = success;
+    m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
-void MediaLibrary::onParsingStatsUpdated( uint32_t )
+void MediaLibrary::onEntryPointUnbanned( const std::string& entryPoint, bool success )
 {
+    vlc_ml_event_t ev;
+    ev.i_type = VLC_ML_EVENT_ENTRY_POINT_UNBANNED;
+    ev.psz_entry_point = entryPoint.c_str();
+    ev.b_success = success;
+    m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
-void MediaLibrary::onBackgroundTasksIdleChanged( bool )
+void MediaLibrary::onParsingStatsUpdated( uint32_t progress )
 {
+    vlc_ml_event_t ev;
+    ev.i_type = VLC_ML_EVENT_PARSING_PROGRESS_UPDATED;
+    ev.i_progress = progress;
+    m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
+}
+
+void MediaLibrary::onBackgroundTasksIdleChanged( bool idle )
+{
+    vlc_ml_event_t ev;
+    ev.i_type = VLC_ML_EVENT_BACKGROUND_IDLE_CHANGED;
+    ev.b_idle = idle;
+    m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
 void MediaLibrary::onMediaThumbnailReady( medialibrary::MediaPtr, bool )

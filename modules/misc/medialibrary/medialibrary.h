@@ -126,6 +126,20 @@ private:
     static medialibrary::IMedia::MetadataType metadataType( int meta );
     static medialibrary::SortingCriteria sortingCriteria( int sort );
 
+    template <typename T>
+    void wrapEntityEventCallback( const std::vector<T>& entities, vlc_ml_event_type evType )
+    {
+        vlc_ml_event_t ev;
+        ev.i_type = evType;
+        for ( const auto& m : entities )
+        {
+            ev.i_entity_id = m->id();
+            m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
+        }
+    }
+
+    void wrapEntityDeletedEventCallback( const std::vector<int64_t>& entities, vlc_ml_event_type evType );
+
 private:
     vlc_medialibrary_module_t* m_vlc_ml;
     std::unique_ptr<Logger> m_logger;

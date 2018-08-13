@@ -142,16 +142,14 @@ public:
     virtual void onAlbumsAdded(std::vector<medialibrary::AlbumPtr> albums) override;
     virtual void onAlbumsModified(std::vector<medialibrary::AlbumPtr> albums) override;
     virtual void onAlbumsDeleted(std::vector<int64_t> albumsIds) override;
-    virtual void onTracksAdded(std::vector<medialibrary::AlbumTrackPtr> tracks) override;
-    virtual void onTracksDeleted(std::vector<int64_t> trackIds) override;
     virtual void onPlaylistsAdded(std::vector<medialibrary::PlaylistPtr> playlists) override;
     virtual void onPlaylistsModified(std::vector<medialibrary::PlaylistPtr> playlists) override;
     virtual void onPlaylistsDeleted(std::vector<int64_t> playlistIds) override;
     virtual void onDiscoveryStarted(const std::string& entryPoint) override;
     virtual void onDiscoveryProgress(const std::string& entryPoint) override;
-    virtual void onDiscoveryCompleted(const std::string& entryPoint) override;
+    virtual void onDiscoveryCompleted(const std::string& entryPoint, bool success) override;
     virtual void onReloadStarted(const std::string& entryPoint) override;
-    virtual void onReloadCompleted(const std::string& entryPoint) override;
+    virtual void onReloadCompleted(const std::string& entryPoint, bool success) override;
     virtual void onEntryPointRemoved(const std::string& entryPoint, bool success) override;
     virtual void onEntryPointBanned(const std::string& entryPoint, bool success) override;
     virtual void onEntryPointUnbanned(const std::string& entryPoint, bool success) override;

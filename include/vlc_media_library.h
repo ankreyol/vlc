@@ -562,10 +562,27 @@ typedef struct vlc_ml_event_t
         {
             const char* psz_entry_point;
             bool b_success;
-        };
-        uint8_t i_progress;
-        int64_t i_entity_id;
-        bool b_idle;
+        } discovery;
+        struct
+        {
+            uint8_t i_progress;
+        } parser;
+        union
+        {
+            const vlc_ml_media_t* p_media;
+            const vlc_ml_artist_t* p_artist;
+            const vlc_ml_album_t* p_album;
+            const vlc_ml_playlist_t* p_playlist;
+            const vlc_ml_genre_t* p_genre;
+        } modification;
+        struct
+        {
+            int64_t i_entity_id;
+        } deletion;
+        struct
+        {
+            bool b_idle;
+        } background_tasks;
     };
 } vlc_ml_event_t;
 

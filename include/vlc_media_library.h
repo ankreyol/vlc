@@ -480,6 +480,9 @@ enum vlc_ml_event_type
     VLC_ML_EVENT_PLAYLIST_ADDED,
     VLC_ML_EVENT_PLAYLIST_UPDATED,
     VLC_ML_EVENT_PLAYLIST_DELETED,
+    VLC_ML_EVENT_GENRE_ADDED,
+    VLC_ML_EVENT_GENRE_UPDATED,
+    VLC_ML_EVENT_GENRE_DELETED,
     /**
      * A discovery started.
      * For each VLC_ML_EVENT_DISCOVERY_STARTED event, there will be

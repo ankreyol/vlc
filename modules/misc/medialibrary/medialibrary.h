@@ -126,20 +126,6 @@ private:
     static medialibrary::IMedia::MetadataType metadataType( int meta );
     static medialibrary::SortingCriteria sortingCriteria( int sort );
 
-    template <typename T>
-    void wrapEntityEventCallback( const std::vector<T>& entities, vlc_ml_event_type evType )
-    {
-        vlc_ml_event_t ev;
-        ev.i_type = evType;
-        for ( const auto& m : entities )
-        {
-            ev.i_entity_id = m->id();
-            m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
-        }
-    }
-
-    void wrapEntityDeletedEventCallback( const std::vector<int64_t>& entities, vlc_ml_event_type evType );
-
 private:
     vlc_medialibrary_module_t* m_vlc_ml;
     std::unique_ptr<Logger> m_logger;
@@ -159,6 +145,9 @@ public:
     virtual void onPlaylistsAdded(std::vector<medialibrary::PlaylistPtr> playlists) override;
     virtual void onPlaylistsModified(std::vector<medialibrary::PlaylistPtr> playlists) override;
     virtual void onPlaylistsDeleted(std::vector<int64_t> playlistIds) override;
+    virtual void onGenresAdded( std::vector<medialibrary::GenrePtr> genres ) override;
+    virtual void onGenresModified( std::vector<medialibrary::GenrePtr> genres ) override;
+    virtual void onGenresDeleted( std::vector<int64_t> genreIds ) override;
     virtual void onDiscoveryStarted(const std::string& entryPoint) override;
     virtual void onDiscoveryProgress(const std::string& entryPoint) override;
     virtual void onDiscoveryCompleted(const std::string& entryPoint, bool success) override;

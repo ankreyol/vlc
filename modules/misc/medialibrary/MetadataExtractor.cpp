@@ -37,17 +37,17 @@ void MetadataExtractor::onInputEvent( const vlc_input_event* ev,
 
     if ( ev->type == INPUT_EVENT_STATE )
     {
-        vlc_mutex_locker lock( &ctx.m_mutex );
+        vlc::threads::mutex_locker lock( ctx.m_mutex );
         ctx.state = ev->state;
         return;
     }
 
     {
-        vlc_mutex_locker lock( &ctx.m_mutex );
+        vlc::threads::mutex_locker lock( ctx.m_mutex );
         // We need to probe the item now, but not from the input thread
         ctx.needsProbing = true;
     }
-    vlc_cond_signal( &ctx.m_cond );
+    ctx.m_cond.signal();
 }
 
 void MetadataExtractor::populateItem( medialibrary::parser::IItem& item, input_item_t* inputItem )
@@ -173,10 +173,10 @@ medialibrary::parser::Status MetadataExtractor::run( medialibrary::parser::IItem
     input_Start( ctx.input.get() );
 
     {
-        vlc_mutex_locker lock( &ctx.m_mutex );
+        vlc::threads::mutex_locker lock( ctx.m_mutex );
         while ( ctx.needsProbing == false )
         {
-            vlc_cond_wait( &ctx.m_cond, &ctx.m_mutex );
+            ctx.m_cond.wait( ctx.m_mutex );
             if ( ctx.needsProbing == true )
             {
                 if ( ctx.state == END_S || ctx.state == ERROR_S )

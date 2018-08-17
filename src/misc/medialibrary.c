@@ -72,7 +72,9 @@ static void vlc_ml_event_send( vlc_medialibrary_module_t* p_ml, const vlc_ml_eve
     vlc_mutex_unlock( &p_priv->lock );
 }
 
-void* vlc_ml_event_register_callback( vlc_medialibrary_t* p_ml, vlc_ml_callback_t cb, void* p_data )
+vlc_ml_event_callback_id*
+vlc_ml_event_register_callback( vlc_medialibrary_t* p_ml, vlc_ml_callback_t cb,
+                                void* p_data )
 {
     struct ml_callback_t* p_cb = malloc( sizeof( *p_cb ) );
     if ( unlikely( p_cb == NULL ) )
@@ -82,14 +84,15 @@ void* vlc_ml_event_register_callback( vlc_medialibrary_t* p_ml, vlc_ml_callback_
     vlc_mutex_lock( &p_ml->lock );
     vlc_list_append( &p_cb->node, &p_ml->cbs );
     vlc_mutex_unlock( &p_ml->lock );
-    return &p_cb->node;
+    return (vlc_ml_event_callback_id*)p_cb;
 }
 
-void vlc_ml_event_unregister_callback( vlc_medialibrary_t* p_ml, void* p_handle )
+void vlc_ml_event_unregister_callback( vlc_medialibrary_t* p_ml,
+                                       vlc_ml_event_callback_id* p_opaque_cb )
 {
-    struct ml_callback_t* p_cb = container_of( p_handle, struct ml_callback_t, node );
+    struct ml_callback_t* p_cb = (struct ml_callback_t*)p_opaque_cb;
     vlc_mutex_lock( &p_ml->lock );
-    vlc_list_remove( (struct vlc_list*)p_handle );
+    vlc_list_remove( &p_cb->node );
     vlc_mutex_unlock( &p_ml->lock );
     free( p_cb );
 }

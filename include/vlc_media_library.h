@@ -651,17 +651,20 @@ VLC_API int vlc_ml_control( vlc_medialibrary_t* p_ml, int i_query, ... ) VLC_USE
 VLC_API int vlc_ml_list( vlc_medialibrary_t* p_ml, int i_query,
                              const vlc_ml_query_params_t* p_params, ... );
 
+typedef struct vlc_ml_event_callback_id vlc_ml_event_callback_id;
 /**
  * \brief Registers a medialibrary callback.
  * \returns A handle to the callback, to be passed to vlc_ml_unregister_callback
  */
-VLC_API void* vlc_ml_event_register_callback( vlc_medialibrary_t* p_ml, vlc_ml_callback_t cb, void* p_data );
+VLC_API vlc_ml_event_callback_id*
+vlc_ml_event_register_callback( vlc_medialibrary_t* p_ml, vlc_ml_callback_t cb, void* p_data );
 
 /**
  * \brief Unregisters a medialibrary callback
  * \param p_handle The handled returned by vlc_ml_register_callback
  */
-VLC_API void vlc_ml_event_unregister_callback( vlc_medialibrary_t* p_ml, void* p_handle );
+VLC_API void vlc_ml_event_unregister_callback( vlc_medialibrary_t* p_ml,
+                                               vlc_ml_event_callback_id* p_callback);
 
 
 VLC_API void vlc_ml_entrypoints_release( vlc_ml_entrypoint_t* p_list, size_t i_nb_items );

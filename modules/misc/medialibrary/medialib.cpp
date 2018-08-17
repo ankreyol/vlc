@@ -188,7 +188,7 @@ void MediaLibrary::onDiscoveryStarted( const std::string& entryPoint )
 {
     vlc_ml_event_t ev;
     ev.i_type = VLC_ML_EVENT_DISCOVERY_STARTED;
-    ev.discovery.psz_entry_point = entryPoint.c_str();
+    ev.discovery_started.psz_entry_point = entryPoint.c_str();
     m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
@@ -196,7 +196,7 @@ void MediaLibrary::onDiscoveryProgress( const std::string& entryPoint )
 {
     vlc_ml_event_t ev;
     ev.i_type = VLC_ML_EVENT_DISCOVERY_PROGRESS;
-    ev.discovery.psz_entry_point = entryPoint.c_str();
+    ev.discovery_progress.psz_entry_point = entryPoint.c_str();
     m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
@@ -204,8 +204,8 @@ void MediaLibrary::onDiscoveryCompleted( const std::string& entryPoint, bool suc
 {
     vlc_ml_event_t ev;
     ev.i_type = VLC_ML_EVENT_DISCOVERY_COMPLETED;
-    ev.discovery.psz_entry_point = entryPoint.c_str();
-    ev.discovery.b_success = success;
+    ev.discovery_completed.psz_entry_point = entryPoint.c_str();
+    ev.discovery_completed.b_success = success;
     m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
@@ -213,7 +213,7 @@ void MediaLibrary::onReloadStarted( const std::string& entryPoint )
 {
     vlc_ml_event_t ev;
     ev.i_type = VLC_ML_EVENT_RELOAD_STARTED;
-    ev.discovery.psz_entry_point = entryPoint.c_str();
+    ev.reload_started.psz_entry_point = entryPoint.c_str();
     m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
@@ -221,8 +221,8 @@ void MediaLibrary::onReloadCompleted( const std::string& entryPoint, bool succes
 {
     vlc_ml_event_t ev;
     ev.i_type = VLC_ML_EVENT_RELOAD_COMPLETED;
-    ev.discovery.psz_entry_point = entryPoint.c_str();
-    ev.discovery.b_success = success;
+    ev.reload_completed.psz_entry_point = entryPoint.c_str();
+    ev.reload_completed.b_success = success;
     m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
@@ -230,8 +230,8 @@ void MediaLibrary::onEntryPointRemoved( const std::string& entryPoint, bool succ
 {
     vlc_ml_event_t ev;
     ev.i_type = VLC_ML_EVENT_ENTRY_POINT_REMOVED;
-    ev.discovery.psz_entry_point = entryPoint.c_str();
-    ev.discovery.b_success = success;
+    ev.entry_point_removed.psz_entry_point = entryPoint.c_str();
+    ev.entry_point_removed.b_success = success;
     m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
@@ -239,8 +239,8 @@ void MediaLibrary::onEntryPointBanned( const std::string& entryPoint, bool succe
 {
     vlc_ml_event_t ev;
     ev.i_type = VLC_ML_EVENT_ENTRY_POINT_BANNED;
-    ev.discovery.psz_entry_point = entryPoint.c_str();
-    ev.discovery.b_success = success;
+    ev.entry_point_banned.psz_entry_point = entryPoint.c_str();
+    ev.entry_point_banned.b_success = success;
     m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
@@ -248,8 +248,8 @@ void MediaLibrary::onEntryPointUnbanned( const std::string& entryPoint, bool suc
 {
     vlc_ml_event_t ev;
     ev.i_type = VLC_ML_EVENT_ENTRY_POINT_UNBANNED;
-    ev.discovery.psz_entry_point = entryPoint.c_str();
-    ev.discovery.b_success = success;
+    ev.entry_point_unbanned.psz_entry_point = entryPoint.c_str();
+    ev.entry_point_unbanned.b_success = success;
     m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
@@ -257,7 +257,7 @@ void MediaLibrary::onParsingStatsUpdated( uint32_t progress )
 {
     vlc_ml_event_t ev;
     ev.i_type = VLC_ML_EVENT_PARSING_PROGRESS_UPDATED;
-    ev.parser.i_progress = progress;
+    ev.parsing_progress.i_percent = progress;
     m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 
@@ -265,7 +265,7 @@ void MediaLibrary::onBackgroundTasksIdleChanged( bool idle )
 {
     vlc_ml_event_t ev;
     ev.i_type = VLC_ML_EVENT_BACKGROUND_IDLE_CHANGED;
-    ev.background_tasks.b_idle = idle;
+    ev.background_idle_changed.b_idle = idle;
     m_vlc_ml->cbs->pf_send_event( m_vlc_ml, &ev );
 }
 

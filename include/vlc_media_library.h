@@ -492,21 +492,21 @@ enum vlc_ml_event_type
      * 1 VLC_ML_EVENT_DISCOVERY_COMPLETED event, and N
      * VLC_ML_EVENT_DISCOVERY_COMPLETED events.
      * The entry point being discovered is stored in
-     * vlc_ml_event_t::discovery::psz_entry_point.
+     * vlc_ml_event_t::discovery_started::psz_entry_point.
      */
     VLC_ML_EVENT_DISCOVERY_STARTED,
     /**
      * Sent when a discovery or reload operation starts analyzing a new folder.
      * The discovered entry point is stored in
-     * vlc_ml_event_t::discovery::psz_entry_point.
+     * vlc_ml_event_t::discovery_progress::psz_entry_point.
      */
     VLC_ML_EVENT_DISCOVERY_PROGRESS,
     /**
      * Sent when an entry point discovery is completed.
      * The entry point that was being discovered is stored in
-     * vlc_ml_event_t::discovery::psz_entry_point.
+     * vlc_ml_event_t::discovery_completed::psz_entry_point.
      * The success or failure state is stored in
-     * vlc_ml_event_t::discovery::b_success
+     * vlc_ml_event_t::discovery_completed::b_success
      */
     VLC_ML_EVENT_DISCOVERY_COMPLETED,
     /**
@@ -514,41 +514,41 @@ enum vlc_ml_event_type
      * For all the entry points being reloaded, N VLC_EVENT_DISCOVERY_PROGRESS
      * and 1 VLC_EVENT_RELOAD_COMPLETED event will be sent.
      * The entry point being reloaded is stored in
-     * vlc_ml_event_t::discovery::psz_entry_point.
+     * vlc_ml_event_t::reload_started::psz_entry_point.
      */
     VLC_ML_EVENT_RELOAD_STARTED,
     /**
      * Sent when an entry point reload is completed.
      * The entry point that was being reloaded is stored in
-     * vlc_ml_event_t::discovery::psz_entry_point.
+     * vlc_ml_event_t::reload_completed::psz_entry_point.
      * The success or failure state is stored in
-     * vlc_ml_event_t::discovery::b_success
+     * vlc_ml_event_t::reload_completed::b_success
      */
     VLC_ML_EVENT_RELOAD_COMPLETED,
     /**
      * Sent when an entry point removal request has been processed.
      * The removed entry point is stored in
-     * vlc_ml_event_t::discovery::psz_entry_point and the success or failure
-     * state is stored in vlc_ml_event_t::discovery::b_success
+     * vlc_ml_event_t::entry_point_removed::psz_entry_point and the success or failure
+     * state is stored in vlc_ml_event_t::entry_point_removed::b_success
      */
     VLC_ML_EVENT_ENTRY_POINT_REMOVED,
     /**
      * Sent when an entry point ban request has been processed.
      * The banned entry point is stored in
-     * vlc_ml_event_t::discovery::psz_entry_point and the operation success
-     * state is stored in vlc_ml_event_t::discovery::b_success
+     * vlc_ml_event_t::entry_point_banned::psz_entry_point and the operation success
+     * state is stored in vlc_ml_event_t::entry_point_banned::b_success
      */
     VLC_ML_EVENT_ENTRY_POINT_BANNED,
     /**
      * Sent when an entry point unban request has been processed.
      * The unbanned entry point is stored in
-     * vlc_ml_event_t::discovery::psz_entry_point and the operation success
-     * state is stored in vlc_ml_event_t::discovery::b_success
+     * vlc_ml_event_t::entry_point_unbanned::psz_entry_point and the operation success
+     * state is stored in vlc_ml_event_t::entry_point_unbanned::b_success
      */
     VLC_ML_EVENT_ENTRY_POINT_UNBANNED,
     /**
      * Sent when a discoverer or parser threads changes its idle state.
-     * The idle state is stored in vlc_ml_event_t::background_tasks.b_idle.
+     * The idle state is stored in vlc_ml_event_t::background_idle_changed.b_idle.
      * False means at least one background thread is in running, true means
      * both discoverer & parser threads are paused.
      */
@@ -556,7 +556,7 @@ enum vlc_ml_event_type
     /**
      * Sent when the parsing progress percentage gets updated.
      * The percentage is stored as a [0;100] integer, in
-     * vlc_ml_event_t::parser::i_progress
+     * vlc_ml_event_t::parsing_progress::i_percent
      * This value might decrease as more media get discovered, but it will only
      * increase once all discovery operations are completed.
      */
@@ -571,12 +571,44 @@ typedef struct vlc_ml_event_t
         struct
         {
             const char* psz_entry_point;
-            bool b_success;
-        } discovery;
+        } discovery_started;
         struct
         {
-            uint8_t i_progress;
-        } parser;
+            const char* psz_entry_point;
+        } discovery_progress;
+        struct
+        {
+            const char* psz_entry_point;
+            bool b_success;
+        } discovery_completed;
+        struct
+        {
+            const char* psz_entry_point;
+        } reload_started;
+        struct
+        {
+            const char* psz_entry_point;
+            bool b_success;
+        } reload_completed;
+        struct
+        {
+            const char* psz_entry_point;
+            bool b_success;
+        } entry_point_removed;
+        struct
+        {
+            const char* psz_entry_point;
+            bool b_success;
+        } entry_point_banned;
+        struct
+        {
+            const char* psz_entry_point;
+            bool b_success;
+        } entry_point_unbanned;
+        struct
+        {
+            uint8_t i_percent;
+        } parsing_progress;
         union
         {
             const vlc_ml_media_t* p_media;
@@ -592,7 +624,7 @@ typedef struct vlc_ml_event_t
         struct
         {
             bool b_idle;
-        } background_tasks;
+        } background_idle_changed;
     };
 } vlc_ml_event_t;
 

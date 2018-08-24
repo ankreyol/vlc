@@ -68,11 +68,23 @@ extern "C" char **environ;
 
 #ifdef _WIN32 /* For static builds */
  #include <QtPlugin>
+ #include <QQuickWindow>
 
  #ifdef QT_STATICPLUGIN
   Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
   Q_IMPORT_PLUGIN(QSvgIconPlugin)
   Q_IMPORT_PLUGIN(QSvgPlugin)
+  Q_IMPORT_PLUGIN(QJpegPlugin)
+  Q_IMPORT_PLUGIN(QtQuick2Plugin)
+  Q_IMPORT_PLUGIN(QtQuickControls1Plugin)
+  Q_IMPORT_PLUGIN(QtQuickControls2Plugin)
+  Q_IMPORT_PLUGIN(QtQuickLayoutsPlugin)
+  Q_IMPORT_PLUGIN(QtQuick2WindowPlugin)
+  Q_IMPORT_PLUGIN(QtQuickTemplates2Plugin)
+  Q_IMPORT_PLUGIN(QtQmlModelsPlugin)
+  Q_IMPORT_PLUGIN(QtGraphicalEffectsPlugin)
+  Q_IMPORT_PLUGIN(QtGraphicalEffectsPrivatePlugin)
+
   #if !HAS_QT56
    Q_IMPORT_PLUGIN(AccessibleFactory)
   #endif
@@ -498,6 +510,11 @@ static void *Thread( void *obj )
 
     argv[argc++] = vlc_name;
     argv[argc] = NULL;
+
+#ifdef _WIN32
+    QQuickWindow::setSceneGraphBackend(QSGRendererInterface::Software);
+#endif
+
 
     Q_INIT_RESOURCE( vlc );
 

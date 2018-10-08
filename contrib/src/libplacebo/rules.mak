@@ -15,6 +15,8 @@ ifeq ($(call need_pkg,"libplacebo"),)
 PKGS_FOUND += libplacebo
 endif
 
+DEPS_libplacebo += pthreads $(DEPS_pthreads)
+
 PLACEBOCONF := --prefix="$(PREFIX)" \
 	--libdir lib \
 	--default-library static

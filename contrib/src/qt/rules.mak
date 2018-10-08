@@ -97,5 +97,8 @@ ifdef HAVE_CROSS_COMPILE
 	for i in bootstrap uic rcc moc; \
 		do (cd $$i; echo $$i && ../../../bin/qmake -spec $(QT_SPEC) QMAKE_RC=$(HOST)-windres && $(MAKE) clean && $(MAKE) CC=$(HOST)-gcc CXX=$(HOST)-g++ LINKER=$(HOST)-g++ LIB="$(HOST)-ar -rc" && $(MAKE) install); \
 	done
+else
+	# Install a qmake with correct paths set
+	cd $<; $(MAKE) sub-qmake-qmake-aux-pro-install_subtargets install_mkspecs
 endif
 	touch $@

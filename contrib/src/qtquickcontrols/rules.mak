@@ -13,11 +13,7 @@ qtquickcontrols: qtquickcontrols-$(QTQC_VERSION).tar.xz .sum-qtquickcontrols2
 	$(MOVE)
 
 .qtquickcontrols: qtquickcontrols
-ifdef HAVE_CROSS_COMPILE
 	cd $< && $(PREFIX)/bin/qmake
-else
-	cd $< && ../qt/bin/qmake
-endif
 	# Make && Install libraries
 	cd $< && $(MAKE)
 	cd $< && $(MAKE) -C src sub-controls-install_subtargets

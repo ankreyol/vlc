@@ -39,6 +39,7 @@
     #endif
     #if defined(QT5_HAS_WAYLAND)
      Q_IMPORT_PLUGIN(QWaylandEglPlatformIntegrationPlugin)
+     Q_IMPORT_PLUGIN(QWaylandWlShellIntegrationPlugin)
     #endif
   #endif
  #endif

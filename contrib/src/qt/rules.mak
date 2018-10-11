@@ -71,6 +71,11 @@ QT_CONFIG += -release
 	cd $< && $(MAKE) -C src sub-moc-install_subtargets sub-rcc-install_subtargets sub-uic-install_subtargets sub-qlalr-install_subtargets
 	# Install plugins
 	cd $< && $(MAKE) -C src/plugins sub-platforms-install_subtargets
+	# .pc files are generated during the compilation & there are no associated .in files
+	# so we fiddle with the installed ones.
+	$(call pkg_static,"$(PREFIX)/lib/pkgconfig/Qt5Core.pc")
+	$(call pkg_static,"$(PREFIX)/lib/pkgconfig/Qt5Gui.pc")
+	$(call pkg_static,"$(PREFIX)/lib/pkgconfig/Qt5Widgets.pc")
 ifdef HAVE_WIN32
 	cd $< && $(MAKE) -C src/plugins sub-imageformats-install_subtargets
 	mv $(PREFIX)/plugins/imageformats/libqjpeg.a $(PREFIX)/lib/

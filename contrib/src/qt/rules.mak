@@ -12,6 +12,11 @@ ifdef HAVE_WIN32
 PKGS += qt
 endif
 
+DEPS_qt =
+ifdef HAVE_LINUX
+DEPS_qt += freetype2 $(DEPS_freetype2) fontconfig $(DEPS_fontconfig)
+endif
+
 ifeq ($(call need_pkg,"Qt5Core Qt5Gui Qt5Widgets"),)
 PKGS_FOUND += qt
 endif
@@ -60,6 +65,13 @@ QT_CONFIG := -static -opensource -confirm-license -no-pkg-config \
 	-no-sql-odbc -no-pch \
 	-no-compile-examples -nomake examples -qt-zlib
 
+ifdef HAVE_LINUX
+# Building Qt with fontconfig requires non-embedded
+# freetype & fontconfig to be available
+QT_CONFIG += -fontconfig -system-freetype
+QT_CONFIG += -I $(PREFIX)/include/ -L $(PREFIX)/lib/
+endif
+
 QT_CONFIG += -release
 
 .qt: qt
@@ -71,11 +83,6 @@ QT_CONFIG += -release
 	cd $< && $(MAKE) -C src sub-moc-install_subtargets sub-rcc-install_subtargets sub-uic-install_subtargets sub-qlalr-install_subtargets
 	# Install plugins
 	cd $< && $(MAKE) -C src/plugins sub-platforms-install_subtargets
-	# .pc files are generated during the compilation & there are no associated .in files
-	# so we fiddle with the installed ones.
-	$(call pkg_static,"$(PREFIX)/lib/pkgconfig/Qt5Core.pc")
-	$(call pkg_static,"$(PREFIX)/lib/pkgconfig/Qt5Gui.pc")
-	$(call pkg_static,"$(PREFIX)/lib/pkgconfig/Qt5Widgets.pc")
 ifdef HAVE_WIN32
 	cd $< && $(MAKE) -C src/plugins sub-imageformats-install_subtargets
 	mv $(PREFIX)/plugins/imageformats/libqjpeg.a $(PREFIX)/lib/
@@ -94,6 +101,22 @@ ifdef HAVE_WIN32
 	cd $(PREFIX)/lib/pkgconfig; sed -i.orig -e 's/ -lQt5Gui/ -lqwindows -lwtsapi32  -lqjpeg -luxtheme -ldwmapi -lQt5ThemeSupport -lQt5FontDatabaseSupport -lQt5EventDispatcherSupport -lQt5WindowsUIAutomationSupport -lqtfreetype -lQt5Gui/g' Qt5Gui.pc
 	# Fix Qt5Widget.pc file to include qwindowsvistastyle before Qt5Widget, as it depends on it
 	cd $(PREFIX)/lib/pkgconfig; sed -i.orig -e 's/ -lQt5Widget/ -lqwindowsvistastyle -lQt5Widget/' Qt5Widgets.pc
+else
+ifdef HAVE_LINUX
+	# .pc files are generated during the compilation & there are no associated .in files
+	# so we fiddle with the installed ones.
+	$(call pkg_static,"$(PREFIX)/lib/pkgconfig/Qt5Core.pc")
+	$(call pkg_static,"$(PREFIX)/lib/pkgconfig/Qt5Gui.pc")
+	$(call pkg_static,"$(PREFIX)/lib/pkgconfig/Qt5Widgets.pc")
+	# Force installing & linking with the xcb platform plugin
+	cd $< && $(MAKE) -C src/plugins/platforms/xcb sub-xcb-static-install_subtargets sub-gl_integrations-install_subtargets
+	mv $(PREFIX)/plugins/platforms/libqxcb.a $(PREFIX)/lib/
+	# Link with available platform plugins
+	cd $(PREFIX)/lib/pkgconfig; sed -i.orig -e 's/ -lQt5Gui/ -lQt5Gui -lqxcb -lQt5XcbQpa/g' Qt5Gui.pc
+	# Provide libfontconfig & its dependencies, because Qt doesn't fetch them
+	# from fontconfig's .pc
+	cd $(PREFIX)/lib/pkgconfig; sed -i.orig -e '/ -lQt5Gui/ s/$$/ -lfontconfig -lfreetype -lxml2 -lz/' Qt5Gui.pc
+endif
 endif
 ifdef HAVE_CROSS_COMPILE
 	# Building Qt build tools for Xcompilation

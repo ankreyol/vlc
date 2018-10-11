@@ -1,7 +1,7 @@
 # QtDeclarative
 
-QTDECLARATIVE_VERSION := 5.11.0
-QTDECLARATIVE_URL := http://download.qt.io/official_releases/qt/5.11/$(QTDECLARATIVE_VERSION)/submodules/qtdeclarative-everywhere-src-$(QTDECLARATIVE_VERSION).tar.xz
+QTDECLARATIVE_VERSION := 5.12.0-beta1
+QTDECLARATIVE_URL := http://download.qt.io/development_releases/qt/5.12/$(QTDECLARATIVE_VERSION)/submodules/qtdeclarative-everywhere-src-$(QTDECLARATIVE_VERSION).tar.xz
 
 DEPS_qtdeclarative += qt $(DEPS_qt)
 
